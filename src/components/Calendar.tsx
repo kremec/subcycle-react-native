@@ -1,14 +1,37 @@
-import React, { useState } from 'react';
-import { DateData, Calendar as RNCalendar } from 'react-native-calendars';
+import React, { useEffect, useState } from 'react';
+import { DateData, Calendar as RNCalendar, CalendarUtils } from 'react-native-calendars';
+
 import { useTheme } from '../theme/ThemeContext';
+import { useDb } from '../database/DbManager';
+import { MenstrualEvent } from '../database/Types';
+
+const formatMenstrualEvents = (events: MenstrualEvent[]) => {
+    const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; color: string } } = {};
+    
+    events.forEach(event => {
+        const dateKey = CalendarUtils.getCalendarDateString(event.date);
+        markedDates[dateKey] = {
+            selected: true,
+            startingDay: true,
+            endingDay: true,
+            color: 'red',
+        };
+    });
+
+    return markedDates;
+};
 
 const Calendar = () => {
     const { theme } = useTheme();
+    const { menstrualEvents, ovulationEvents, tabletEvents, addMenstrualEvent } = useDb();
 
     const [loadingDates, setLoadingDates] = useState(false);
-    const [markedDates, setMarkedDates] = useState({
-        [new Date().toISOString().split('T')[0]]: { selected: true, startingDay: true, endingDay: true, color: 'red' }, // Today
-    });
+    
+    const [markedDates, setMarkedDates] = useState({});
+    useEffect(() => {
+        const newMarkedDates = formatMenstrualEvents(menstrualEvents);
+        setMarkedDates(newMarkedDates);
+    }, [menstrualEvents]);
 
     return (
         <RNCalendar
@@ -26,7 +49,7 @@ const Calendar = () => {
             displayLoadingIndicator={loadingDates}
             onDayPress={(date: DateData) => {
                 const selectedDate = new Date(date.dateString);
-                console.log("Add menstrual event for date: ", selectedDate);
+                addMenstrualEvent(selectedDate);
             }}
             theme={{
                 calendarBackground: theme.colors.background,
