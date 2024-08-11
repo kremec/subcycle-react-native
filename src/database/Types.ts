@@ -1,18 +1,21 @@
-export type MenstrualEvent = {
-    date: Date;
-};
+import { DateData } from "react-native-calendars";
 
-export type OvulationEvent = {
+export type Event = {
     date: Date;
-};
-
-export type TabletEvent = {
-    date: Date;
+    menstruation: boolean;
+    ovulation: boolean;
+    tablet: boolean;
 };
 
 export type DbData = {
-    menstrualEvents: MenstrualEvent[];
-    ovulationEvents: OvulationEvent[];
-    tabletEvents: TabletEvent[];
-    addMenstrualEvent: (date: Date) => void;
+    events: Event[];
+    updateEvent: (event: Event) => void;
+};
+
+export const isSameDate = (dateData: DateData, date: Date): boolean => {
+    const yearMatches = dateData.year === date.getFullYear();
+    const monthMatches = dateData.month === date.getMonth() + 1; // getMonth() is 0-based
+    const dayMatches = dateData.day === date.getDate();
+
+    return yearMatches && monthMatches && dayMatches;
 };

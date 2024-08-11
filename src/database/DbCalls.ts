@@ -1,67 +1,45 @@
 import { SQLiteDatabase } from "expo-sqlite";
-import { MenstrualEvent, OvulationEvent, TabletEvent } from "./Types";
+import { Event } from "./Types";
 
 export function createTables(db: SQLiteDatabase) {
 
     db.withTransactionAsync(async() => {
 
       db?.execAsync(
-        `CREATE TABLE IF NOT EXISTS menstrual_event (
-            date DATE PRIMARY KEY
-        );`
-      );
-
-      db?.execAsync(
-        `CREATE TABLE IF NOT EXISTS ovulation_event (
-            date DATE PRIMARY KEY
-        );`
-      );
-  
-      db?.execAsync(
-        `CREATE TABLE IF NOT EXISTS tablet_event (
-            date DATE PRIMARY KEY
+        `CREATE TABLE IF NOT EXISTS events (
+            date DATE PRIMARY KEY,
+            menstruation BOOLEAN NOT NULL DEFAULT FALSE,
+            ovulation BOOLEAN NOT NULL DEFAULT FALSE,
+            tablet BOOLEAN NOT NULL DEFAULT FALSE
         );`
       );
 
     });
 };
 
-export const getMenstrualEventsFromDb = async (db: SQLiteDatabase) => {
-    return await db.getAllAsync<MenstrualEvent>("SELECT * FROM menstrual_event");
-};
-export const getOvulationEventsFromDb = async (db: SQLiteDatabase) => {
-    return await db.getAllAsync<OvulationEvent>("SELECT * FROM ovulation_event");
-};
-export const getTabletEventsFromDb = async (db: SQLiteDatabase) => {
-    return await db.getAllAsync<TabletEvent>("SELECT * FROM tablet_event");
+export const getEventsFromDb = async (db: SQLiteDatabase) => {
+    const results = await db.getAllAsync<Event>("SELECT * FROM events");
+
+    const events = results.map(event => ({
+        date: new Date(event.date),
+        menstruation: event.menstruation,
+        ovulation: event.ovulation,
+        tablet: event.tablet,
+    }));
+    return events;
 };
 
-export const addMenstrualEventToDb = async (db: SQLiteDatabase, date: Date) => {
-    const command = await db.prepareAsync("INSERT INTO menstrual_event (date) VALUES ($date)");
-    await command.executeAsync({ $date: formatDate(date) });
-};
-export const addOvulationEventToDb = async (db: SQLiteDatabase, date: Date) => {
-    const command = await db.prepareAsync("INSERT INTO ovulation_event (date) VALUES ($date)");
-    await command.executeAsync({ $date: formatDate(date) });
-};
-export const addTabletEventToDb = async (db: SQLiteDatabase, date: Date) => {
-    const command = await db.prepareAsync("INSERT INTO tablet_event (date) VALUES ($date)");
-    await command.executeAsync({ $date: formatDate(date) });
+export const insertEventToDb = async (db: SQLiteDatabase, event: Event) => {
+    const command = await db.prepareAsync("INSERT INTO events (date, menstruation, ovulation, tablet) VALUES ($date, $menstruation, $ovulation, $tablet)");
+    await command.executeAsync({ $date: event.date.toISOString(), $menstruation: event.menstruation, $ovulation: event.ovulation, $tablet: event.tablet });
 };
 
-export const deleteMenstrualEventFromDb = async (db: SQLiteDatabase, date: Date) => {
-    const command = await db.prepareAsync("DELETE FROM menstrual_event WHERE date = $date");
-    await command.executeAsync({ $date: formatDate(date) });
-};
-export const deleteOvulationEventFromDb = async (db: SQLiteDatabase, date: Date) => {
-    const command = await db.prepareAsync("DELETE FROM ovulation_event WHERE date = $date");
-    await command.executeAsync({ $date: formatDate(date) });
-};
-export const deleteTabletEventFromDb = async (db: SQLiteDatabase, date: Date) => {
-    const command = await db.prepareAsync("DELETE FROM tablet_event WHERE date = $date");
-    await command.executeAsync({ $date: formatDate(date) });
+export const updateEventInDb = async (db: SQLiteDatabase, event: Event) => {
+    const command = await db.prepareAsync("UPDATE events SET menstruation = $menstruation, ovulation = $ovulation, tablet = $tablet WHERE date = $date");
+    await command.executeAsync({ $date: event.date.toISOString(), $menstruation: event.menstruation, $ovulation: event.ovulation, $tablet: event.tablet });
 };
 
-const formatDate = (date: Date) => {
-    return date.toISOString().split('T')[0];
+export const deleteEventFromDb = async (db: SQLiteDatabase, date: Date) => {
+    const command = await db.prepareAsync("DELETE FROM events WHERE date = $date");
+    await command.executeAsync({ $date: date.toISOString() });
 };

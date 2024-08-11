@@ -84,3 +84,8 @@ export const Colors = {
       backdrop: "rgba(59, 45, 41, 0.4)",
     },
   };
+  export const CalendarColors = {
+    menstruation: 'indianred',
+    ovulation: 'skyblue',
+    tablet: 'lightgreen',
+  };

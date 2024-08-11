@@ -3,64 +3,98 @@ import { DateData, Calendar as RNCalendar, CalendarUtils } from 'react-native-ca
 
 import { useTheme } from '../theme/ThemeContext';
 import { useDb } from '../database/DbManager';
-import { MenstrualEvent } from '../database/Types';
-
-const formatMenstrualEvents = (events: MenstrualEvent[]) => {
-    const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; color: string } } = {};
-    
-    events.forEach(event => {
-        const dateKey = CalendarUtils.getCalendarDateString(event.date);
-        markedDates[dateKey] = {
-            selected: true,
-            startingDay: true,
-            endingDay: true,
-            color: 'red',
-        };
-    });
-
-    return markedDates;
-};
+import { Event, isSameDate } from '../database/Types';
+import CalendarEditDialog from './CalendarEditDialog';
+import { CalendarColors } from '../theme/Colors';
 
 const Calendar = () => {
+    // Getting theme and data contexts
     const { theme } = useTheme();
-    const { menstrualEvents, ovulationEvents, tabletEvents, addMenstrualEvent } = useDb();
+    const { events, updateEvent } = useDb();
 
-    const [loadingDates, setLoadingDates] = useState(false);
-    
+    // Marking dates
+    const [loadingDates, setLoadingDates] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
     useEffect(() => {
-        const newMarkedDates = formatMenstrualEvents(menstrualEvents);
-        setMarkedDates(newMarkedDates);
-    }, [menstrualEvents]);
+        const formattedDates = formatCalendarDates(events);
+        setMarkedDates({ ...formattedDates });
+        setLoadingDates(false);
+    }, [events]);
+    const formatCalendarDates = (events: Event[]) => {
+        const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; color: string } } = {};
+        
+        events.forEach(event => {
+            const dateKey = CalendarUtils.getCalendarDateString(event.date);
+            const color = getEventColor(event);
+            markedDates[dateKey] = {
+                selected: true,
+                startingDay: true,
+                endingDay: true,
+                color,
+            };
+        });
+    
+        return markedDates;
+    };
+    const getEventColor = (event: Event) => {
+        if (event.menstruation) return CalendarColors.menstruation;
+        else if (event.ovulation) return CalendarColors.ovulation;
+        else return CalendarColors.tablet;
+    };
+
+    // Edit dialog
+    const [dialogVisible, setDialogVisible] = useState(false);
+    const [selectedDateEvents, setSelectedDateEvents] = useState<Event>();
+    const calendarDayPress = (date: DateData) => {
+        let event = events.find(e => isSameDate(date, e.date));
+        if (!event)
+            event = { date: new Date(date.dateString), menstruation: false, ovulation: false, tablet: false };
+
+        setSelectedDateEvents(event);
+        setDialogVisible(true);
+    };
 
     return (
-        <RNCalendar
-            key={theme.mode} // Force remount when theme changes
-            horizontal={true}
-            pagingEnabled={true}
-            futureScrollRange={0}
-            enableSwipeMonths={true}
-            hideArrows={true}
-            showSixWeeks={true}
-            hideExtraDays={true}
-            firstDay={1}
-            markingType={'period'}
-            markedDates={markedDates}
-            displayLoadingIndicator={loadingDates}
-            onDayPress={(date: DateData) => {
-                const selectedDate = new Date(date.dateString);
-                addMenstrualEvent(selectedDate);
-            }}
-            theme={{
-                calendarBackground: theme.colors.background,
-                textSectionTitleColor: theme.colors.onBackground,
-                dayTextColor: theme.colors.onBackground,
-                todayTextColor: theme.colors.onBackground,
-                selectedDayBackgroundColor: theme.colors.onBackground,
-                arrowColor: theme.colors.onBackground,
-                monthTextColor: theme.colors.onBackground,
-            }}
-        />
+        <>
+            <RNCalendar
+                key={theme.mode} // Force remount when theme changes
+                horizontal={true}
+                pagingEnabled={true}
+                futureScrollRange={0}
+                enableSwipeMonths={true}
+                hideArrows={true}
+                showSixWeeks={true}
+                hideExtraDays={true}
+                firstDay={1}
+                markingType={'period'}
+                markedDates={markedDates}
+                displayLoadingIndicator={loadingDates}
+                onDayPress={(date: DateData) => {calendarDayPress(date)}}
+                theme={{
+                    calendarBackground: theme.colors.background,
+                    textSectionTitleColor: theme.colors.onBackground,
+                    dayTextColor: theme.colors.onBackground,
+                    todayTextColor: theme.colors.onBackground,
+                    selectedDayBackgroundColor: theme.colors.onBackground,
+                    arrowColor: theme.colors.onBackground,
+                    monthTextColor: theme.colors.onBackground,
+                }}
+            />
+
+            <CalendarEditDialog
+                visible={dialogVisible}
+                onCancel={() => {
+                    setDialogVisible(false)
+                    setSelectedDateEvents(undefined)
+                }}
+                onDone={(updatedDateEvent: Event) => {
+                    updateEvent(updatedDateEvent);
+                    setDialogVisible(false)
+                    setSelectedDateEvents(undefined)
+                }}
+                selectedDateEvents={selectedDateEvents}
+            />
+        </>
     );
 };
 
