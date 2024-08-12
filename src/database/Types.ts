@@ -12,10 +12,29 @@ export type DbData = {
     updateEvent: (event: Event) => void;
 };
 
-export const isSameDate = (dateData: DateData, date: Date): boolean => {
-    const yearMatches = dateData.year === date.getFullYear();
-    const monthMatches = dateData.month === date.getMonth() + 1; // getMonth() is 0-based
-    const dayMatches = dateData.day === date.getDate();
+export const isSameDate = (date1: Date | DateData, date2: Date | DateData): boolean => {
+    const getDateComponents = (date: Date | DateData): { year: number, month: number, day: number } => {
+        if (date instanceof Date) {
+            return {
+                year: date.getFullYear(),
+                month: date.getMonth() + 1, // Months are zero-based in JavaScript's Date
+                day: date.getDate()
+            };
+        } else {
+            return {
+                year: date.year,
+                month: date.month,
+                day: date.day
+            };
+        }
+    };
 
-    return yearMatches && monthMatches && dayMatches;
+    const date1Components = getDateComponents(date1);
+    const date2Components = getDateComponents(date2);
+
+    return (
+        date1Components.year === date2Components.year &&
+        date1Components.month === date2Components.month &&
+        date1Components.day === date2Components.day
+    );
 };

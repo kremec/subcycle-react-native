@@ -21,16 +21,20 @@ const Calendar = () => {
         setLoadingDates(false);
     }, [events]);
     const formatCalendarDates = (events: Event[]) => {
-        const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; color: string } } = {};
-        
+        const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; marked: boolean, color: string, dotColor: string, customStyles: any } } = {};
+
         events.forEach(event => {
             const dateKey = CalendarUtils.getCalendarDateString(event.date);
             const color = getEventColor(event);
+            const dotColor = getEventDotColor(event);
             markedDates[dateKey] = {
                 selected: true,
                 startingDay: true,
                 endingDay: true,
+                marked: true,
                 color,
+                dotColor,
+                customStyles: {}
             };
         });
     
@@ -39,7 +43,11 @@ const Calendar = () => {
     const getEventColor = (event: Event) => {
         if (event.menstruation) return CalendarColors.menstruation;
         else if (event.ovulation) return CalendarColors.ovulation;
-        else return CalendarColors.tablet;
+        else return CalendarColors.off;
+    };
+    const getEventDotColor = (event: Event) => {
+        if (event.tablet) return CalendarColors.tablet;
+        else return CalendarColors.off;
     };
 
     // Edit dialog
@@ -72,11 +80,7 @@ const Calendar = () => {
                 onDayPress={(date: DateData) => {calendarDayPress(date)}}
                 theme={{
                     calendarBackground: theme.colors.background,
-                    textSectionTitleColor: theme.colors.onBackground,
                     dayTextColor: theme.colors.onBackground,
-                    todayTextColor: theme.colors.onBackground,
-                    selectedDayBackgroundColor: theme.colors.onBackground,
-                    arrowColor: theme.colors.onBackground,
                     monthTextColor: theme.colors.onBackground,
                 }}
             />
