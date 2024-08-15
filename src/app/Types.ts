@@ -13,7 +13,7 @@ export type EventPeriod = {
     dayLength: number;
 }
 
-export type DbData = {
+export type Context = {
     events: Event[];
     updateEvent: (event: Event) => void;
 };

@@ -1,4 +1,4 @@
-import { Event, EventPeriod, isSameDate } from '../database/Types';
+import { Event, EventPeriod, isSameDate } from '../app/Types';
 
 export const getMenstruationPredictions = (events: Event[]) => {
     const menstruationPeriods: EventPeriod[] = [];

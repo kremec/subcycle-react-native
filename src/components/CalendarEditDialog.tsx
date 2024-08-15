@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Checkbox, Dialog, Portal } from 'react-native-paper'
 import { CalendarColors } from '../theme/Colors';
-import { Event } from '../database/Types';
+import { Event } from '../app/Types';
 
 const CalendarEditDialog = ({ visible, onCancel, onDone, selectedDateEvents }:
     { visible: boolean, onCancel: () => void, onDone: (updatedDateEvent: Event) => void, selectedDateEvents: Event | undefined }) => {

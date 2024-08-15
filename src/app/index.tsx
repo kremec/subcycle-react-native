@@ -1,7 +1,6 @@
 import { View } from "react-native";
-import { Divider, Text } from "react-native-paper";
 
-import { SQLiteDb } from "../database/DbManager";
+import { AppContext } from "./AppContext";
 
 import CycleTime from "../components/CycleTime";
 import Calendar from "../components/Calendar";
@@ -9,7 +8,7 @@ import TabletCheckbox from "../components/TabletCheckbox";
 
 const Home = () => {
     return (
-        <SQLiteDb>
+        <AppContext>
             <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10 }}>
                 <View style={{ justifyContent: 'center' }}>
                     <CycleTime />
@@ -23,7 +22,7 @@ const Home = () => {
                     <TabletCheckbox />
                 </View>
             </View>
-        </SQLiteDb>
+        </AppContext>
     );
 };
 

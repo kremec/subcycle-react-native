@@ -2,30 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { DateData, Calendar as RNCalendar, CalendarUtils } from 'react-native-calendars';
 
 import { useTheme } from '../theme/ThemeContext';
-import { useDb } from '../database/DbManager';
-import { Event, isSameDate } from '../database/Types';
+import { useAppContext } from '../app/AppContext';
+import { Event, isSameDate } from '../app/Types';
 import CalendarEditDialog from './CalendarEditDialog';
 import { CalendarColors } from '../theme/Colors';
-import { getMenstruationPredictions, getOvulationPredictions } from '../stats/MenstruationPrediction';
+
 import { TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 
 const Calendar = () => {
     // Getting theme and data contexts
     const { theme } = useTheme();
-    const { events, updateEvent } = useDb();
+    const { events, updateEvent } = useAppContext();
 
     // Marking dates
     const [loadingDates, setLoadingDates] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
     useEffect(() => {
         setLoadingDates(true);
-        // Watch out to not mutate events array in these functions
-        const allEvents = [...events, ...getMenstruationPredictions(events), ...getOvulationPredictions(events)];
-        if (!allEvents.some(e => isSameDate(e.date, new Date())))
-            allEvents.push({ date: new Date(), menstruation: false, ovulation: false, tablet: false, prediction: false });
-
-        const formattedEvents = formatCalendarDates(allEvents);
+        
+        // Watch out to not mutate events array in this function
+        const formattedEvents = formatCalendarDates(events);
         setMarkedDates({...formattedEvents});
 
         setLoadingDates(false);
