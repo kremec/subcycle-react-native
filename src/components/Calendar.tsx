@@ -7,6 +7,8 @@ import { Event, isSameDate } from '../database/Types';
 import CalendarEditDialog from './CalendarEditDialog';
 import { CalendarColors } from '../theme/Colors';
 import { getMenstruationPredictions, getOvulationPredictions } from '../stats/MenstruationPrediction';
+import { TouchableOpacity } from 'react-native';
+import { Text } from 'react-native-paper';
 
 const Calendar = () => {
     // Getting theme and data contexts
@@ -17,6 +19,7 @@ const Calendar = () => {
     const [loadingDates, setLoadingDates] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
     useEffect(() => {
+        setLoadingDates(true);
         // Watch out to not mutate events array in these functions
         const allEvents = [...events, ...getMenstruationPredictions(events), ...getOvulationPredictions(events)];
         if (!allEvents.some(e => isSameDate(e.date, new Date())))
@@ -35,7 +38,7 @@ const Calendar = () => {
             const color = getEventColor(event);
             const dotColor = getEventDotColor(event);
             const textColor = getEventTextColor(event);
-            
+
             var dayBefore = new Date(event.date);
             dayBefore.setDate(event.date.getDate() - 1);
             var dayAfter = new Date(event.date);
@@ -89,10 +92,12 @@ const Calendar = () => {
         setDialogVisible(true);
     };
 
+    const [headerClicked, setHeaderClicked] = useState(false);
+
     return (
         <>
             <RNCalendar
-                key={theme.mode} // Force remount when theme changes
+                key={theme.mode?.toString() + headerClicked.toString()} // Force remount when theme changes
                 horizontal={true}
                 pagingEnabled={true}
                 futureScrollRange={0}
@@ -105,6 +110,16 @@ const Calendar = () => {
                 markedDates={markedDates}
                 displayLoadingIndicator={loadingDates}
                 onDayPress={(date: DateData) => {calendarDayPress(date)}}
+                renderHeader={(date: string) => {
+                    const header = new Date(date).toLocaleDateString('default', { year: 'numeric', month: 'long' });
+                    return (
+                        <TouchableOpacity onPress={() => {setHeaderClicked(!headerClicked)}}>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>
+                                {header}
+                            </Text>
+                        </TouchableOpacity>
+                    );
+                }}
                 theme={{
                     calendarBackground: theme.colors.background,
                     dayTextColor: theme.colors.onBackground,
