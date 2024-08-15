@@ -25,6 +25,7 @@ const TabletCheckbox = () => {
                 let event = events.find(e => isSameDate(new Date(), e.date));
                 if (!event)
                     event = { date: new Date(), menstruation: false, ovulation: false, tablet: !checked };
+                event.tablet = !checked;
                 updateEvent(event);
             }}
             label='Contraception pill taken today'

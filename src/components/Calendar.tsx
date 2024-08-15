@@ -19,9 +19,9 @@ const Calendar = () => {
         const formattedDates = formatCalendarDates(events);
         setMarkedDates({ ...formattedDates });
         setLoadingDates(false);
-    }, [events]);
+    }, [events, theme]);
     const formatCalendarDates = (events: Event[]) => {
-        const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; marked: boolean, color: string, dotColor: string, customStyles: any } } = {};
+        const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; marked: boolean, color: string, dotColor: string, textColor: string } } = {};
 
         events.forEach(event => {
             const dateKey = CalendarUtils.getCalendarDateString(event.date);
@@ -36,13 +36,13 @@ const Calendar = () => {
             markedDates[dateKey] = {
                 selected: true,
                 // If there is no event on the previous day with same color, mark it as starting day
-                startingDay: !events.some(e => e.date.toDateString() === dayBefore.toDateString() && getEventColor(event) === getEventColor(e)),
+                startingDay: !events.some(e => isSameDate(e.date, dayBefore) && getEventColor(event) === getEventColor(e)),
                 // If there is no event on the next day with same color, mark it as ending day
-                endingDay: !events.some(e => e.date.toDateString() === dayAfter.toDateString() && getEventColor(event) === getEventColor(e)),
+                endingDay: !events.some(e => isSameDate(e.date, dayAfter) && getEventColor(event) === getEventColor(e)),
                 marked: true,
                 color,
                 dotColor,
-                customStyles: {}
+                textColor: event.menstruation || event.ovulation ? theme.colors.background : theme.colors.onBackground,
             };
         });
     
@@ -90,6 +90,7 @@ const Calendar = () => {
                     calendarBackground: theme.colors.background,
                     dayTextColor: theme.colors.onBackground,
                     monthTextColor: theme.colors.onBackground,
+                    selectedDayTextColor: 'black',
                 }}
             />
 
