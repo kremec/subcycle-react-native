@@ -27,10 +27,18 @@ const Calendar = () => {
             const dateKey = CalendarUtils.getCalendarDateString(event.date);
             const color = getEventColor(event);
             const dotColor = getEventDotColor(event);
+
+            var dayBefore = new Date();
+            dayBefore.setDate(event.date.getDate() - 1);
+            var dayAfter = new Date();
+            dayAfter.setDate(event.date.getDate() + 1);
+
             markedDates[dateKey] = {
                 selected: true,
-                startingDay: true,
-                endingDay: true,
+                // If there is no event on the previous day with same color, mark it as starting day
+                startingDay: !events.some(e => e.date.toDateString() === dayBefore.toDateString() && getEventColor(event) === getEventColor(e)),
+                // If there is no event on the next day with same color, mark it as ending day
+                endingDay: !events.some(e => e.date.toDateString() === dayAfter.toDateString() && getEventColor(event) === getEventColor(e)),
                 marked: true,
                 color,
                 dotColor,
