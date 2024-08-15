@@ -8,7 +8,7 @@ export const getMenstruationPredictions = (events: Event[]) => {
         var dayAfter = new Date(event.date);
         dayAfter.setDate(event.date.getDate() + 1);
 
-        if (event.menstruation && !events.some(e => isSameDate(e.date, dayBefore) && e.menstruation)) {
+        if (!event.prediction && event.menstruation && !events.some(e => isSameDate(e.date, dayBefore) && e.menstruation)) {
             // event is the is the first day of a menstruation period
             var periodLength = 1;
             while (events.some(e => isSameDate(e.date, dayAfter) && e.menstruation)) {
@@ -35,6 +35,8 @@ export const getMenstruationPredictions = (events: Event[]) => {
         const msTimeBetweenPeriods = nextStartDate.getTime() - startDate.getTime();
         timesBetweenMenstruationPeriods.push(msTimeBetweenPeriods / (1000 * 60 * 60 * 24));
     }
+    if (timesBetweenMenstruationPeriods.length == 0)
+        return [];
     var averageTimeBetweenMenstruationPeriods = timesBetweenMenstruationPeriods.reduce((acc, time) => acc + time, 0) / timesBetweenMenstruationPeriods.length;
 
     // Predict menstruation events for next year
@@ -86,6 +88,8 @@ export const getOvulationPredictions = (events: Event[]) => {
         const msTimeBetweenPeriods = nextStartDate.getTime() - startDate.getTime();
         timesBetweenOvulationPeriods.push(msTimeBetweenPeriods / (1000 * 60 * 60 * 24));
     }
+    if (timesBetweenOvulationPeriods.length == 0)
+        return [];
     var averageTimeBetweenOvulationPeriods = timesBetweenOvulationPeriods.reduce((acc, time) => acc + time, 0) / timesBetweenOvulationPeriods.length;
 
     // Predict ovulation events for next year

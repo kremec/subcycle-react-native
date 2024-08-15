@@ -6,7 +6,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { Context, Event, isSameDate } from './Types';
 
 import { createTables, insertEventToDb, updateEventInDb, getEventsFromDb, deleteEventFromDb } from '../database/DbCalls';
-import { getMenstruationPredictions, getOvulationPredictions } from '../stats/MenstruationPrediction';
+import { getMenstruationPredictions, getOvulationPredictions } from '../stats/EventPrediction';
 
 const db = SQLite.openDatabaseSync("db");
 
