@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { Divider } from "react-native-paper";
+import { Divider, Text } from "react-native-paper";
 
 import { SQLiteDb } from "../database/DbManager";
 
@@ -10,12 +10,18 @@ import TabletCheckbox from "../components/TabletCheckbox";
 const Home = () => {
     return (
         <SQLiteDb>
-            <View style={{ paddingHorizontal: 10, gap: 10 }}>
-                <CycleTime />
-                <Divider />
-                <Calendar />
-                <Divider />
-                <TabletCheckbox />
+            <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10 }}>
+                <View style={{ justifyContent: 'center' }}>
+                    <CycleTime />
+                </View>
+                
+                <View style={{ flex: 1, width: '100%', justifyContent: 'center' }}>
+                    <Calendar />
+                </View>
+                
+                <View style={{ justifyContent: 'center' }}>
+                    <TabletCheckbox />
+                </View>
             </View>
         </SQLiteDb>
     );

@@ -90,5 +90,6 @@ export const CalendarColors = {
     ovulation: 'deepskyblue',
     predictedOvulation: 'lightskyblue',
     tablet: 'limegreen',
+    today: 'deeppink',
     off: 'transparent'
 };

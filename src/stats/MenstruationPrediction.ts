@@ -1,7 +1,6 @@
 import { Event, EventPeriod, isSameDate } from '../database/Types';
 
 export const getMenstruationPredictions = (events: Event[]) => {
-    //console.log(events);
     const menstruationPeriods: EventPeriod[] = [];
     events.forEach(event => {
         var dayBefore = new Date(event.date);
@@ -39,26 +38,20 @@ export const getMenstruationPredictions = (events: Event[]) => {
     var averageTimeBetweenMenstruationPeriods = timesBetweenMenstruationPeriods.reduce((acc, time) => acc + time, 0) / timesBetweenMenstruationPeriods.length;
 
     // Predict menstruation events for next year
-    const predictedMenstruationDates: Date[] = [];
+    const predictedMenstruationEvents: Event[] = [];
     var lastMenstruationPeriodStartDate = menstruationPeriods[menstruationPeriods.length - 1].start;
     for (let sequentialPrediction = 0; sequentialPrediction < 12; sequentialPrediction++) {
         lastMenstruationPeriodStartDate = new Date(new Date(lastMenstruationPeriodStartDate).setDate(lastMenstruationPeriodStartDate.getDate() + averageTimeBetweenMenstruationPeriods));
         for (let dayInPredictedPeriod = 0; dayInPredictedPeriod < averageMenstruationPeriodLength; dayInPredictedPeriod++) {
-            predictedMenstruationDates.push(new Date(new Date(lastMenstruationPeriodStartDate).setDate(lastMenstruationPeriodStartDate.getDate() + dayInPredictedPeriod)));
+            const date = new Date(new Date(lastMenstruationPeriodStartDate).setDate(lastMenstruationPeriodStartDate.getDate() + dayInPredictedPeriod));
+            predictedMenstruationEvents.push({date, menstruation: true, ovulation: false, tablet: false, prediction: true});
         }
     }
 
-    predictedMenstruationDates.sort((a, b) => a.getTime() - b.getTime());
-    console.log("Average menstruation period day length: " + averageMenstruationPeriodLength);
-    console.log("Average days between menstruation period starts: " + averageTimeBetweenMenstruationPeriods);
-    console.log(predictedMenstruationDates);
-    console.log();
-    //console.log(events);
-    return predictedMenstruationDates;
+    return predictedMenstruationEvents;
 }
 
 export const getOvulationPredictions = (events: Event[]) => {
-    //console.log(events);
     const ovulationPeriods: EventPeriod[] = [];
     events.forEach(event => {
         var dayBefore = new Date(event.date);
@@ -96,20 +89,15 @@ export const getOvulationPredictions = (events: Event[]) => {
     var averageTimeBetweenOvulationPeriods = timesBetweenOvulationPeriods.reduce((acc, time) => acc + time, 0) / timesBetweenOvulationPeriods.length;
 
     // Predict ovulation events for next year
-    const predictedOvulationDates: Date[] = [];
+    const predictedOvulationEvents: Event[] = [];
     var lastOvulationPeriodStartDate = ovulationPeriods[ovulationPeriods.length - 1].start;
     for (let sequentialPrediction = 0; sequentialPrediction < 12; sequentialPrediction++) {
         lastOvulationPeriodStartDate = new Date(new Date(lastOvulationPeriodStartDate).setDate(lastOvulationPeriodStartDate.getDate() + averageTimeBetweenOvulationPeriods));
         for (let dayInPredictedPeriod = 0; dayInPredictedPeriod < averageOvulationPeriodLength; dayInPredictedPeriod++) {
-            predictedOvulationDates.push(new Date(new Date(lastOvulationPeriodStartDate).setDate(lastOvulationPeriodStartDate.getDate() + dayInPredictedPeriod)));
+            const date = new Date(new Date(lastOvulationPeriodStartDate).setDate(lastOvulationPeriodStartDate.getDate() + dayInPredictedPeriod));
+            predictedOvulationEvents.push({date, menstruation: false, ovulation: true, tablet: false, prediction: true});
         }
     }
 
-    predictedOvulationDates.sort((a, b) => a.getTime() - b.getTime());
-    console.log("Average ovulation period day length: " + averageOvulationPeriodLength);
-    console.log("Average days between ovulation period starts: " + averageTimeBetweenOvulationPeriods);
-    console.log(predictedOvulationDates);
-    console.log();
-    //console.log(events);
-    return predictedOvulationDates;
+    return predictedOvulationEvents;
 }

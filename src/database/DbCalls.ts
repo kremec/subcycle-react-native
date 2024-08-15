@@ -25,6 +25,7 @@ export const getEventsFromDb = async (db: SQLiteDatabase) => {
         menstruation: event.menstruation ? true : false,
         ovulation: event.ovulation ? true : false,
         tablet: event.tablet ? true : false,
+        prediction: false,
     }));
     return events;
 };

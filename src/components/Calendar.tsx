@@ -18,15 +18,12 @@ const Calendar = () => {
     const [markedDates, setMarkedDates] = useState({});
     useEffect(() => {
         // Watch out to not mutate events array in these functions
-        const formattedDates = formatCalendarDates(events);
+        const allEvents = [...events, ...getMenstruationPredictions(events), ...getOvulationPredictions(events)];
+        if (!allEvents.some(e => isSameDate(e.date, new Date())))
+            allEvents.push({ date: new Date(), menstruation: false, ovulation: false, tablet: false, prediction: false });
 
-        const predictedMenstruationDates = getMenstruationPredictions(events);
-        const predictedMenstruationMarkedDates = markPredictedMenstruationDates(predictedMenstruationDates);
-
-        const predictedOvulationDates = getOvulationPredictions(events);
-        const predictedOvulationMarkedDates = markPredictedOvulationDates(predictedOvulationDates);
-
-        setMarkedDates({ ...formattedDates, ...predictedMenstruationMarkedDates, ...predictedOvulationMarkedDates });
+        const formattedEvents = formatCalendarDates(allEvents);
+        setMarkedDates({...formattedEvents});
 
         setLoadingDates(false);
     }, [events, theme]);
@@ -37,7 +34,8 @@ const Calendar = () => {
             const dateKey = CalendarUtils.getCalendarDateString(event.date);
             const color = getEventColor(event);
             const dotColor = getEventDotColor(event);
-
+            const textColor = getEventTextColor(event);
+            
             var dayBefore = new Date(event.date);
             dayBefore.setDate(event.date.getDate() - 1);
             var dayAfter = new Date(event.date);
@@ -52,77 +50,31 @@ const Calendar = () => {
                 marked: true,
                 color,
                 dotColor,
-                textColor: event.menstruation || event.ovulation ? theme.colors.background : theme.colors.onBackground,
+                textColor
             };
         });
     
         return markedDates;
     };
     const getEventColor = (event: Event) => {
-        if (event.menstruation) return CalendarColors.menstruation;
-        else if (event.ovulation) return CalendarColors.ovulation;
-        else return CalendarColors.off;
+        if (event.prediction) {
+            if (event.menstruation) return CalendarColors.predictedMenstruation;
+            else if (event.ovulation) return CalendarColors.predictedOvulation;
+            else return CalendarColors.off;
+        }
+        else {
+            if (event.menstruation) return CalendarColors.menstruation;
+            else if (event.ovulation) return CalendarColors.ovulation;
+            else return CalendarColors.off;    
+        }
     };
     const getEventDotColor = (event: Event) => {
         if (event.tablet) return CalendarColors.tablet;
         else return CalendarColors.off;
     };
-
-    const markPredictedMenstruationDates = (predictedMenstruationDates: Date[]) => {
-        const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; marked: boolean, color: string, dotColor: string, textColor: string } } = {};
-
-        predictedMenstruationDates.forEach(date => {
-            const dateKey = CalendarUtils.getCalendarDateString(date);
-            const color = CalendarColors.predictedMenstruation;
-            const dotColor = CalendarColors.off;
-
-            var dayBefore = new Date(date);
-            dayBefore.setDate(date.getDate() - 1);
-            var dayAfter = new Date(date);
-            dayAfter.setDate(date.getDate() + 1);
-
-            markedDates[dateKey] = {
-                selected: true,
-                // If there is no event on the previous day with same color, mark it as starting day
-                startingDay: !predictedMenstruationDates.some(d => isSameDate(d, dayBefore)),
-                // If there is no event on the next day with same color, mark it as ending day
-                endingDay: !predictedMenstruationDates.some(d => isSameDate(d, dayAfter)),
-                marked: true,
-                color,
-                dotColor: dotColor,
-                textColor: theme.colors.background,
-            };
-        });
-    
-        return markedDates;
-    };
-    const markPredictedOvulationDates = (predictedOvulationDates: Date[]) => {
-        const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; marked: boolean, color: string, dotColor: string, textColor: string } } = {};
-
-        predictedOvulationDates.forEach(date => {
-            const dateKey = CalendarUtils.getCalendarDateString(date);
-            const color = CalendarColors.predictedOvulation;
-            const dotColor = CalendarColors.off;
-
-            var dayBefore = new Date(date);
-            dayBefore.setDate(date.getDate() - 1);
-            var dayAfter = new Date(date);
-            dayAfter.setDate(date.getDate() + 1);
-
-            markedDates[dateKey] = {
-                selected: true,
-                // If there is no event on the previous day with same color, mark it as starting day
-                startingDay: !predictedOvulationDates.some(d => isSameDate(d, dayBefore)),
-                // If there is no event on the next day with same color, mark it as ending day
-                endingDay: !predictedOvulationDates.some(d => isSameDate(d, dayAfter)),
-                marked: true,
-                color,
-                dotColor: dotColor,
-                textColor: theme.colors.background,
-            };
-        });
-    
-        return markedDates;
+    const getEventTextColor = (event: Event) => {
+        if (isSameDate(event.date, new Date())) return CalendarColors.today;
+        else return (event.menstruation || event.ovulation) ? theme.colors.background : theme.colors.onBackground;
     };
 
     // Edit dialog
@@ -131,7 +83,7 @@ const Calendar = () => {
     const calendarDayPress = (date: DateData) => {
         let event = events.find(e => isSameDate(date, e.date));
         if (!event)
-            event = { date: new Date(date.dateString), menstruation: false, ovulation: false, tablet: false };
+            event = { date: new Date(date.dateString), menstruation: false, ovulation: false, tablet: false, prediction: false };
 
         setSelectedDateEvents(event);
         setDialogVisible(true);
