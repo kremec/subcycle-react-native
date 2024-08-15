@@ -6,6 +6,7 @@ import { useDb } from '../database/DbManager';
 import { Event, isSameDate } from '../database/Types';
 import CalendarEditDialog from './CalendarEditDialog';
 import { CalendarColors } from '../theme/Colors';
+import { getMenstruationPredictions, getOvulationPredictions } from '../stats/MenstruationPrediction';
 
 const Calendar = () => {
     // Getting theme and data contexts
@@ -16,8 +17,17 @@ const Calendar = () => {
     const [loadingDates, setLoadingDates] = useState(true);
     const [markedDates, setMarkedDates] = useState({});
     useEffect(() => {
+        // Watch out to not mutate events array in these functions
         const formattedDates = formatCalendarDates(events);
-        setMarkedDates({ ...formattedDates });
+
+        const predictedMenstruationDates = getMenstruationPredictions(events);
+        const predictedMenstruationMarkedDates = markPredictedMenstruationDates(predictedMenstruationDates);
+
+        const predictedOvulationDates = getOvulationPredictions(events);
+        const predictedOvulationMarkedDates = markPredictedOvulationDates(predictedOvulationDates);
+
+        setMarkedDates({ ...formattedDates, ...predictedMenstruationMarkedDates, ...predictedOvulationMarkedDates });
+
         setLoadingDates(false);
     }, [events, theme]);
     const formatCalendarDates = (events: Event[]) => {
@@ -28,9 +38,9 @@ const Calendar = () => {
             const color = getEventColor(event);
             const dotColor = getEventDotColor(event);
 
-            var dayBefore = new Date();
+            var dayBefore = new Date(event.date);
             dayBefore.setDate(event.date.getDate() - 1);
-            var dayAfter = new Date();
+            var dayAfter = new Date(event.date);
             dayAfter.setDate(event.date.getDate() + 1);
 
             markedDates[dateKey] = {
@@ -56,6 +66,63 @@ const Calendar = () => {
     const getEventDotColor = (event: Event) => {
         if (event.tablet) return CalendarColors.tablet;
         else return CalendarColors.off;
+    };
+
+    const markPredictedMenstruationDates = (predictedMenstruationDates: Date[]) => {
+        const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; marked: boolean, color: string, dotColor: string, textColor: string } } = {};
+
+        predictedMenstruationDates.forEach(date => {
+            const dateKey = CalendarUtils.getCalendarDateString(date);
+            const color = CalendarColors.predictedMenstruation;
+            const dotColor = CalendarColors.off;
+
+            var dayBefore = new Date(date);
+            dayBefore.setDate(date.getDate() - 1);
+            var dayAfter = new Date(date);
+            dayAfter.setDate(date.getDate() + 1);
+
+            markedDates[dateKey] = {
+                selected: true,
+                // If there is no event on the previous day with same color, mark it as starting day
+                startingDay: !predictedMenstruationDates.some(d => isSameDate(d, dayBefore)),
+                // If there is no event on the next day with same color, mark it as ending day
+                endingDay: !predictedMenstruationDates.some(d => isSameDate(d, dayAfter)),
+                marked: true,
+                color,
+                dotColor: dotColor,
+                textColor: theme.colors.background,
+            };
+        });
+    
+        return markedDates;
+    };
+    const markPredictedOvulationDates = (predictedOvulationDates: Date[]) => {
+        const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; marked: boolean, color: string, dotColor: string, textColor: string } } = {};
+
+        predictedOvulationDates.forEach(date => {
+            const dateKey = CalendarUtils.getCalendarDateString(date);
+            const color = CalendarColors.predictedOvulation;
+            const dotColor = CalendarColors.off;
+
+            var dayBefore = new Date(date);
+            dayBefore.setDate(date.getDate() - 1);
+            var dayAfter = new Date(date);
+            dayAfter.setDate(date.getDate() + 1);
+
+            markedDates[dateKey] = {
+                selected: true,
+                // If there is no event on the previous day with same color, mark it as starting day
+                startingDay: !predictedOvulationDates.some(d => isSameDate(d, dayBefore)),
+                // If there is no event on the next day with same color, mark it as ending day
+                endingDay: !predictedOvulationDates.some(d => isSameDate(d, dayAfter)),
+                marked: true,
+                color,
+                dotColor: dotColor,
+                textColor: theme.colors.background,
+            };
+        });
+    
+        return markedDates;
     };
 
     // Edit dialog

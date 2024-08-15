@@ -22,9 +22,9 @@ export const getEventsFromDb = async (db: SQLiteDatabase) => {
 
     const events = results.map(event => ({
         date: new Date(event.date),
-        menstruation: event.menstruation,
-        ovulation: event.ovulation,
-        tablet: event.tablet,
+        menstruation: event.menstruation ? true : false,
+        ovulation: event.ovulation ? true : false,
+        tablet: event.tablet ? true : false,
     }));
     return events;
 };

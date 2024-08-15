@@ -1,0 +1,115 @@
+import { Event, EventPeriod, isSameDate } from '../database/Types';
+
+export const getMenstruationPredictions = (events: Event[]) => {
+    //console.log(events);
+    const menstruationPeriods: EventPeriod[] = [];
+    events.forEach(event => {
+        var dayBefore = new Date(event.date);
+        dayBefore.setDate(event.date.getDate() - 1);
+        var dayAfter = new Date(event.date);
+        dayAfter.setDate(event.date.getDate() + 1);
+
+        if (event.menstruation && !events.some(e => isSameDate(e.date, dayBefore) && e.menstruation)) {
+            // event is the is the first day of a menstruation period
+            var periodLength = 1;
+            while (events.some(e => isSameDate(e.date, dayAfter) && e.menstruation)) {
+                dayAfter.setDate(dayAfter.getDate() + 1);
+                periodLength++;
+            }
+
+            menstruationPeriods.push({ start: event.date, dayLength: periodLength });
+        }
+    });
+    if (menstruationPeriods.length == 0)
+        return [];
+    
+    menstruationPeriods.sort((a, b) => a.start.getTime() - b.start.getTime());
+
+    // Average menstruation period length
+    const averageMenstruationPeriodLength = menstruationPeriods.reduce((acc, period) => acc + period.dayLength, 0) / menstruationPeriods.length;
+
+    // Average time between menstruation periods
+    const timesBetweenMenstruationPeriods: number[] = [];
+    for (let i = 0; i < menstruationPeriods.length - 1; i++) {
+        const startDate = menstruationPeriods[i].start;
+        const nextStartDate = menstruationPeriods[i + 1].start;
+        const msTimeBetweenPeriods = nextStartDate.getTime() - startDate.getTime();
+        timesBetweenMenstruationPeriods.push(msTimeBetweenPeriods / (1000 * 60 * 60 * 24));
+    }
+    var averageTimeBetweenMenstruationPeriods = timesBetweenMenstruationPeriods.reduce((acc, time) => acc + time, 0) / timesBetweenMenstruationPeriods.length;
+
+    // Predict menstruation events for next year
+    const predictedMenstruationDates: Date[] = [];
+    var lastMenstruationPeriodStartDate = menstruationPeriods[menstruationPeriods.length - 1].start;
+    for (let sequentialPrediction = 0; sequentialPrediction < 12; sequentialPrediction++) {
+        lastMenstruationPeriodStartDate = new Date(new Date(lastMenstruationPeriodStartDate).setDate(lastMenstruationPeriodStartDate.getDate() + averageTimeBetweenMenstruationPeriods));
+        for (let dayInPredictedPeriod = 0; dayInPredictedPeriod < averageMenstruationPeriodLength; dayInPredictedPeriod++) {
+            predictedMenstruationDates.push(new Date(new Date(lastMenstruationPeriodStartDate).setDate(lastMenstruationPeriodStartDate.getDate() + dayInPredictedPeriod)));
+        }
+    }
+
+    predictedMenstruationDates.sort((a, b) => a.getTime() - b.getTime());
+    console.log("Average menstruation period day length: " + averageMenstruationPeriodLength);
+    console.log("Average days between menstruation period starts: " + averageTimeBetweenMenstruationPeriods);
+    console.log(predictedMenstruationDates);
+    console.log();
+    //console.log(events);
+    return predictedMenstruationDates;
+}
+
+export const getOvulationPredictions = (events: Event[]) => {
+    //console.log(events);
+    const ovulationPeriods: EventPeriod[] = [];
+    events.forEach(event => {
+        var dayBefore = new Date(event.date);
+        dayBefore.setDate(event.date.getDate() - 1);
+        var dayAfter = new Date(event.date);
+        dayAfter.setDate(event.date.getDate() + 1);
+
+        if (event.ovulation && !events.some(e => isSameDate(e.date, dayBefore) && e.ovulation)) {
+            // event is the is the first day of a menstruation period
+            var periodLength = 1;
+            while (events.some(e => isSameDate(e.date, dayAfter) && e.ovulation)) {
+                dayAfter.setDate(dayAfter.getDate() + 1);
+                periodLength++;
+            }
+
+            ovulationPeriods.push({ start: event.date, dayLength: periodLength });
+        }
+    });
+    if (ovulationPeriods.length == 0)
+        return [];
+    
+    ovulationPeriods.sort((a, b) => a.start.getTime() - b.start.getTime());
+
+    // Average ovulation period length
+    const averageOvulationPeriodLength = ovulationPeriods.reduce((acc, period) => acc + period.dayLength, 0) / ovulationPeriods.length;
+
+    // Average time between ovulation periods
+    const timesBetweenOvulationPeriods: number[] = [];
+    for (let i = 0; i < ovulationPeriods.length - 1; i++) {
+        const startDate = ovulationPeriods[i].start;
+        const nextStartDate = ovulationPeriods[i + 1].start;
+        const msTimeBetweenPeriods = nextStartDate.getTime() - startDate.getTime();
+        timesBetweenOvulationPeriods.push(msTimeBetweenPeriods / (1000 * 60 * 60 * 24));
+    }
+    var averageTimeBetweenOvulationPeriods = timesBetweenOvulationPeriods.reduce((acc, time) => acc + time, 0) / timesBetweenOvulationPeriods.length;
+
+    // Predict ovulation events for next year
+    const predictedOvulationDates: Date[] = [];
+    var lastOvulationPeriodStartDate = ovulationPeriods[ovulationPeriods.length - 1].start;
+    for (let sequentialPrediction = 0; sequentialPrediction < 12; sequentialPrediction++) {
+        lastOvulationPeriodStartDate = new Date(new Date(lastOvulationPeriodStartDate).setDate(lastOvulationPeriodStartDate.getDate() + averageTimeBetweenOvulationPeriods));
+        for (let dayInPredictedPeriod = 0; dayInPredictedPeriod < averageOvulationPeriodLength; dayInPredictedPeriod++) {
+            predictedOvulationDates.push(new Date(new Date(lastOvulationPeriodStartDate).setDate(lastOvulationPeriodStartDate.getDate() + dayInPredictedPeriod)));
+        }
+    }
+
+    predictedOvulationDates.sort((a, b) => a.getTime() - b.getTime());
+    console.log("Average ovulation period day length: " + averageOvulationPeriodLength);
+    console.log("Average days between ovulation period starts: " + averageTimeBetweenOvulationPeriods);
+    console.log(predictedOvulationDates);
+    console.log();
+    //console.log(events);
+    return predictedOvulationDates;
+}

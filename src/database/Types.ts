@@ -7,6 +7,11 @@ export type Event = {
     tablet: boolean;
 };
 
+export type EventPeriod = {
+    start: Date;
+    dayLength: number;
+}
+
 export type DbData = {
     events: Event[];
     updateEvent: (event: Event) => void;
