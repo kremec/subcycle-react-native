@@ -44,3 +44,18 @@ export const isSameDate = (date1: Date | DateData, date2: Date | DateData): bool
         date1Components.day === date2Components.day
     );
 };
+
+export const getMonthYear = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'long'
+    };
+    return date.toLocaleDateString(undefined, options);
+}
+export const getDayMonthYear = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = {
+        month: 'long',
+        day: 'numeric'
+    };
+    return date.toLocaleDateString(undefined, options);
+}

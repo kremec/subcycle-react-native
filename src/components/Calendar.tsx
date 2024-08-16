@@ -3,7 +3,7 @@ import { DateData, Calendar as RNCalendar, CalendarUtils } from 'react-native-ca
 
 import { useTheme } from '../theme/ThemeContext';
 import { useAppContext } from '../app/AppContext';
-import { Event, isSameDate } from '../app/Types';
+import { Event, getMonthYear, isSameDate } from '../app/Types';
 import CalendarEditDialog from './CalendarEditDialog';
 import { CalendarColors } from '../theme/Colors';
 
@@ -79,13 +79,13 @@ const Calendar = () => {
 
     // Edit dialog
     const [dialogVisible, setDialogVisible] = useState(false);
-    const [selectedDateEvents, setSelectedDateEvents] = useState<Event>();
+    const [selectedEvent, setSelectedEvent] = useState<Event>();
     const calendarDayPress = (date: DateData) => {
         let event = events.find(e => isSameDate(date, e.date));
         if (!event)
             event = { date: new Date(date.dateString), menstruation: false, ovulation: false, tablet: false, prediction: false };
 
-        setSelectedDateEvents(event);
+        setSelectedEvent(event);
         setDialogVisible(true);
     };
 
@@ -108,11 +108,10 @@ const Calendar = () => {
                 displayLoadingIndicator={loadingDates}
                 onDayPress={(date: DateData) => {calendarDayPress(date)}}
                 renderHeader={(date: string) => {
-                    const header = new Date(date).toLocaleDateString('default', { year: 'numeric', month: 'long' });
                     return (
                         <TouchableOpacity onPress={() => {setHeaderClicked(!headerClicked)}}>
                             <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>
-                                {header}
+                                {getMonthYear(new Date(date))}
                             </Text>
                         </TouchableOpacity>
                     );
@@ -129,14 +128,14 @@ const Calendar = () => {
                 visible={dialogVisible}
                 onCancel={() => {
                     setDialogVisible(false)
-                    setSelectedDateEvents(undefined)
+                    setSelectedEvent(undefined)
                 }}
                 onDone={(updatedDateEvent: Event) => {
                     updateEvent(updatedDateEvent);
                     setDialogVisible(false)
-                    setSelectedDateEvents(undefined)
+                    setSelectedEvent(undefined)
                 }}
-                selectedDateEvents={selectedDateEvents}
+                selectedEvent={selectedEvent}
             />
         </>
     );

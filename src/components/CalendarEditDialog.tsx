@@ -1,22 +1,24 @@
 import React from 'react'
-import { Button, Checkbox, Dialog, Portal } from 'react-native-paper'
+import { Button, Checkbox, Dialog, Portal, Text } from 'react-native-paper'
 import { CalendarColors } from '../theme/Colors';
-import { Event } from '../app/Types';
+import { Event, getDayMonthYear } from '../app/Types';
+import { View } from 'react-native';
+import DialogTitle from 'react-native-paper/lib/typescript/components/Dialog/DialogTitle';
 
-const CalendarEditDialog = ({ visible, onCancel, onDone, selectedDateEvents }:
-    { visible: boolean, onCancel: () => void, onDone: (updatedDateEvent: Event) => void, selectedDateEvents: Event | undefined }) => {
-    if (!selectedDateEvents)
+const CalendarEditDialog = ({ visible, onCancel, onDone, selectedEvent }:
+    { visible: boolean, onCancel: () => void, onDone: (updatedDateEvent: Event) => void, selectedEvent: Event | undefined }) => {
+    if (!selectedEvent)
         return;
 
-    const [menstruationChecked, setMenstruationChecked] = React.useState(selectedDateEvents.menstruation);
-    const [ovulationChecked, setOvulationChecked] = React.useState(selectedDateEvents.ovulation);
-    const [tabletChecked, setTabletChecked] = React.useState(selectedDateEvents.tablet);
+    const [menstruationChecked, setMenstruationChecked] = React.useState(selectedEvent.menstruation);
+    const [ovulationChecked, setOvulationChecked] = React.useState(selectedEvent.ovulation);
+    const [tabletChecked, setTabletChecked] = React.useState(selectedEvent.tablet);
 
     return (
         <Portal>
             <Dialog visible={visible} onDismiss={onCancel}>
                 <Dialog.Title>
-                    Edit events for {selectedDateEvents.date.toLocaleDateString()}
+                    <Text variant="titleLarge">{selectedEvent.prediction ? "Predictions" : "Events"} for {getDayMonthYear(selectedEvent.date)}</Text>
                 </Dialog.Title>
                 <Dialog.Content>
                     {/* Menstruation */}
@@ -53,11 +55,11 @@ const CalendarEditDialog = ({ visible, onCancel, onDone, selectedDateEvents }:
                 </Dialog.Content>
                 <Dialog.Actions>
                     <Button onPress={() => {
-                        selectedDateEvents.menstruation = menstruationChecked;
-                        selectedDateEvents.ovulation = ovulationChecked;
-                        selectedDateEvents.tablet = tabletChecked;
-                        selectedDateEvents.prediction = false;
-                        onDone(selectedDateEvents);
+                        selectedEvent.menstruation = menstruationChecked;
+                        selectedEvent.ovulation = ovulationChecked;
+                        selectedEvent.tablet = tabletChecked;
+                        selectedEvent.prediction = false;
+                        onDone(selectedEvent);
                     }}>Done</Button>
                 </Dialog.Actions>
             </Dialog>
