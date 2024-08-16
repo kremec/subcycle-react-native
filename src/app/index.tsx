@@ -2,7 +2,7 @@ import { View } from "react-native";
 
 import { AppContext } from "./AppContext";
 
-import CycleTime from "../components/CycleTime";
+import CycleStatus from "../components/CycleStatus";
 import Calendar from "../components/Calendar";
 import TabletCheckbox from "../components/TabletCheckbox";
 
@@ -11,7 +11,7 @@ const Home = () => {
         <AppContext>
             <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10 }}>
                 <View style={{ justifyContent: 'center' }}>
-                    <CycleTime />
+                    <CycleStatus />
                 </View>
                 
                 <View style={{ flex: 1, width: '100%', justifyContent: 'center' }}>

@@ -47,9 +47,8 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
     }
     
     useEffect(() => {
-        createTables(db);
-
         async function updateAllEventsFromDb() {
+            await createTables(db);
             const eventsFromDb = await getEventsFromDb(db);
             setDbEvents(eventsFromDb);
         }

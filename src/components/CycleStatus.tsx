@@ -5,7 +5,7 @@ import { Text } from 'react-native-paper'
 import { useAppContext } from '../app/AppContext';
 import { CalendarColors } from '../theme/Colors';
 
-const CycleTime = () => {
+const CycleStatus = () => {
     const { events } = useAppContext();
 
     const [daysUntilNextMenstruationEvent, setDaysUntilNextMenstruationEvent] = React.useState(-1);
@@ -22,17 +22,17 @@ const CycleTime = () => {
     }, [events]);
 
     return (
-        <>
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
         {daysUntilNextMenstruationEvent !== -1 ? (
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <>
                 <Text variant="headlineSmall" style={{ fontWeight: 'bold' }}>{daysUntilNextMenstruationEvent} days</Text>
-                <Text variant="titleLarge">until next <Text style={{ color: CalendarColors.predictedMenstruation, fontWeight: 'bold' }}>menstruation</Text> event</Text>
-            </View>
+                <Text variant="titleLarge">until next <Text style={{ color: CalendarColors.predictedMenstruation, fontWeight: 'bold' }}>menstruation</Text></Text>
+            </>
         ) : (
-            <Text style={{ fontSize: 25 }}>No menstruation events</Text>
+            <Text variant="titleLarge">No menstruation events</Text>
         )}
-        </>
+        </View>
     )
 }
 
-export default CycleTime
+export default CycleStatus
