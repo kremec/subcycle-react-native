@@ -2,8 +2,6 @@ import React from 'react'
 import { Button, Checkbox, Dialog, Portal, Text } from 'react-native-paper'
 import { CalendarColors } from '../theme/Colors';
 import { Event, getDayMonthYear } from '../app/Types';
-import { View } from 'react-native';
-import DialogTitle from 'react-native-paper/lib/typescript/components/Dialog/DialogTitle';
 
 const CalendarEditDialog = ({ visible, onCancel, onDone, selectedEvent }:
     { visible: boolean, onCancel: () => void, onDone: (updatedDateEvent: Event) => void, selectedEvent: Event | undefined }) => {

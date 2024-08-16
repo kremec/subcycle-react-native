@@ -1,10 +1,10 @@
 import { View } from "react-native";
 
-import { AppContext } from "./AppContext";
+import { AppContext } from "../AppContext";
 
-import CycleStatus from "../components/CycleStatus";
-import Calendar from "../components/Calendar";
-import TabletCheckbox from "../components/TabletCheckbox";
+import CycleStatus from "../../components/CycleStatus";
+import Calendar from "../../components/Calendar";
+import TabletCheckbox from "../../components/TabletCheckbox";
 
 const Home = () => {
     return (
