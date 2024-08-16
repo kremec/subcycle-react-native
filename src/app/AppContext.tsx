@@ -25,6 +25,9 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
     const [events, setEvents] = useState<Event[]>([]);
 
     async function updateEvent(event: Event) {
+        if (event.prediction)
+            return;
+        
         const hasEvents = event.menstruation || event.ovulation || event.tablet;
         const existingEvent = dbEvents.find(e => isSameDate(e.date, event.date));
         if (!existingEvent) {

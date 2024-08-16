@@ -56,6 +56,7 @@ const CalendarEditDialog = ({ visible, onCancel, onDone, selectedDateEvents }:
                         selectedDateEvents.menstruation = menstruationChecked;
                         selectedDateEvents.ovulation = ovulationChecked;
                         selectedDateEvents.tablet = tabletChecked;
+                        selectedDateEvents.prediction = false;
                         onDone(selectedDateEvents);
                     }}>Done</Button>
                 </Dialog.Actions>
