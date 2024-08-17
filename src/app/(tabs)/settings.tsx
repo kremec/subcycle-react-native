@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View } from 'react-native';
-import { Card, Icon, Switch, Text } from 'react-native-paper';
+import { Button, Card, Icon, Switch, Text } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -21,67 +21,78 @@ export default function Tab() {
     console.log(partnerMode);
 
     return (
-        <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10, flexDirection: 'column' }}>
-            <Card
-                style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}
-            >
-                <Card.Title
-                    title="Menstrual cycle prediction"
-                    subtitle="Number of months for predictions"
-                    left={(props) => <Icon source='chart-box-outline' {...props} />}
-                />
-                <Card.Content>
-                    <Picker
-                        selectedValue={predictionSettings}
-                        onValueChange={(itemValue) => setPredictionSettings(itemValue)}
-                    >
-                        <Picker.Item label="No predictions" value={0} />
-                        {[...Array(24)].map((_, i) => (
-                            <Picker.Item key={i + 1} label={`${i + 1} month${i > 0 ? 's' : ''}`} value={i + 1} />
-                        ))}
-                    </Picker>
-                </Card.Content>
-            </Card>
+        <>
+            <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10, flexDirection: 'column' }}>
+                <Card
+                    style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}
+                >
+                    <Card.Title
+                        title="Menstrual cycle prediction"
+                        subtitle="Number of months for predictions"
+                        left={(props) => <Icon source='chart-box-outline' {...props} />}
+                    />
+                    <Card.Content>
+                        <Picker
+                            selectedValue={predictionSettings}
+                            onValueChange={(itemValue) => setPredictionSettings(itemValue)}
+                        >
+                            <Picker.Item label="No predictions" value={0} />
+                            {[...Array(24)].map((_, i) => (
+                                <Picker.Item key={i + 1} label={`${i + 1} month${i > 0 ? 's' : ''}`} value={i + 1} />
+                            ))}
+                        </Picker>
+                    </Card.Content>
+                </Card>
 
-            <Card
-                style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}
-                onPress={() => setShowNotificationTimePicker(true)}
-            >
-                <Card.Title
-                    title="Tablet notifications"
-                    subtitle="Daily notification time"
-                    left={(props) => <Icon source='alarm' {...props} />}
-                />
-                <Card.Content>
-                    <Text>Notification time: {getHourMinute(notificationTime)}</Text>
-                    {showNotificationTimePicker && (
-                        <DateTimePicker
-                            value={notificationTime}
-                            mode="time"
-                            is24Hour={true}
-                            onChange={(event, value) => {
-                                if (event.type === 'set' && value)
-                                    setNotificationTime(value)
+                <Card
+                    style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}
+                    onPress={() => setShowNotificationTimePicker(true)}
+                >
+                    <Card.Title
+                        title="Tablet notifications"
+                        subtitle="Daily notification time"
+                        left={(props) => <Icon source='alarm' {...props} />}
+                    />
+                    <Card.Content>
+                        <Text>Notification time: {getHourMinute(notificationTime)}</Text>
+                        {showNotificationTimePicker && (
+                            <DateTimePicker
+                                value={notificationTime}
+                                mode="time"
+                                is24Hour={true}
+                                onChange={(event, value) => {
+                                    if (event.type === 'set' && value)
+                                        setNotificationTime(value)
 
-                                setShowNotificationTimePicker(false)
-                            }}
-                        />
-                    )}
-                </Card.Content>
-            </Card>
+                                    setShowNotificationTimePicker(false)
+                                }}
+                            />
+                        )}
+                    </Card.Content>
+                </Card>
 
-            <Card
-                style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}
-            >
-                <Card.Title
-                    title="Partner mode"
-                    subtitle="(Coming soon)"
-                    left={(props) => <Icon source='account-heart-outline' {...props} />}
-                />
-                <Card.Content>
-                    <Switch value={partnerMode} onValueChange={setPartnerMode} />
-                </Card.Content>
-            </Card>
-        </View>
+                <Card
+                    style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}
+                >
+                    <Card.Title
+                        title="Partner mode"
+                        subtitle="Coming soon <3"
+                        left={(props) => <Icon source='account-heart-outline' {...props} />}
+                    />
+                    <Card.Content>
+                        <Switch value={partnerMode} onValueChange={setPartnerMode} />
+                    </Card.Content>
+                </Card>
+            </View>
+            <View style={{ paddingHorizontal: 10, paddingVertical: 10, gap: 10, flexDirection: 'column' }}>
+                <Button
+                    mode='outlined'
+                    textColor={theme.colors.onBackground}
+                    onPress={() => console.log("Export data")}
+                >
+                    Export data
+                </Button>
+            </View>
+        </>
     );
 }
