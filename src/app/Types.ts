@@ -52,10 +52,11 @@ export const getMonthYear = (date: Date) => {
     };
     return date.toLocaleDateString(undefined, options);
 }
-export const getDayMonthYear = (date: Date) => {
+export const getWeekdayDayMonth = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = {
-        month: 'long',
-        day: 'numeric'
+        weekday:'short',
+        month: 'short',
+        day: 'numeric',
     };
     return date.toLocaleDateString(undefined, options);
 }

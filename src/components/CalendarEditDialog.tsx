@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Checkbox, Dialog, Portal, Text } from 'react-native-paper'
 import { CalendarColors } from '../theme/Colors';
-import { Event, getDayMonthYear } from '../app/Types';
+import { Event, getWeekdayDayMonth } from '../app/Types';
 
 const CalendarEditDialog = ({ visible, onCancel, onDone, selectedEvent }:
     { visible: boolean, onCancel: () => void, onDone: (updatedDateEvent: Event) => void, selectedEvent: Event | undefined }) => {
@@ -16,7 +16,7 @@ const CalendarEditDialog = ({ visible, onCancel, onDone, selectedEvent }:
         <Portal>
             <Dialog visible={visible} onDismiss={onCancel}>
                 <Dialog.Title>
-                    <Text variant="titleLarge">{selectedEvent.prediction ? "Predictions" : "Events"} for {getDayMonthYear(selectedEvent.date)}</Text>
+                    <Text variant="titleLarge">{selectedEvent.prediction ? "Predictions" : "Events"} for {getWeekdayDayMonth(selectedEvent.date)}</Text>
                 </Dialog.Title>
                 <Dialog.Content>
                     {/* Menstruation */}
