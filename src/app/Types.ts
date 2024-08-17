@@ -60,3 +60,10 @@ export const getWeekdayDayMonth = (date: Date) => {
     };
     return date.toLocaleDateString(undefined, options);
 }
+export const getHourMinute = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = {
+        hour: 'numeric',
+        minute: 'numeric'
+    };
+    return date.toLocaleTimeString(undefined, options);
+}

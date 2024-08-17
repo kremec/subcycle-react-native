@@ -1,56 +1,86 @@
 import { useState } from 'react';
 import { View } from 'react-native';
-import ScrollPicker from 'react-native-wheel-scrollview-picker';
+import { Card, Icon, Switch, Text } from 'react-native-paper';
+import { Picker } from '@react-native-picker/picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 import { useTheme } from '../../theme/ThemeContext';
-import { Button, Card, Icon, IconButton, Text } from 'react-native-paper';
+import { getHourMinute } from '../Types';
 
 export default function Tab() {
     const { theme } = useTheme();
 
-    const [predictionSettingsOpen, setPredictionSettingsOpen] = useState(false); 
-    const noPredictions = ["No predictions"];
-    const predictionMonths = [...Array(28).keys()].map(i => i+1);
-    const predictionSettings = [...noPredictions, ...predictionMonths];
+    const [predictionSettings, setPredictionSettings] = useState();
+    console.log(predictionSettings);
+
+    const [showNotificationTimePicker, setShowNotificationTimePicker] = useState(false);
+    const [notificationTime, setNotificationTime] = useState(new Date(new Date().setHours(18, 0, 0)));
+    console.log(notificationTime);
+
+    const [partnerMode, setPartnerMode] = useState(false);
+    console.log(partnerMode);
 
     return (
         <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10, flexDirection: 'column' }}>
             <Card
                 style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}
-                onPress={() => {if (!predictionSettingsOpen) {setPredictionSettingsOpen(true)}}}
             >
                 <Card.Title
-                    title="Predictions timespan"
-                    subtitle="How many months in advance should the app make predictions?"
-                    subtitleNumberOfLines={2}
-                    left={(props) => !predictionSettingsOpen ?
-                        <Icon source='chart-box-outline' {...props} /> : 
-                        <IconButton
-                            mode='contained'
-                            icon='arrow-up'
-                            onPress={() => setPredictionSettingsOpen(false)}
-                        />
-                    }
+                    title="Menstrual cycle prediction"
+                    subtitle="Number of months for predictions"
+                    left={(props) => <Icon source='chart-box-outline' {...props} />}
                 />
-                {predictionSettingsOpen &&
                 <Card.Content>
-                    <View style={{ height: 180, marginTop: 10 }}>
-                        <ScrollPicker
-                            dataSource={predictionSettings}
-                            selectedIndex={0}
-                            renderItem={(data, index) => (
-                                <Text key={index}>{data}</Text>
-                            )}
-                            onValueChange={(data) => {
-                                console.log(data);
+                    <Picker
+                        selectedValue={predictionSettings}
+                        onValueChange={(itemValue) => setPredictionSettings(itemValue)}
+                    >
+                        <Picker.Item label="No predictions" value={0} />
+                        {[...Array(24)].map((_, i) => (
+                            <Picker.Item key={i + 1} label={`${i + 1} month${i > 0 ? 's' : ''}`} value={i + 1} />
+                        ))}
+                    </Picker>
+                </Card.Content>
+            </Card>
+
+            <Card
+                style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}
+                onPress={() => setShowNotificationTimePicker(true)}
+            >
+                <Card.Title
+                    title="Tablet notifications"
+                    subtitle="Daily notification time"
+                    left={(props) => <Icon source='alarm' {...props} />}
+                />
+                <Card.Content>
+                    <Text>Notification time: {getHourMinute(notificationTime)}</Text>
+                    {showNotificationTimePicker && (
+                        <DateTimePicker
+                            value={notificationTime}
+                            mode="time"
+                            is24Hour={true}
+                            onChange={(event, value) => {
+                                if (event.type === 'set' && value)
+                                    setNotificationTime(value)
+
+                                setShowNotificationTimePicker(false)
                             }}
-                            wrapperHeight={180}
-                            wrapperBackground={theme.colors.background}
-                            itemHeight={60}
-                            highlightColor={theme.colors.onBackground}
-                            highlightBorderWidth={1}
                         />
-                    </View>
-                </Card.Content>}
+                    )}
+                </Card.Content>
+            </Card>
+
+            <Card
+                style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}
+            >
+                <Card.Title
+                    title="Partner mode"
+                    subtitle="(Coming soon)"
+                    left={(props) => <Icon source='account-heart-outline' {...props} />}
+                />
+                <Card.Content>
+                    <Switch value={partnerMode} onValueChange={setPartnerMode} />
+                </Card.Content>
             </Card>
         </View>
     );
