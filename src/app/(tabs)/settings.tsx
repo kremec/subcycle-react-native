@@ -88,6 +88,7 @@ export default function Tab() {
                 <Button
                     mode='outlined'
                     textColor={theme.colors.onBackground}
+                    icon={(props) => <Icon source='export' {...props} />}
                     onPress={() => console.log("Export data")}
                 >
                     Export data
