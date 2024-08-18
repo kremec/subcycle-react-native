@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { Button, Card, Icon, Switch, Text } from 'react-native-paper';
+import { Button, Card, Icon, Switch, Text, TouchableRipple } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -15,7 +15,6 @@ export default function Tab() {
     const { settings, updateSettings } = useAppContext();
     const [currentSettings, setCurrentSettings] = useState(settings);
     useEffect(() => {
-        console.log(settings);
         setCurrentSettings(settings);
     }, [settings]);
 
@@ -50,7 +49,6 @@ export default function Tab() {
 
                 <Card
                     style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}
-                    onPress={() => setShowNotificationTimePicker(true)}
                 >
                     <Card.Title
                         title="Tablet notifications"
@@ -58,7 +56,12 @@ export default function Tab() {
                         left={(props) => <Icon source='alarm' {...props} />}
                     />
                     <Card.Content>
-                        <Text>Notification time: {getHourMinute(currentSettings?.notificationTime)}</Text>
+                        <TouchableRipple
+                            style={{ padding: 10, borderRadius: 10 }}
+                            onPress={() => setShowNotificationTimePicker(true)}
+                        >
+                            <Text>Notification time: {getHourMinute(currentSettings?.notificationTime)}</Text>
+                        </TouchableRipple>
                         {showNotificationTimePicker && (
                             <DateTimePicker
                                 value={currentSettings?.notificationTime}
@@ -88,15 +91,27 @@ export default function Tab() {
                     </Card.Content>
                 </Card>
             </View>
-            <View style={{ paddingHorizontal: 10, paddingVertical: 10, gap: 10, flexDirection: 'column' }}>
-                <Button
-                    mode='outlined'
-                    textColor={theme.colors.onBackground}
-                    icon={(props) => <Icon source='export' {...props} />}
-                    onPress={() => console.log("Export data")}
-                >
-                    Export data
-                </Button>
+            <View style={{ paddingHorizontal: 10, paddingVertical: 10, gap: 10, flexDirection: 'row' }}>
+                <View style={{ flex: 1 }}>
+                    <Button
+                        mode='outlined'
+                        textColor={theme.colors.onBackground}
+                        icon={(props) => <Icon source='import' {...props} />}
+                        onPress={() => console.log("Import data")}
+                    >
+                        Import data
+                    </Button>
+                </View>
+                <View style={{ flex: 1 }}>
+                    <Button
+                        mode='outlined'
+                        textColor={theme.colors.onBackground}
+                        icon={(props) => <Icon source='export' {...props} />}
+                        onPress={() => console.log("Export data")}
+                    >
+                        Export data
+                    </Button>
+                </View>
             </View>
         </>
     );
