@@ -1,5 +1,5 @@
 # subcycle
-App for menstraul cycle tracking, which monitors menstruation, ovulation, and contraceptive pill usage, while predicting your next cycle events for better planning and health management.
+App for menstrual cycle tracking, which monitors menstruation, ovulation, and contraceptive pill usage, while predicting your next cycle events for better planning and health management.
 
 ## Usage
 On the top you can see which part of your menstrual cycle you're in.
