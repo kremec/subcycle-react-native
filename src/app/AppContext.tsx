@@ -82,12 +82,12 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         // Watch out to not mutate events array in these functions
-        const allEvents = [...dbEvents, ...getMenstruationPredictions(dbEvents), ...getOvulationPredictions(dbEvents)];
+        const allEvents = [...dbEvents, ...getMenstruationPredictions(dbEvents, settings.predictionsTimespan), ...getOvulationPredictions(dbEvents, settings.predictionsTimespan)];
         if (!allEvents.some(e => isSameDate(e.date, new Date())))
             allEvents.push({ date: new Date(), menstruation: false, ovulation: false, tablet: false, prediction: false });
 
         setEvents(allEvents);
-    }, [dbEvents, theme]);
+    }, [dbEvents, theme, settings.predictionsTimespan]);
 
     return (
         <Ctx.Provider value={{ events, updateEvent, settings, updateSettings }}>

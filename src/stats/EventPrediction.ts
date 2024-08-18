@@ -1,6 +1,6 @@
 import { Event, EventPeriod, isSameDate } from '../app/Types';
 
-export const getMenstruationPredictions = (events: Event[]) => {
+export const getMenstruationPredictions = (events: Event[], predictionPeriod: number) => {
     const menstruationPeriods: EventPeriod[] = [];
     events.forEach(event => {
         var dayBefore = new Date(event.date);
@@ -42,7 +42,7 @@ export const getMenstruationPredictions = (events: Event[]) => {
     // Predict menstruation events for next year
     const predictedMenstruationEvents: Event[] = [];
     var lastMenstruationPeriodStartDate = menstruationPeriods[menstruationPeriods.length - 1].start;
-    for (let sequentialPrediction = 0; sequentialPrediction < 12; sequentialPrediction++) {
+    for (let sequentialPrediction = 0; sequentialPrediction < predictionPeriod; sequentialPrediction++) {
         lastMenstruationPeriodStartDate = new Date(new Date(lastMenstruationPeriodStartDate).setDate(lastMenstruationPeriodStartDate.getDate() + averageTimeBetweenMenstruationPeriods));
         for (let dayInPredictedPeriod = 0; dayInPredictedPeriod < averageMenstruationPeriodLength; dayInPredictedPeriod++) {
             const date = new Date(new Date(lastMenstruationPeriodStartDate).setDate(lastMenstruationPeriodStartDate.getDate() + dayInPredictedPeriod));
@@ -53,7 +53,7 @@ export const getMenstruationPredictions = (events: Event[]) => {
     return predictedMenstruationEvents;
 }
 
-export const getOvulationPredictions = (events: Event[]) => {
+export const getOvulationPredictions = (events: Event[], predictionPeriod: number) => {
     const ovulationPeriods: EventPeriod[] = [];
     events.forEach(event => {
         var dayBefore = new Date(event.date);
@@ -95,7 +95,7 @@ export const getOvulationPredictions = (events: Event[]) => {
     // Predict ovulation events for next year
     const predictedOvulationEvents: Event[] = [];
     var lastOvulationPeriodStartDate = ovulationPeriods[ovulationPeriods.length - 1].start;
-    for (let sequentialPrediction = 0; sequentialPrediction < 12; sequentialPrediction++) {
+    for (let sequentialPrediction = 0; sequentialPrediction < predictionPeriod; sequentialPrediction++) {
         lastOvulationPeriodStartDate = new Date(new Date(lastOvulationPeriodStartDate).setDate(lastOvulationPeriodStartDate.getDate() + averageTimeBetweenOvulationPeriods));
         for (let dayInPredictedPeriod = 0; dayInPredictedPeriod < averageOvulationPeriodLength; dayInPredictedPeriod++) {
             const date = new Date(new Date(lastOvulationPeriodStartDate).setDate(lastOvulationPeriodStartDate.getDate() + dayInPredictedPeriod));
