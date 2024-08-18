@@ -7,7 +7,7 @@ export async function createTables(db: SQLiteDatabase) {
             date DATE PRIMARY KEY,
             menstruation BOOLEAN NOT NULL DEFAULT FALSE,
             ovulation BOOLEAN NOT NULL DEFAULT FALSE,
-            tablet BOOLEAN NOT NULL DEFAULT FALSE
+            pill BOOLEAN NOT NULL DEFAULT FALSE
         );`
     );
 };
@@ -19,20 +19,20 @@ export async function getEventsFromDb(db: SQLiteDatabase) {
         date: new Date(event.date),
         menstruation: event.menstruation ? true : false,
         ovulation: event.ovulation ? true : false,
-        tablet: event.tablet ? true : false,
+        pill: event.pill ? true : false,
         prediction: false,
     }));
     return events;
 };
 
 export async function insertEventToDb(db: SQLiteDatabase, event: Event) {
-    const command = await db.prepareAsync("INSERT INTO events (date, menstruation, ovulation, tablet) VALUES ($date, $menstruation, $ovulation, $tablet)");
-    await command.executeAsync({ $date: event.date.toISOString(), $menstruation: event.menstruation, $ovulation: event.ovulation, $tablet: event.tablet });
+    const command = await db.prepareAsync("INSERT INTO events (date, menstruation, ovulation, pill) VALUES ($date, $menstruation, $ovulation, $pill)");
+    await command.executeAsync({ $date: event.date.toISOString(), $menstruation: event.menstruation, $ovulation: event.ovulation, $pill: event.pill });
 };
 
 export async function updateEventInDb(db: SQLiteDatabase, event: Event) {
-    const command = await db.prepareAsync("UPDATE events SET menstruation = $menstruation, ovulation = $ovulation, tablet = $tablet WHERE date = $date");
-    await command.executeAsync({ $date: event.date.toISOString(), $menstruation: event.menstruation, $ovulation: event.ovulation, $tablet: event.tablet });
+    const command = await db.prepareAsync("UPDATE events SET menstruation = $menstruation, ovulation = $ovulation, pill = $pill WHERE date = $date");
+    await command.executeAsync({ $date: event.date.toISOString(), $menstruation: event.menstruation, $ovulation: event.ovulation, $pill: event.pill });
 };
 
 export async function deleteEventFromDb(db: SQLiteDatabase, date: Date) {

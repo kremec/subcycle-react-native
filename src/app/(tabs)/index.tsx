@@ -1,10 +1,8 @@
 import { View } from "react-native";
 
-import { AppContext } from "../AppContext";
-
 import CycleStatus from "../../components/CycleStatus";
 import Calendar from "../../components/Calendar";
-import TabletCheckbox from "../../components/TabletCheckbox";
+import PillCheckbox from "../../components/PillCheckbox";
 
 const Home = () => {
     return (
@@ -12,13 +10,13 @@ const Home = () => {
             <View style={{ justifyContent: 'center' }}>
                 <CycleStatus />
             </View>
-            
+
             <View style={{ flex: 1, width: '100%', justifyContent: 'center' }}>
                 <Calendar />
             </View>
-            
+
             <View style={{ justifyContent: 'center' }}>
-                <TabletCheckbox />
+                <PillCheckbox />
             </View>
         </View>
     );

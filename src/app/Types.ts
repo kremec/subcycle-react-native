@@ -5,7 +5,7 @@ export type Event = {
     date: Date;
     menstruation: boolean;
     ovulation: boolean;
-    tablet: boolean;
+    pill: boolean;
     prediction: boolean;
 };
 

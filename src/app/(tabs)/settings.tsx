@@ -94,7 +94,7 @@ export default function Tab() {
                     style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}
                 >
                     <Card.Title
-                        title="Tablet notifications"
+                        title="Pill notifications"
                         subtitle="Daily notification time"
                         left={(props) => <Icon source='alarm' {...props} />}
                     />

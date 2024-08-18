@@ -21,7 +21,7 @@ export const getMenstruationPredictions = (events: Event[], predictionPeriod: nu
     });
     if (menstruationPeriods.length == 0)
         return [];
-    
+
     menstruationPeriods.sort((a, b) => a.start.getTime() - b.start.getTime());
 
     // Average menstruation period length
@@ -46,7 +46,7 @@ export const getMenstruationPredictions = (events: Event[], predictionPeriod: nu
         lastMenstruationPeriodStartDate = new Date(new Date(lastMenstruationPeriodStartDate).setDate(lastMenstruationPeriodStartDate.getDate() + averageTimeBetweenMenstruationPeriods));
         for (let dayInPredictedPeriod = 0; dayInPredictedPeriod < averageMenstruationPeriodLength; dayInPredictedPeriod++) {
             const date = new Date(new Date(lastMenstruationPeriodStartDate).setDate(lastMenstruationPeriodStartDate.getDate() + dayInPredictedPeriod));
-            predictedMenstruationEvents.push({date, menstruation: true, ovulation: false, tablet: false, prediction: true});
+            predictedMenstruationEvents.push({ date, menstruation: true, ovulation: false, pill: false, prediction: true });
         }
     }
 
@@ -74,7 +74,7 @@ export const getOvulationPredictions = (events: Event[], predictionPeriod: numbe
     });
     if (ovulationPeriods.length == 0)
         return [];
-    
+
     ovulationPeriods.sort((a, b) => a.start.getTime() - b.start.getTime());
 
     // Average ovulation period length
@@ -99,7 +99,7 @@ export const getOvulationPredictions = (events: Event[], predictionPeriod: numbe
         lastOvulationPeriodStartDate = new Date(new Date(lastOvulationPeriodStartDate).setDate(lastOvulationPeriodStartDate.getDate() + averageTimeBetweenOvulationPeriods));
         for (let dayInPredictedPeriod = 0; dayInPredictedPeriod < averageOvulationPeriodLength; dayInPredictedPeriod++) {
             const date = new Date(new Date(lastOvulationPeriodStartDate).setDate(lastOvulationPeriodStartDate.getDate() + dayInPredictedPeriod));
-            predictedOvulationEvents.push({date, menstruation: false, ovulation: true, tablet: false, prediction: true});
+            predictedOvulationEvents.push({ date, menstruation: false, ovulation: true, pill: false, prediction: true });
         }
     }
 

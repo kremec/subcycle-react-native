@@ -10,7 +10,7 @@ const CalendarEditDialog = ({ visible, onCancel, onDone, selectedEvent }:
 
     const [menstruationChecked, setMenstruationChecked] = React.useState(selectedEvent.menstruation);
     const [ovulationChecked, setOvulationChecked] = React.useState(selectedEvent.ovulation);
-    const [tabletChecked, setTabletChecked] = React.useState(selectedEvent.tablet);
+    const [pillChecked, setPillChecked] = React.useState(selectedEvent.pill);
 
     return (
         <Portal>
@@ -41,21 +41,21 @@ const CalendarEditDialog = ({ visible, onCancel, onDone, selectedEvent }:
                         label='Ovulation'
                         color={CalendarColors.ovulation}
                     />
-                    {/* Tablet */}
+                    {/* Pill */}
                     <Checkbox.Item
-                        status={tabletChecked ? 'checked' : 'unchecked'}
+                        status={pillChecked ? 'checked' : 'unchecked'}
                         onPress={() => {
-                            setTabletChecked(!tabletChecked)
+                            setPillChecked(!pillChecked)
                         }}
-                        label='Tablet'
-                        color={CalendarColors.tablet}
+                        label='Pill'
+                        color={CalendarColors.pill}
                     />
                 </Dialog.Content>
                 <Dialog.Actions>
                     <Button onPress={() => {
                         selectedEvent.menstruation = menstruationChecked;
                         selectedEvent.ovulation = ovulationChecked;
-                        selectedEvent.tablet = tabletChecked;
+                        selectedEvent.pill = pillChecked;
                         selectedEvent.prediction = false;
                         onDone(selectedEvent);
                     }}>Done</Button>

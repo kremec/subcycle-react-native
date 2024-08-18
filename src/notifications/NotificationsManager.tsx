@@ -52,7 +52,7 @@ const NotificationsManager = () => {
         await Notifications.scheduleNotificationAsync({
             content: {
                 title: "subcycle",
-                body: "Don't forget to take your tablet!",
+                body: "Don't forget to take your pill!",
                 sound: true,
                 vibrate: [0, 250, 250, 250],
                 priority: 'max',

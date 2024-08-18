@@ -40,7 +40,7 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
         if (event.prediction)
             return;
 
-        const hasEvents = event.menstruation || event.ovulation || event.tablet;
+        const hasEvents = event.menstruation || event.ovulation || event.pill;
         const existingEvent = dbEvents.find(e => isSameDate(e.date, event.date));
         if (!existingEvent) {
             if (hasEvents) { // Insert if event is new and has at least some event
@@ -86,7 +86,7 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
         // Watch out to not mutate events array in these functions
         const allEvents = [...dbEvents, ...getMenstruationPredictions(dbEvents, settings.predictionsTimespan), ...getOvulationPredictions(dbEvents, settings.predictionsTimespan)];
         if (!allEvents.some(e => isSameDate(e.date, new Date())))
-            allEvents.push({ date: new Date(), menstruation: false, ovulation: false, tablet: false, prediction: false });
+            allEvents.push({ date: new Date(), menstruation: false, ovulation: false, pill: false, prediction: false });
 
         setEvents(allEvents);
     }, [db, dbEvents, theme, settings.predictionsTimespan]);

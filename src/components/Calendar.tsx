@@ -20,10 +20,10 @@ const Calendar = () => {
     const [markedDates, setMarkedDates] = useState({});
     useEffect(() => {
         setLoadingDates(true);
-        
+
         // Watch out to not mutate events array in this function
         const formattedEvents = formatCalendarDates(events);
-        setMarkedDates({...formattedEvents});
+        setMarkedDates({ ...formattedEvents });
 
         setLoadingDates(false);
     }, [events, theme]);
@@ -53,7 +53,7 @@ const Calendar = () => {
                 textColor
             };
         });
-    
+
         return markedDates;
     };
     const getEventColor = (event: Event) => {
@@ -65,11 +65,11 @@ const Calendar = () => {
         else {
             if (event.menstruation) return CalendarColors.menstruation;
             else if (event.ovulation) return CalendarColors.ovulation;
-            else return CalendarColors.off;    
+            else return CalendarColors.off;
         }
     };
     const getEventDotColor = (event: Event) => {
-        if (event.tablet) return CalendarColors.tablet;
+        if (event.pill) return CalendarColors.pill;
         else return CalendarColors.off;
     };
     const getEventTextColor = (event: Event) => {
@@ -83,7 +83,7 @@ const Calendar = () => {
     const calendarDayPress = (date: DateData) => {
         let event = events.find(e => isSameDate(date, e.date));
         if (!event)
-            event = { date: new Date(date.dateString), menstruation: false, ovulation: false, tablet: false, prediction: false };
+            event = { date: new Date(date.dateString), menstruation: false, ovulation: false, pill: false, prediction: false };
 
         setSelectedEvent(event);
         setDialogVisible(true);
@@ -106,10 +106,10 @@ const Calendar = () => {
                 markingType={'period'}
                 markedDates={markedDates}
                 displayLoadingIndicator={loadingDates}
-                onDayPress={(date: DateData) => {calendarDayPress(date)}}
+                onDayPress={(date: DateData) => { calendarDayPress(date) }}
                 renderHeader={(date: string) => {
                     return (
-                        <TouchableOpacity onPress={() => {setHeaderClicked(!headerClicked)}}>
+                        <TouchableOpacity onPress={() => { setHeaderClicked(!headerClicked) }}>
                             <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>
                                 {getMonthYear(new Date(date))}
                             </Text>
