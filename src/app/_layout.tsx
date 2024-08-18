@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import { ThemeProvider, useTheme } from "../theme/ThemeContext";
 import { PaperProvider } from "react-native-paper";
 import { AppContext } from "./AppContext";
+import NotificationsManager from "../notifications/NotificationsManager";
 
 const RootLayout = () => {
     const { theme } = useTheme();
@@ -23,6 +24,7 @@ const App = () => {
         <ThemeProvider>
             <AppContext>
                 <RootLayout />
+                <NotificationsManager />
             </AppContext>
         </ThemeProvider>
     );
