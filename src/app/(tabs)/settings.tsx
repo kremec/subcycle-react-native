@@ -4,6 +4,11 @@ import { Button, Card, Icon, Switch, Text, TouchableRipple } from 'react-native-
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import * as SQLite from 'expo-sqlite';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+import * as DocumentPicker from 'expo-document-picker';
+
 import { useTheme } from '../../theme/ThemeContext';
 import { useAppContext } from '../AppContext';
 import { getHourMinute, Settings } from '../Types';
@@ -11,14 +16,52 @@ import { getHourMinute, Settings } from '../Types';
 export default function Tab() {
     const { theme } = useTheme();
 
-    
-    const { settings, updateSettings } = useAppContext();
+    const { db, setDb, settings, updateSettings } = useAppContext();
     const [currentSettings, setCurrentSettings] = useState(settings);
     useEffect(() => {
         setCurrentSettings(settings);
     }, [settings]);
 
     const [showNotificationTimePicker, setShowNotificationTimePicker] = useState(false);
+
+    const originalDbFolder = FileSystem.documentDirectory + 'SQLite';
+    const exportDb = async () => {
+        const dbOriginalFilePath = originalDbFolder + '/subcycle.db';
+        const dbCustomFilePath = FileSystem.documentDirectory + 'subcycle.db';
+        await FileSystem.copyAsync({
+            from: dbOriginalFilePath,
+            to: dbCustomFilePath
+        });
+        await Sharing.shareAsync(dbCustomFilePath, { dialogTitle: 'Export database' });
+    }
+
+    const importDb = async () => {
+        let result = await DocumentPicker.getDocumentAsync({
+            copyToCacheDirectory: true,
+        });
+
+        if (result.canceled || result.assets.length === 0)
+            return;
+
+        if (!((await FileSystem.getInfoAsync(originalDbFolder)).exists))
+            await FileSystem.makeDirectoryAsync(originalDbFolder);
+
+        const base64Data = await FileSystem.readAsStringAsync(
+            result.assets[0].uri,
+            { encoding: FileSystem.EncodingType.Base64 }
+        );
+
+        await FileSystem.writeAsStringAsync(originalDbFolder + '/subcycle.db', base64Data, { encoding: FileSystem.EncodingType.Base64 });
+        setDb(SQLite.openDatabaseSync("subcycle.db"));
+        console.log("Imported database");
+
+        const results = await db.getAllAsync("SELECT * FROM events");
+        if (results.length === 0) {
+            console.log("Database is empty after import.");
+        } else {
+            console.log("Database successfully imported with data.");
+        }
+    }
 
     return (
         <>
@@ -35,7 +78,7 @@ export default function Tab() {
                         <Picker
                             selectedValue={currentSettings?.predictionsTimespan}
                             onValueChange={(itemValue) => {
-                                const newSettings: Settings = {...currentSettings, predictionsTimespan: itemValue};
+                                const newSettings: Settings = { ...currentSettings, predictionsTimespan: itemValue };
                                 updateSettings(newSettings);
                             }}
                         >
@@ -97,7 +140,7 @@ export default function Tab() {
                         mode='outlined'
                         textColor={theme.colors.onBackground}
                         icon={(props) => <Icon source='import' {...props} />}
-                        onPress={() => console.log("Import data")}
+                        onPress={() => importDb()}
                     >
                         Import data
                     </Button>
@@ -107,7 +150,7 @@ export default function Tab() {
                         mode='outlined'
                         textColor={theme.colors.onBackground}
                         icon={(props) => <Icon source='export' {...props} />}
-                        onPress={() => console.log("Export data")}
+                        onPress={() => exportDb()}
                     >
                         Export data
                     </Button>

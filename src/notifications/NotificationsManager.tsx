@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
 import { useAppContext } from '../app/AppContext';
 
 Notifications.setNotificationHandler({
@@ -65,8 +64,6 @@ const NotificationsManager = () => {
                 repeats: true,
             }
         });
-
-        console.log('Notification scheduled successfully');
     };
 
     return null;

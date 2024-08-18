@@ -1,3 +1,4 @@
+import * as SQLite from 'expo-sqlite';
 import { DateData } from "react-native-calendars";
 
 export type Event = {
@@ -18,6 +19,8 @@ export type Context = {
     updateEvent: (event: Event) => void;
     settings: Settings;
     updateSettings: (settings: Settings) => void;
+    db: SQLite.SQLiteDatabase;
+    setDb: (db: SQLite.SQLiteDatabase) => void;
 };
 
 export type Settings = {
@@ -62,7 +65,7 @@ export const getMonthYear = (date: Date) => {
 }
 export const getWeekdayDayMonth = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = {
-        weekday:'short',
+        weekday: 'short',
         month: 'short',
         day: 'numeric',
     };
