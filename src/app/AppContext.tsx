@@ -29,7 +29,7 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
     const { theme } = useTheme();
 
     const [db, setDb] = useState<SQLite.SQLiteDatabase>(defaultDb);
-    useDrizzleStudio(db);
+    __DEV__ && useDrizzleStudio(db);
 
     const [dbEvents, setDbEvents] = useState<Event[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
