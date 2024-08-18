@@ -3,16 +3,24 @@ import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import * as SQLite from 'expo-sqlite';
 
 import { useTheme } from '../theme/ThemeContext';
-import { Context, Event, isSameDate } from './Types';
+import { Context, Event, isSameDate, Settings } from './Types';
 
-import { createTables, insertEventToDb, updateEventInDb, getEventsFromDb, deleteEventFromDb } from '../database/DbCalls';
+import { createTables, insertEventToDb, updateEventInDb, getEventsFromDb, deleteEventFromDb } from '../data/SqlDbCalls';
 import { getMenstruationPredictions, getOvulationPredictions } from '../stats/EventPrediction';
+import { getSettings, storeSettings } from '../data/AsyncStorageCalls';
 
 const db = SQLite.openDatabaseSync("db");
 
+const defaultSettings: Settings = {
+    predictionsTimespan: 1,
+    notificationTime: new Date(new Date().setHours(18, 0, 0)),
+    partnerMode: false,
+};
 const defaultContextValue: Context = {
     events: [],
     updateEvent: (_event: Event) => {},
+    settings: defaultSettings,
+    updateSettings: (_settings: Settings) => {},
 };
 const Ctx = createContext(defaultContextValue);
 
@@ -23,6 +31,8 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
 
     const [dbEvents, setDbEvents] = useState<Event[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
+
+    const [settings, setSettings] = useState<Settings>(defaultSettings);
 
     async function updateEvent(event: Event) {
         if (event.prediction)
@@ -48,6 +58,11 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
             }
         }
     }
+
+    async function updateSettings(settings: Settings) {
+        setSettings(settings);
+        await storeSettings(settings);
+    }
     
     useEffect(() => {
         async function updateAllEventsFromDb() {
@@ -56,6 +71,13 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
             setDbEvents(eventsFromDb);
         }
         updateAllEventsFromDb();
+
+        async function updateSettingsFromStorage() {
+            const settings = await getSettings();
+            if (settings)
+                setSettings(settings);
+        }
+        updateSettingsFromStorage();
     }, []);
 
     useEffect(() => {
@@ -68,7 +90,7 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
     }, [dbEvents, theme]);
 
     return (
-        <Ctx.Provider value={{ events, updateEvent }}>
+        <Ctx.Provider value={{ events, updateEvent, settings, updateSettings }}>
             {children}
         </Ctx.Provider>
     )

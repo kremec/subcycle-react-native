@@ -1,24 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Button, Card, Icon, Switch, Text } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { useTheme } from '../../theme/ThemeContext';
-import { getHourMinute } from '../Types';
+import { useAppContext } from '../AppContext';
+import { getHourMinute, Settings } from '../Types';
 
 export default function Tab() {
     const { theme } = useTheme();
 
-    const [predictionSettings, setPredictionSettings] = useState();
-    console.log(predictionSettings);
+    
+    const { settings, updateSettings } = useAppContext();
+    const [currentSettings, setCurrentSettings] = useState(settings);
+    useEffect(() => {
+        console.log(settings);
+        setCurrentSettings(settings);
+    }, [settings]);
 
     const [showNotificationTimePicker, setShowNotificationTimePicker] = useState(false);
-    const [notificationTime, setNotificationTime] = useState(new Date(new Date().setHours(18, 0, 0)));
-    console.log(notificationTime);
-
-    const [partnerMode, setPartnerMode] = useState(false);
-    console.log(partnerMode);
 
     return (
         <>
@@ -33,8 +34,11 @@ export default function Tab() {
                     />
                     <Card.Content>
                         <Picker
-                            selectedValue={predictionSettings}
-                            onValueChange={(itemValue) => setPredictionSettings(itemValue)}
+                            selectedValue={currentSettings?.predictionsTimespan}
+                            onValueChange={(itemValue) => {
+                                const newSettings: Settings = {...currentSettings, predictionsTimespan: itemValue};
+                                updateSettings(newSettings);
+                            }}
                         >
                             <Picker.Item label="No predictions" value={0} />
                             {[...Array(24)].map((_, i) => (
@@ -54,15 +58,15 @@ export default function Tab() {
                         left={(props) => <Icon source='alarm' {...props} />}
                     />
                     <Card.Content>
-                        <Text>Notification time: {getHourMinute(notificationTime)}</Text>
+                        <Text>Notification time: {getHourMinute(currentSettings?.notificationTime)}</Text>
                         {showNotificationTimePicker && (
                             <DateTimePicker
-                                value={notificationTime}
+                                value={currentSettings?.notificationTime}
                                 mode="time"
                                 is24Hour={true}
                                 onChange={(event, value) => {
                                     if (event.type === 'set' && value)
-                                        setNotificationTime(value)
+                                        updateSettings({ ...currentSettings, notificationTime: value })
 
                                     setShowNotificationTimePicker(false)
                                 }}
@@ -80,7 +84,7 @@ export default function Tab() {
                         left={(props) => <Icon source='account-heart-outline' {...props} />}
                     />
                     <Card.Content>
-                        <Switch value={partnerMode} onValueChange={setPartnerMode} />
+                        <Switch value={currentSettings.partnerMode} onValueChange={(value) => updateSettings({ ...currentSettings, partnerMode: value })} />
                     </Card.Content>
                 </Card>
             </View>

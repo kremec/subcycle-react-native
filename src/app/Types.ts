@@ -16,6 +16,14 @@ export type EventPeriod = {
 export type Context = {
     events: Event[];
     updateEvent: (event: Event) => void;
+    settings: Settings;
+    updateSettings: (settings: Settings) => void;
+};
+
+export type Settings = {
+    predictionsTimespan: number;
+    notificationTime: Date;
+    partnerMode: boolean;
 };
 
 export const isSameDate = (date1: Date | DateData, date2: Date | DateData): boolean => {
