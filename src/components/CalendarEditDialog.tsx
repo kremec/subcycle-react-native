@@ -53,6 +53,11 @@ const CalendarEditDialog = ({ visible, onCancel, onDone, selectedEvent }:
                 </Dialog.Content>
                 <Dialog.Actions>
                     <Button onPress={() => {
+                        // If we opened a prediction and selected none of the options, cancel
+                        if (selectedEvent.prediction && !menstruationChecked && !ovulationChecked && !pillChecked) {
+                            onCancel();
+                            return;
+                        }
                         selectedEvent.menstruation = menstruationChecked;
                         selectedEvent.ovulation = ovulationChecked;
                         selectedEvent.pill = pillChecked;
