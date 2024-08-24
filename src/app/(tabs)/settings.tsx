@@ -81,10 +81,15 @@ export default function Tab() {
                                 const newSettings: Settings = { ...currentSettings, predictionsTimespan: itemValue };
                                 updateSettings(newSettings);
                             }}
+                            style={{
+                                color: theme.colors.onBackground,
+                                backgroundColor: theme.colors.background
+                            }}
+                            dropdownIconColor={theme.colors.onBackground}
                         >
-                            <Picker.Item label="No predictions" value={0} />
+                            <Picker.Item color={theme.colors.onBackground} style={{ backgroundColor: theme.colors.background }} label="No predictions" value={0} />
                             {[...Array(24)].map((_, i) => (
-                                <Picker.Item key={i + 1} label={`${i + 1} month${i > 0 ? 's' : ''}`} value={i + 1} />
+                                <Picker.Item color={theme.colors.onBackground} style={{ backgroundColor: theme.colors.background }} key={i + 1} label={`${i + 1} month${i > 0 ? 's' : ''}`} value={i + 1} />
                             ))}
                         </Picker>
                     </Card.Content>
