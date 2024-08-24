@@ -7,7 +7,7 @@ import { Event, getMonthYear, isSameDate } from '../app/Types';
 import CalendarEditDialog from './CalendarEditDialog';
 import { CalendarColors } from '../theme/Colors';
 
-import { TouchableOpacity } from 'react-native';
+import { TextStyle, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 
 const Calendar = () => {
@@ -28,13 +28,13 @@ const Calendar = () => {
         setLoadingDates(false);
     }, [events, theme]);
     const formatCalendarDates = (events: Event[]) => {
-        const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; marked: boolean, color: string, dotColor: string, textColor: string } } = {};
+        const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; marked: boolean, color: string, dotColor: string, customTextStyle?: TextStyle } } = {};
 
         events.forEach(event => {
             const dateKey = CalendarUtils.getCalendarDateString(event.date);
             const color = getEventColor(event);
             const dotColor = getEventDotColor(event);
-            const textColor = getEventTextColor(event);
+            const customTextStyle = getEventTextStyle(event);
 
             var dayBefore = new Date(event.date);
             dayBefore.setDate(event.date.getDate() - 1);
@@ -50,7 +50,7 @@ const Calendar = () => {
                 marked: true,
                 color,
                 dotColor,
-                textColor
+                customTextStyle
             };
         });
 
@@ -72,9 +72,13 @@ const Calendar = () => {
         if (event.pill) return CalendarColors.pill;
         else return CalendarColors.off;
     };
-    const getEventTextColor = (event: Event) => {
-        if (isSameDate(event.date, new Date())) return CalendarColors.today;
-        else return (event.menstruation || event.ovulation) ? theme.colors.background : theme.colors.onBackground;
+    const getEventTextStyle = (event: Event) => {
+        const textStyle: TextStyle = { color: (event.menstruation || event.ovulation) ? theme.colors.background : theme.colors.onBackground };
+
+        if (isSameDate(event.date, new Date()))
+            textStyle.fontWeight = 'bold';
+
+        return textStyle;
     };
 
     // Edit dialog

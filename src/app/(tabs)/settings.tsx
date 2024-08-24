@@ -53,14 +53,6 @@ export default function Tab() {
 
         await FileSystem.writeAsStringAsync(originalDbFolder + '/subcycle.db', base64Data, { encoding: FileSystem.EncodingType.Base64 });
         setDb(SQLite.openDatabaseSync("subcycle.db"));
-        console.log("Imported database");
-
-        const results = await db.getAllAsync("SELECT * FROM events");
-        if (results.length === 0) {
-            console.log("Database is empty after import.");
-        } else {
-            console.log("Database successfully imported with data.");
-        }
     }
 
     return (

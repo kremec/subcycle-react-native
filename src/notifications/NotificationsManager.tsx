@@ -39,7 +39,6 @@ const NotificationsManager = () => {
         }
 
         if (finalStatus !== 'granted') {
-            console.log('Failed to get push token for push notification!');
             return;
         }
     };
