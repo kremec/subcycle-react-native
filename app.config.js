@@ -5,7 +5,7 @@ export default {
         name: IS_DEV ? "subcycle (Dev)" : "subcycle",
         slug: "subcycle",
         scheme: "subcycle",
-        version: "1.0.1",
+        version: "1.0.2",
         orientation: "portrait",
         icon: "./assets/icon.png",
         userInterfaceStyle: "automatic",

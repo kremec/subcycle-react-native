@@ -19,6 +19,10 @@
         }
     },
     "submit": {
-        "production": {}
+        "production": {
+            "android": {
+                "serviceAccountKeyPath": "./subcycle-c9f6cae82d4e.json"
+            }
+        }
     }
 }
