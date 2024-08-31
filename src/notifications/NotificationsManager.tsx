@@ -29,6 +29,14 @@ const NotificationsManager = () => {
             bypassDnd: true,
         });
 
+        await Notifications.setNotificationCategoryAsync(
+            "pillreminder",
+            [{
+                buttonTitle: "Check pill for today",
+                identifier: "checkpill"
+            }]
+        )
+
         const { status: existingStatus } = await Notifications.getPermissionsAsync();
         let finalStatus = existingStatus;
 
@@ -50,6 +58,7 @@ const NotificationsManager = () => {
         // Schedule the notification
         await Notifications.scheduleNotificationAsync({
             content: {
+                categoryIdentifier: "pillreminder",
                 title: "subcycle",
                 body: "Don't forget to take your pill!",
                 sound: true,
