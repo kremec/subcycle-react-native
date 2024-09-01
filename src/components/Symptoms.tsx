@@ -6,6 +6,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useAppContext } from '../app/AppContext';
 import { useTheme } from '../theme/ThemeContext';
 import { getWeekdayDayMonth } from '../app/Types';
+import { IconDroplet } from '@tabler/icons-react-native';
 
 const Symptoms = ({ selectedDate }: { selectedDate: Date }) => {
     const { updateEvent } = useAppContext();
@@ -36,7 +37,8 @@ const Symptoms = ({ selectedDate }: { selectedDate: Date }) => {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
                     <Card>
                         <Card.Content>
-                            <Text> Low</Text>
+                            <IconDroplet size={20} color={theme.colors.onBackground} />
+                            <Text>Low</Text>
                         </Card.Content>
                     </Card>
                 </View>

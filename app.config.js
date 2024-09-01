@@ -24,7 +24,7 @@ export default {
                     backgroundColor: "#000000"
                 }
             },
-            package: IS_DEV ? "com.subbyte.subcycle.dev" : "com.subbyte.subcycle"
+            package: IS_DEV ? "dev.subbyte.subcycle" : "com.subbyte.subcycle"
         },
         web: {
             favicon: "./assets/favicon.png"
