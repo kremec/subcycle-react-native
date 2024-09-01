@@ -6,6 +6,8 @@ import NotificationsManager from "../notifications/NotificationsManager";
 import * as Notifications from 'expo-notifications';
 import { useEffect } from "react";
 import { isSameDate } from "./Types";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 const RootLayout = () => {
     const { theme } = useTheme();
@@ -39,12 +41,16 @@ const RootLayout = () => {
 
 const App = () => {
     return (
-        <ThemeProvider>
-            <AppContext>
-                <RootLayout />
-                <NotificationsManager />
-            </AppContext>
-        </ThemeProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>
+                <ThemeProvider>
+                    <AppContext>
+                        <RootLayout />
+                        <NotificationsManager />
+                    </AppContext>
+                </ThemeProvider>
+            </BottomSheetModalProvider>
+        </GestureHandlerRootView>
     );
 };
 export default App;

@@ -8,6 +8,7 @@ import { useAppContext } from "../AppContext";
 
 const Home = () => {
     const { selectedDate } = useAppContext();
+
     return (
         <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10 }}>
             <View style={{ justifyContent: 'center' }}>
