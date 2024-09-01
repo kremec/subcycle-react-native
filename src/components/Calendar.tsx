@@ -13,7 +13,7 @@ import { Text } from 'react-native-paper';
 const Calendar = () => {
     // Getting theme and data contexts
     const { theme } = useTheme();
-    const { events, updateEvent } = useAppContext();
+    const { events, updateEvent, selectedDate, setSelectedDate } = useAppContext();
 
     // Marking dates
     const [loadingDates, setLoadingDates] = useState(true);
@@ -26,7 +26,7 @@ const Calendar = () => {
         setMarkedDates({ ...formattedEvents });
 
         setLoadingDates(false);
-    }, [events, theme]);
+    }, [events, selectedDate, theme]);
     const formatCalendarDates = (events: Event[]) => {
         const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; marked: boolean, color: string, dotColor: string, customTextStyle?: TextStyle } } = {};
 
@@ -53,6 +53,16 @@ const Calendar = () => {
                 customTextStyle
             };
         });
+        if (!events.some(e => isSameDate(e.date, selectedDate)))
+            markedDates[CalendarUtils.getCalendarDateString(selectedDate)] = {
+                selected: true,
+                startingDay: false,
+                endingDay: false,
+                marked: true,
+                color: theme.colors.background,
+                dotColor: theme.colors.background,
+                customTextStyle: { color: theme.colors.onBackground, fontWeight: 'bold' }
+            }
 
         return markedDates;
     };
@@ -75,7 +85,7 @@ const Calendar = () => {
     const getEventTextStyle = (event: Event) => {
         const textStyle: TextStyle = { color: (event.menstruation || event.ovulation) ? theme.colors.background : theme.colors.onBackground };
 
-        if (isSameDate(event.date, new Date()))
+        if (isSameDate(event.date, selectedDate))
             textStyle.fontWeight = 'bold';
 
         return textStyle;
@@ -83,14 +93,19 @@ const Calendar = () => {
 
     // Edit dialog
     const [dialogVisible, setDialogVisible] = useState(false);
-    const [selectedEvent, setSelectedEvent] = useState<Event>();
+    const [editEvent, setEditEvent] = useState<Event>();
+
     const calendarDayPress = (date: DateData) => {
         let event = events.find(e => isSameDate(date, e.date));
         if (!event)
             event = { date: new Date(date.dateString), menstruation: false, ovulation: false, pill: false, prediction: false };
 
-        setSelectedEvent(event);
-        setDialogVisible(true);
+        if (isSameDate(event.date, selectedDate)) {
+            setEditEvent(event);
+            setDialogVisible(true);
+        }
+        else
+            setSelectedDate(event.date);
     };
 
     const [headerClicked, setHeaderClicked] = useState(false);
@@ -113,7 +128,10 @@ const Calendar = () => {
                 onDayPress={(date: DateData) => { calendarDayPress(date) }}
                 renderHeader={(date: string) => {
                     return (
-                        <TouchableOpacity onPress={() => { setHeaderClicked(!headerClicked) }}>
+                        <TouchableOpacity onPress={() => {
+                            setHeaderClicked(!headerClicked)
+                            setSelectedDate(new Date())
+                        }}>
                             <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>
                                 {getMonthYear(new Date(date))}
                             </Text>
@@ -132,14 +150,14 @@ const Calendar = () => {
                 visible={dialogVisible}
                 onCancel={() => {
                     setDialogVisible(false)
-                    setSelectedEvent(undefined)
+                    setEditEvent(undefined)
                 }}
                 onDone={(updatedDateEvent: Event) => {
                     updateEvent(updatedDateEvent);
                     setDialogVisible(false)
-                    setSelectedEvent(undefined)
+                    setEditEvent(undefined)
                 }}
-                selectedEvent={selectedEvent}
+                selectedEvent={editEvent}
             />
         </>
     );

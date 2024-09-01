@@ -17,6 +17,8 @@ export type EventPeriod = {
 export type Context = {
     events: Event[];
     updateEvent: (event: Event) => void;
+    selectedDate: Date;
+    setSelectedDate: (date: Date) => void;
     settings: Settings;
     updateSettings: (settings: Settings) => void;
     db: SQLite.SQLiteDatabase;

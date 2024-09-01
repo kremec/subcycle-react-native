@@ -18,6 +18,8 @@ const defaultSettings: Settings = {
 const defaultContextValue: Context = {
     events: [],
     updateEvent: (_event: Event) => { },
+    selectedDate: new Date(),
+    setSelectedDate: (_date: Date) => { },
     settings: defaultSettings,
     updateSettings: (_settings: Settings) => { },
     db: defaultDb,
@@ -31,8 +33,9 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
     const [db, setDb] = useState<SQLite.SQLiteDatabase>(defaultDb);
     __DEV__ && useDrizzleStudio(db);
 
-    const [dbEvents, setDbEvents] = useState<Event[]>([]);
-    const [events, setEvents] = useState<Event[]>([]);
+    const [dbEvents, setDbEvents] = useState<Event[]>(defaultContextValue.events);
+    const [events, setEvents] = useState<Event[]>(defaultContextValue.events);
+    const [selectedDate, setSelectedDate] = useState<Date>(defaultContextValue.selectedDate);
 
     const [settings, setSettings] = useState<Settings>(defaultSettings);
 
@@ -85,14 +88,12 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         // Watch out to not mutate events array in these functions
         const allEvents = [...dbEvents, ...getMenstruationPredictions(dbEvents, settings.predictionsTimespan), ...getOvulationPredictions(dbEvents, settings.predictionsTimespan)];
-        if (!allEvents.some(e => isSameDate(e.date, new Date())))
-            allEvents.push({ date: new Date(), menstruation: false, ovulation: false, pill: false, prediction: false });
 
         setEvents(allEvents);
     }, [db, dbEvents, theme, settings.predictionsTimespan]);
 
     return (
-        <Ctx.Provider value={{ events, updateEvent, settings, updateSettings, db, setDb }}>
+        <Ctx.Provider value={{ events, updateEvent, selectedDate, setSelectedDate, settings, updateSettings, db, setDb }}>
             {children}
         </Ctx.Provider>
     )

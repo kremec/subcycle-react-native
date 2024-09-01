@@ -2,9 +2,12 @@ import { View } from "react-native";
 
 import CycleStatus from "../../components/CycleStatus";
 import Calendar from "../../components/Calendar";
-import PillCheckbox from "../../components/PillCheckbox";
+import Symptoms from "../../components/Symptoms";
+
+import { useAppContext } from "../AppContext";
 
 const Home = () => {
+    const { selectedDate } = useAppContext();
     return (
         <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10 }}>
             <View style={{ justifyContent: 'center' }}>
@@ -16,7 +19,7 @@ const Home = () => {
             </View>
 
             <View style={{ justifyContent: 'center' }}>
-                <PillCheckbox />
+                <Symptoms selectedDate={selectedDate} />
             </View>
         </View>
     );
