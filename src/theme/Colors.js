@@ -92,3 +92,11 @@ export const CalendarColors = {
     pill: 'limegreen',
     off: 'transparent'
 };
+export const SymptomColors = {
+    check: 'lightskyblue',
+    menstruation: 'lightcoral',
+    symptoms: 'lightsalmon',
+    moods: 'orchid',
+    sexDrive: 'lightpink',
+    exercise: 'lightseagreen'
+};
