@@ -93,8 +93,8 @@ export const CalendarColors = {
     off: 'transparent'
 };
 export const SymptomColors = {
-    check: 'lightskyblue',
     menstruation: 'lightcoral',
+    discharge: 'lightskyblue',
     symptoms: 'lightsalmon',
     moods: 'orchid',
     sexDrive: 'lightpink',
