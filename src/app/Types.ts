@@ -1,5 +1,8 @@
 import * as SQLite from 'expo-sqlite';
 import { DateData } from "react-native-calendars";
+import { SymptomColors } from '../theme/Colors';
+import { IconArrowBadgeDown, IconArrowBadgeUp, IconBalloon, IconBarbell, IconBedOff, IconBike, IconBolt, IconCactus, IconChartBubble, IconChartRadar, IconDroplet, IconDropletHalfFilled, IconDropletOff, IconIceCream2, IconMoodAngry, IconMoodAnnoyed, IconMoodCry, IconMoodHappy, IconMoodNeutral, IconMoodSad, IconMoodSadSquint, IconMoodSick, IconPoo, IconRipple, IconRun, IconSnowflake, IconToolsKitchen2, IconTrekking } from '@tabler/icons-react-native';
+
 
 export type Event = {
     date: Date;
@@ -9,6 +12,146 @@ export type Event = {
     prediction: boolean;
 };
 
+export type Symptoms = {
+    date: Date;
+    menstruationLow: boolean;
+    menstruationMedium: boolean;
+    menstruationStrong: boolean;
+    menstruationSpotting: boolean;
+    symptomsIntestinalProblems: boolean;
+    symptomsAppetiteChanges: boolean;
+    symptomsBloating: boolean;
+    symptomsChills: boolean;
+    symptomsCramps: boolean;
+    symptomsDrySkin: boolean;
+    symptomsInsomnia: boolean;
+    symptomsNausea: boolean;
+    dischargeWatery: boolean;
+    dischargeCreamy: boolean;
+    dischargeSticky: boolean;
+    dischargeDry: boolean;
+    sexDriveVeryLow: boolean;
+    sexDriveLow: boolean;
+    sexDriveHigh: boolean;
+    sexDriveVeryHigh: boolean;
+    exerciseRunning: boolean;
+    exerciseCycling: boolean;
+    exerciseHiking: boolean;
+    exerciseGym: boolean;
+    moodAngry: boolean;
+    moodHappy: boolean;
+    moodNeutral: boolean;
+    moodSad: boolean;
+    moodAnnoyed: boolean;
+    moodSensitive: boolean;
+    moodIrritated: boolean;
+};
+
+export const defaultSymptoms = (date: Date): Symptoms => ({
+    date,
+    menstruationLow: false,
+    menstruationMedium: false,
+    menstruationStrong: false,
+    menstruationSpotting: false,
+    symptomsIntestinalProblems: false,
+    symptomsAppetiteChanges: false,
+    symptomsBloating: false,
+    symptomsChills: false,
+    symptomsCramps: false,
+    symptomsDrySkin: false,
+    symptomsInsomnia: false,
+    symptomsNausea: false,
+    dischargeWatery: false,
+    dischargeCreamy: false,
+    dischargeSticky: false,
+    dischargeDry: false,
+    sexDriveVeryLow: false,
+    sexDriveLow: false,
+    sexDriveHigh: false,
+    sexDriveVeryHigh: false,
+    exerciseRunning: false,
+    exerciseCycling: false,
+    exerciseHiking: false,
+    exerciseGym: false,
+    moodAngry: false,
+    moodHappy: false,
+    moodNeutral: false,
+    moodSad: false,
+    moodAnnoyed: false,
+    moodSensitive: false,
+    moodIrritated: false
+});
+
+export const SymptomTypes = [
+    {
+        name: "Menstruation",
+        backgroundColor: SymptomColors.menstruation,
+        types: [
+            { key: "menstruationLow", name: "Low", icon: IconDroplet },
+            { key: "menstruationMedium", name: "Medium", icon: IconDropletHalfFilled, filled: true },
+            { key: "menstruationStrong", name: "Strong", icon: IconDroplet, filled: true },
+            { key: "menstruationSpotting", name: "Spotting", icon: IconChartBubble, filled: true },
+        ]
+    },
+    {
+        name: "Symptoms",
+        backgroundColor: SymptomColors.symptoms,
+        types: [
+            { key: "symptomsIntestinalProblems", name: "Intestinal\nproblems", icon: IconPoo },
+            { key: "symptomsAppetiteChanges", name: "Appetite\nchanges", icon: IconToolsKitchen2 },
+            { key: "symptomsBloating", name: "Bloating", icon: IconBalloon },
+            { key: "symptomsChills", name: "Chills", icon: IconSnowflake },
+            { key: "symptomsCramps", name: "Cramps", icon: IconBolt },
+            { key: "symptomsDrySkin", name: "Dry skin", icon: IconDropletOff },
+            { key: "symptomsInsomnia", name: "Insomnia", icon: IconBedOff },
+            { key: "symptomsNausea", name: "Nausea", icon: IconMoodSick },
+        ]
+    },
+    {
+        name: "Discharge",
+        backgroundColor: SymptomColors.discharge,
+        types: [
+            { key: "dischargeWatery", name: "Watery", icon: IconRipple },
+            { key: "dischargeCreamy", name: "Creamy", icon: IconIceCream2 },
+            { key: "dischargeSticky", name: "Sticky", icon: IconChartRadar },
+            { key: "dischargeDry", name: "Dry", icon: IconCactus },
+        ]
+    },
+    {
+        name: "Sex drive",
+        backgroundColor: SymptomColors.sexDrive,
+        types: [
+            { key: "sexDriveVeryLow", name: "Very low", icon: IconArrowBadgeDown, filled: true },
+            { key: "sexDriveLow", name: "Low", icon: IconArrowBadgeDown },
+            { key: "sexDriveHigh", name: "High", icon: IconArrowBadgeUp },
+            { key: "sexDriveVeryHigh", name: "Very high", icon: IconArrowBadgeUp, filled: true },
+        ]
+    },
+    {
+        name: "Exercise",
+        backgroundColor: SymptomColors.exercise,
+        types: [
+            { key: "exerciseRunning", name: "Running", icon: IconRun },
+            { key: "exerciseCycling", name: "Cycling", icon: IconBike },
+            { key: "exerciseHiking", name: "Hiking", icon: IconTrekking },
+            { key: "exerciseGym", name: "Gym", icon: IconBarbell },
+        ]
+    },
+    {
+        name: "Moods",
+        backgroundColor: SymptomColors.moods,
+        types: [
+            { key: "moodAngry", name: "Angry", icon: IconMoodAngry },
+            { key: "moodHappy", name: "Happy", icon: IconMoodHappy },
+            { key: "moodNeutral", name: "Neutral", icon: IconMoodNeutral },
+            { key: "moodSad", name: "Sad", icon: IconMoodSad },
+            { key: "moodAnnoyed", name: "Annoyed", icon: IconMoodAnnoyed },
+            { key: "moodSensitive", name: "Sensitive", icon: IconMoodCry },
+            { key: "moodIrritated", name: "Irritated", icon: IconMoodSadSquint },
+        ]
+    }
+]
+
 export type EventPeriod = {
     start: Date;
     dayLength: number;
@@ -17,6 +160,8 @@ export type EventPeriod = {
 export type Context = {
     events: Event[];
     updateEvent: (event: Event) => void;
+    symptoms: Symptoms[];
+    updateSymptoms: (symptoms: Symptoms) => void;
     selectedDate: Date;
     setSelectedDate: (date: Date) => void;
     settings: Settings;

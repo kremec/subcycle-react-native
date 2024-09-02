@@ -1,13 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Card, Text } from 'react-native-paper'
 import { Icon } from '@tabler/icons-react-native'
 
 import { useTheme } from '../theme/ThemeContext';
 
-const SymptomCard = ({ icon: Icon, text, backgroundColor, filled, onPress }: { icon: Icon, text: string, backgroundColor: string, filled: boolean | undefined, onPress: () => void }) => {
+const SymptomCard = ({ icon: Icon, text, backgroundColor, filled, selected, onPress }: { icon: Icon, text: string, backgroundColor: string, filled: boolean | undefined, selected: boolean, onPress: () => void }) => {
     const { theme } = useTheme();
-
-    const [isPressed, setIsPressed] = useState(false);
 
     return (
         <Card
@@ -16,14 +14,13 @@ const SymptomCard = ({ icon: Icon, text, backgroundColor, filled, onPress }: { i
                 marginHorizontal: 2,
                 minWidth: 80,
                 height: 100,
-                opacity: isPressed ? 1 : 0.5,
-                borderWidth: isPressed ? 1 : 0, borderColor: theme.colors.onBackground,
+                opacity: selected ? 1 : 0.5,
+                borderWidth: selected ? 1 : 0, borderColor: theme.colors.onBackground,
                 justifyContent: 'center',
                 alignItems: 'center'
             }}
             onPress={() => {
                 onPress()
-                setIsPressed(!isPressed)
             }}
         >
             <Card.Content style={{ justifyContent: 'center', alignItems: 'center' }}>

@@ -2,13 +2,9 @@ import { View } from "react-native";
 
 import CycleStatus from "../../components/CycleStatus";
 import Calendar from "../../components/Calendar";
-import Symptoms from "../../components/Symptoms";
-
-import { useAppContext } from "../AppContext";
+import SymptomsOverview from "../../components/SymptomsOverview";
 
 const Home = () => {
-    const { selectedDate } = useAppContext();
-
     return (
         <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10 }}>
             <View style={{ justifyContent: 'center' }}>
@@ -20,7 +16,7 @@ const Home = () => {
             </View>
 
             <View style={{ justifyContent: 'center' }}>
-                <Symptoms selectedDate={selectedDate} />
+                <SymptomsOverview />
             </View>
         </View>
     );
