@@ -1,5 +1,5 @@
 import { SQLiteDatabase } from "expo-sqlite";
-import { Event, Symptoms } from "../app/Types";
+import { DbEvent, DbSymptoms, Event, Symptoms } from "../app/Types";
 
 export async function createTables(db: SQLiteDatabase) {
     await db?.execAsync(
@@ -50,9 +50,9 @@ export async function createTables(db: SQLiteDatabase) {
 };
 
 export async function getEventsFromDb(db: SQLiteDatabase) {
-    const results = await db.getAllAsync<Event>("SELECT * FROM events");
+    const results = await db.getAllAsync<DbEvent>("SELECT * FROM events");
 
-    const events = results.map(event => ({
+    const events: Event[] = results.map(event => ({
         date: new Date(event.date),
         menstruation: event.menstruation ? true : false,
         ovulation: event.ovulation ? true : false,
@@ -63,42 +63,43 @@ export async function getEventsFromDb(db: SQLiteDatabase) {
 };
 
 export async function getSymptomsFromDb(db: SQLiteDatabase) {
-    const results = await db.getAllAsync<Symptoms>("SELECT * FROM symptoms");
+    const results = await db.getAllAsync<DbSymptoms>("SELECT * FROM symptoms");
 
-    const symptoms = results.map(symptoms => ({
+    const symptoms: Symptoms[] = results.map(symptoms => ({
         date: new Date(symptoms.date),
-        menstruationLow: symptoms.menstruationLow ? true : false,
-        menstruationMedium: symptoms.menstruationMedium ? true : false,
-        menstruationStrong: symptoms.menstruationStrong ? true : false,
-        menstruationSpotting: symptoms.menstruationSpotting ? true : false,
-        symptomsIntestinalProblems: symptoms.symptomsIntestinalProblems ? true : false,
-        symptomsAppetiteChanges: symptoms.symptomsAppetiteChanges ? true : false,
-        symptomsBloating: symptoms.symptomsBloating ? true : false,
-        symptomsChills: symptoms.symptomsChills ? true : false,
-        symptomsCramps: symptoms.symptomsCramps ? true : false,
-        symptomsDrySkin: symptoms.symptomsDrySkin ? true : false,
-        symptomsInsomnia: symptoms.symptomsInsomnia ? true : false,
-        symptomsNausea: symptoms.symptomsNausea ? true : false,
-        dischargeWatery: symptoms.dischargeWatery ? true : false,
-        dischargeCreamy: symptoms.dischargeCreamy ? true : false,
-        dischargeSticky: symptoms.dischargeSticky ? true : false,
-        dischargeDry: symptoms.dischargeDry ? true : false,
-        sexDriveVeryLow: symptoms.sexDriveVeryLow ? true : false,
-        sexDriveLow: symptoms.sexDriveLow ? true : false,
-        sexDriveHigh: symptoms.sexDriveHigh ? true : false,
-        sexDriveVeryHigh: symptoms.sexDriveVeryHigh ? true : false,
-        exerciseRunning: symptoms.exerciseRunning ? true : false,
-        exerciseCycling: symptoms.exerciseCycling ? true : false,
-        exerciseHiking: symptoms.exerciseHiking ? true : false,
-        exerciseGym: symptoms.exerciseGym ? true : false,
-        moodAngry: symptoms.moodAngry ? true : false,
-        moodHappy: symptoms.moodHappy ? true : false,
-        moodNeutral: symptoms.moodNeutral ? true : false,
-        moodSad: symptoms.moodSad ? true : false,
-        moodAnnoyed: symptoms.moodAnnoyed ? true : false,
-        moodSensitive: symptoms.moodSensitive ? true : false,
-        moodIrritated: symptoms.moodIrritated ? true : false,
+        menstruationLow: symptoms.menstruation_low ? true : false,
+        menstruationMedium: symptoms.menstruation_medium ? true : false,
+        menstruationStrong: symptoms.menstruation_strong ? true : false,
+        menstruationSpotting: symptoms.menstruation_spotting ? true : false,
+        symptomsIntestinalProblems: symptoms.symptoms_intestinal_problems ? true : false,
+        symptomsAppetiteChanges: symptoms.symptoms_appetite_changes ? true : false,
+        symptomsBloating: symptoms.symptoms_bloating ? true : false,
+        symptomsChills: symptoms.symptoms_chills ? true : false,
+        symptomsCramps: symptoms.symptoms_cramps ? true : false,
+        symptomsDrySkin: symptoms.symptoms_dry_skin ? true : false,
+        symptomsInsomnia: symptoms.symptoms_insomnia ? true : false,
+        symptomsNausea: symptoms.symptoms_nausea ? true : false,
+        dischargeWatery: symptoms.discharge_watery ? true : false,
+        dischargeCreamy: symptoms.discharge_creamy ? true : false,
+        dischargeSticky: symptoms.discharge_sticky ? true : false,
+        dischargeDry: symptoms.discharge_dry ? true : false,
+        sexDriveVeryLow: symptoms.sex_drive_very_low ? true : false,
+        sexDriveLow: symptoms.sex_drive_low ? true : false,
+        sexDriveHigh: symptoms.sex_drive_high ? true : false,
+        sexDriveVeryHigh: symptoms.sex_drive_very_high ? true : false,
+        exerciseRunning: symptoms.exercise_running ? true : false,
+        exerciseCycling: symptoms.exercise_cycling ? true : false,
+        exerciseHiking: symptoms.exercise_hiking ? true : false,
+        exerciseGym: symptoms.exercise_gym ? true : false,
+        moodAngry: symptoms.mood_angry ? true : false,
+        moodHappy: symptoms.mood_happy ? true : false,
+        moodNeutral: symptoms.mood_neutral ? true : false,
+        moodSad: symptoms.mood_sad ? true : false,
+        moodAnnoyed: symptoms.mood_annoyed ? true : false,
+        moodSensitive: symptoms.mood_sensitive ? true : false,
+        moodIrritated: symptoms.mood_irritated ? true : false
     }));
+    console.log(symptoms);
     return symptoms;
 };
 

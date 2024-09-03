@@ -3,7 +3,12 @@ import { DateData } from "react-native-calendars";
 import { SymptomColors } from '../theme/Colors';
 import { IconArrowBadgeDown, IconArrowBadgeUp, IconBalloon, IconBarbell, IconBedOff, IconBike, IconBolt, IconCactus, IconChartBubble, IconChartRadar, IconDroplet, IconDropletHalfFilled, IconDropletOff, IconIceCream2, IconMoodAngry, IconMoodAnnoyed, IconMoodCry, IconMoodHappy, IconMoodNeutral, IconMoodSad, IconMoodSadSquint, IconMoodSick, IconPoo, IconRipple, IconRun, IconSnowflake, IconToolsKitchen2, IconTrekking } from '@tabler/icons-react-native';
 
-
+export type DbEvent = {
+    date: Date;
+    menstruation: boolean;
+    ovulation: boolean;
+    pill: boolean;
+};
 export type Event = {
     date: Date;
     menstruation: boolean;
@@ -12,6 +17,40 @@ export type Event = {
     prediction: boolean;
 };
 
+export type DbSymptoms = {
+    date: Date;
+    menstruation_low: boolean;
+    menstruation_medium: boolean;
+    menstruation_strong: boolean;
+    menstruation_spotting: boolean;
+    symptoms_intestinal_problems: boolean;
+    symptoms_appetite_changes: boolean;
+    symptoms_bloating: boolean;
+    symptoms_chills: boolean;
+    symptoms_cramps: boolean;
+    symptoms_dry_skin: boolean;
+    symptoms_insomnia: boolean;
+    symptoms_nausea: boolean;
+    discharge_watery: boolean;
+    discharge_creamy: boolean;
+    discharge_sticky: boolean;
+    discharge_dry: boolean;
+    sex_drive_very_low: boolean;
+    sex_drive_low: boolean;
+    sex_drive_high: boolean;
+    sex_drive_very_high: boolean;
+    exercise_running: boolean;
+    exercise_cycling: boolean;
+    exercise_hiking: boolean;
+    exercise_gym: boolean;
+    mood_angry: boolean;
+    mood_happy: boolean;
+    mood_neutral: boolean;
+    mood_sad: boolean;
+    mood_annoyed: boolean;
+    mood_sensitive: boolean;
+    mood_irritated: boolean;
+};
 export type Symptoms = {
     date: Date;
     menstruationLow: boolean;

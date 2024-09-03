@@ -156,10 +156,9 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
         setEvents(allEvents);
     }, [db, dbEvents, theme, settings.predictionsTimespan]);
 
-    // TODO: IS THIS REALLY NEEDED?
     useEffect(() => {
         setSymptoms(dbSymptoms);
-    }, [db, dbSymptoms, theme]);
+    }, [db, dbSymptoms]);
 
     return (
         <Ctx.Provider value={{ events, updateEvent, symptoms, updateSymptoms, selectedDate, setSelectedDate, settings, updateSettings, db, setDb }}>

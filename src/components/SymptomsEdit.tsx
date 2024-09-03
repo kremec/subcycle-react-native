@@ -11,8 +11,6 @@ import SymptomCard from './SymptomCard';
 const SymptomsEdit = ({ bottomSheetModalRef, selectedSymptoms, onChange }: { bottomSheetModalRef: React.RefObject<BottomSheetModal>, selectedSymptoms: Symptoms, onChange: (symptoms: Symptoms) => void }) => {
     const { theme } = useTheme();
 
-    console.log(selectedSymptoms)
-
     useEffect(() => {
         bottomSheetModalRef.current?.present();
     }, [bottomSheetModalRef]);
