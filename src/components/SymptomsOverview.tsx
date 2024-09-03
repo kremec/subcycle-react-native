@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 import { Card, IconButton } from 'react-native-paper'
 
 import { defaultSymptoms, getWeekdayDayMonth, isSameDate, Symptoms, SymptomTypes } from '../app/Types';
@@ -13,10 +13,9 @@ const SymptomsOverview = () => {
     const { theme } = useTheme();
     const { symptoms, updateSymptoms, selectedDate } = useAppContext();
 
-    const [selectedSymptoms, setSelectedSymptoms] = useState<Symptoms>(symptoms.find(s => isSameDate(s.date, selectedDate)) || defaultSymptoms(selectedDate));
-    useEffect(() => {
-        setSelectedSymptoms(symptoms.find(s => isSameDate(s.date, selectedDate)) || defaultSymptoms(selectedDate));
-    }, [selectedDate, symptoms]);
+    const selectedSymptoms = useMemo(() => {
+        return symptoms.find(s => isSameDate(s.date, selectedDate)) || defaultSymptoms(selectedDate);
+    }, [symptoms, selectedDate]);
 
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -30,13 +29,12 @@ const SymptomsOverview = () => {
                             mode='outlined'
                             icon='plus'
                             style={{ borderRadius: 10 }}
-                            onPress={() => { bottomSheetModalRef.current?.snapToIndex(0) }}
+                            onPress={() => bottomSheetModalRef.current?.snapToIndex(0)}
                         />
                         <ScrollView
                             horizontal
                             decelerationRate={0.9}
                         >
-
                             {
                                 SymptomTypes.map((type) => (
                                     type.types.map((symptom) => {

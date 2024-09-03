@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Card, Text } from 'react-native-paper'
 import { Icon } from '@tabler/icons-react-native'
 
@@ -31,4 +31,4 @@ const SymptomCard = ({ icon: Icon, text, backgroundColor, filled, selected, onPr
     )
 }
 
-export default SymptomCard
+export default memo(SymptomCard)

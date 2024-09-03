@@ -99,7 +99,6 @@ export async function getSymptomsFromDb(db: SQLiteDatabase) {
         moodSensitive: symptoms.mood_sensitive ? true : false,
         moodIrritated: symptoms.mood_irritated ? true : false
     }));
-    console.log(symptoms);
     return symptoms;
 };
 

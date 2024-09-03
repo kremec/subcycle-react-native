@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { DateData, Calendar as RNCalendar, CalendarUtils } from 'react-native-calendars';
 
 import { useTheme } from '../theme/ThemeContext';
@@ -11,6 +11,7 @@ import { TextStyle, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 
 const Calendar = () => {
+    console.log("RERENDER: Calendar");
     // Getting theme and data contexts
     const { theme } = useTheme();
     const { events, updateEvent, selectedDate, setSelectedDate } = useAppContext();
@@ -27,7 +28,8 @@ const Calendar = () => {
 
         setLoadingDates(false);
     }, [events, selectedDate, theme]);
-    const formatCalendarDates = (events: Event[]) => {
+
+    const formatCalendarDates = useCallback((events: Event[]) => {
         const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; marked: boolean, color: string, dotColor: string, customTextStyle?: TextStyle } } = {};
 
         events.forEach(event => {
@@ -65,8 +67,8 @@ const Calendar = () => {
             }
 
         return markedDates;
-    };
-    const getEventColor = (event: Event) => {
+    }, [events, selectedDate, theme]);
+    const getEventColor = useCallback((event: Event) => {
         if (event.prediction) {
             if (event.menstruation) return CalendarColors.predictedMenstruation;
             else if (event.ovulation) return CalendarColors.predictedOvulation;
@@ -77,25 +79,25 @@ const Calendar = () => {
             else if (event.ovulation) return CalendarColors.ovulation;
             else return CalendarColors.off;
         }
-    };
-    const getEventDotColor = (event: Event) => {
+    }, []);
+    const getEventDotColor = useCallback((event: Event) => {
         if (event.pill) return CalendarColors.pill;
         else return CalendarColors.off;
-    };
-    const getEventTextStyle = (event: Event) => {
+    }, []);
+    const getEventTextStyle = useCallback((event: Event) => {
         const textStyle: TextStyle = { color: (event.menstruation || event.ovulation) ? theme.colors.background : theme.colors.onBackground };
 
         if (isSameDate(event.date, selectedDate))
             textStyle.fontWeight = 'bold';
 
         return textStyle;
-    };
+    }, [selectedDate, theme]);
 
     // Edit dialog
     const [dialogVisible, setDialogVisible] = useState(false);
     const [editEvent, setEditEvent] = useState<Event>();
 
-    const calendarDayPress = (date: DateData) => {
+    const calendarDayPress = useCallback((date: DateData) => {
         let event = events.find(e => isSameDate(date, e.date));
         if (!event)
             event = { date: new Date(date.dateString), menstruation: false, ovulation: false, pill: false, prediction: false };
@@ -106,9 +108,19 @@ const Calendar = () => {
         }
         else
             setSelectedDate(event.date);
-    };
+    }, [events, selectedDate]);
 
     const [headerClicked, setHeaderClicked] = useState(false);
+    const renderHeader = useCallback((date: string) => (
+        <TouchableOpacity onPress={() => {
+            setHeaderClicked(prev => !prev);
+            setSelectedDate(new Date());
+        }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>
+                {getMonthYear(new Date(date))}
+            </Text>
+        </TouchableOpacity>
+    ), [setSelectedDate]);
 
     return (
         <>
@@ -126,18 +138,7 @@ const Calendar = () => {
                 markedDates={markedDates}
                 displayLoadingIndicator={loadingDates}
                 onDayPress={(date: DateData) => { calendarDayPress(date) }}
-                renderHeader={(date: string) => {
-                    return (
-                        <TouchableOpacity onPress={() => {
-                            setHeaderClicked(!headerClicked)
-                            setSelectedDate(new Date())
-                        }}>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>
-                                {getMonthYear(new Date(date))}
-                            </Text>
-                        </TouchableOpacity>
-                    );
-                }}
+                renderHeader={renderHeader}
                 theme={{
                     calendarBackground: theme.colors.background,
                     dayTextColor: theme.colors.onBackground,

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, View } from 'react-native';
 import { Divider, Text } from 'react-native-paper'
 import { ScrollView } from 'react-native-gesture-handler';
@@ -17,15 +17,17 @@ const SymptomsEdit = ({ bottomSheetModalRef, selectedSymptoms, onChange }: { bot
 
     const snapPoints = useMemo(() => ["90%"], []);
 
+    // Close the modal if the user is at the top and scrolls up
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-        const yOffset = event.nativeEvent.contentOffset.y;
-
-        // Close the modal if the user is at the top and scrolls up
-        if (yOffset <= 0) {
-            // Add a little threshold if needed, e.g., -10
+        if (event.nativeEvent.contentOffset.y <= 0) {
             bottomSheetModalRef.current?.dismiss();
         }
     };
+
+    const handleSymptomToggle = useCallback((key: keyof Symptoms) => {
+        const updatedSymptoms = { ...selectedSymptoms, [key]: !selectedSymptoms[key] };
+        onChange(updatedSymptoms);
+    }, [selectedSymptoms, onChange]);
 
     return (
         <BottomSheetModal
@@ -36,7 +38,9 @@ const SymptomsEdit = ({ bottomSheetModalRef, selectedSymptoms, onChange }: { bot
             backgroundStyle={{ backgroundColor: theme.colors.background }}
             enableDismissOnClose={false}
         >
-            <Text variant='titleLarge' style={{ paddingLeft: 10, color: theme.colors.onBackground }}>Symptoms for {getWeekdayDayMonth(selectedSymptoms.date)}</Text>
+            <Text variant='titleLarge' style={{ paddingLeft: 10, color: theme.colors.onBackground }}>
+                Symptoms for {getWeekdayDayMonth(selectedSymptoms.date)}
+            </Text>
             <Divider style={{ marginTop: 10 }} />
             <ScrollView decelerationRate={0.9} showsVerticalScrollIndicator={false} onScrollEndDrag={handleScroll}>
                 {SymptomTypes.map((type) => (
@@ -58,8 +62,7 @@ const SymptomsEdit = ({ bottomSheetModalRef, selectedSymptoms, onChange }: { bot
                                             filled={symptom.filled}
                                             onPress={() => {
                                                 if (key !== "date")
-                                                    selectedSymptoms[key] = !selectedSymptoms[key]
-                                                onChange(selectedSymptoms)
+                                                    handleSymptomToggle(key)
                                             }}
                                             selected={selectedSymptoms[key] === true}
                                         />
