@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
-import { useAppContext } from '../app/AppContext';
+import { useSettingsContext } from '../app/AppContext';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -11,7 +11,7 @@ Notifications.setNotificationHandler({
 });
 
 const NotificationsManager = () => {
-    const { settings } = useAppContext();
+    const { settings } = useSettingsContext();
 
     useEffect(() => {
         // Request notification permissions

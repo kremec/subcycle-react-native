@@ -2,11 +2,11 @@ import React, { useEffect } from 'react'
 import { View } from 'react-native';
 import { Text } from 'react-native-paper'
 
-import { useAppContext } from '../app/AppContext';
 import { CalendarColors } from '../theme/Colors';
+import { useEventsContext } from '../app/AppContext';
 
 const CycleStatus = () => {
-    const { events } = useAppContext();
+    const { events } = useEventsContext();
 
     const [daysUntilNextMenstruationEvent, setDaysUntilNextMenstruationEvent] = React.useState(-1);
     useEffect(() => {
@@ -18,19 +18,19 @@ const CycleStatus = () => {
             return;
 
         const msTimeUntilNextEvent = nextClosestEvent.date.getTime() - new Date().getTime();
-        setDaysUntilNextMenstruationEvent(Math.floor(msTimeUntilNextEvent / (1000 * 60 * 60 * 24))+1);
+        setDaysUntilNextMenstruationEvent(Math.floor(msTimeUntilNextEvent / (1000 * 60 * 60 * 24)) + 1);
     }, [events]);
 
     return (
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-        {daysUntilNextMenstruationEvent !== -1 ? (
-            <>
-                <Text variant="headlineSmall" style={{ fontWeight: 'bold' }}>{daysUntilNextMenstruationEvent} days</Text>
-                <Text variant="titleLarge">until next <Text style={{ color: CalendarColors.predictedMenstruation, fontWeight: 'bold' }}>menstruation</Text></Text>
-            </>
-        ) : (
-            <Text variant="titleLarge">No menstruation events</Text>
-        )}
+            {daysUntilNextMenstruationEvent !== -1 ? (
+                <>
+                    <Text variant="headlineSmall" style={{ fontWeight: 'bold' }}>{daysUntilNextMenstruationEvent} days</Text>
+                    <Text variant="titleLarge">until next <Text style={{ color: CalendarColors.predictedMenstruation, fontWeight: 'bold' }}>menstruation</Text></Text>
+                </>
+            ) : (
+                <Text variant="titleLarge">No menstruation events</Text>
+            )}
         </View>
     )
 }

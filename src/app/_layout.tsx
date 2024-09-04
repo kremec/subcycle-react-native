@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { ThemeProvider, useTheme } from "../theme/ThemeContext";
 import { PaperProvider } from "react-native-paper";
-import { AppContext, useAppContext } from "./AppContext";
+import { AppContext, useEventsContext } from "./AppContext";
 import NotificationsManager from "../notifications/NotificationsManager";
 import * as Notifications from 'expo-notifications';
 import { useEffect } from "react";
@@ -11,7 +11,7 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 const RootLayout = () => {
     const { theme } = useTheme();
-    const { events, updateEvent } = useAppContext();
+    const { events, updateEvent } = useEventsContext();
 
     const lastNotificationResponse = Notifications.useLastNotificationResponse();
     useEffect(() => {
@@ -23,7 +23,6 @@ const RootLayout = () => {
                 event = { date: new Date(), menstruation: false, ovulation: false, pill: true, prediction: false };
             event.pill = true;
             updateEvent(event);
-            console.log(event);
         }
     }, [lastNotificationResponse]);
 

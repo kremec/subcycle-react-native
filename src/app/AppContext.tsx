@@ -1,8 +1,8 @@
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import * as SQLite from 'expo-sqlite';
 
-import { Context, Event, isSameDate, Settings, Symptoms } from './Types';
+import { DbContext, Event, EventsContext, isSameDate, SelectedDateContext, Settings, SettingsContext, Symptoms, SymptomsContext } from './Types';
 import { getMenstruationPredictions, getOvulationPredictions } from '../stats/EventPrediction';
 
 import { createTables, insertEventToDb, updateEventInDb, getEventsFromDb, deleteEventFromDb, getSymptomsFromDb, updateSymptomsInDb, deleteSymptomsFromDb, insertSymptomsToDb } from '../data/SqlDbCalls';
@@ -14,19 +14,31 @@ const defaultSettings: Settings = {
     notificationTime: new Date(new Date().setHours(18, 0, 0)),
     partnerMode: false,
 };
-const defaultContextValue: Context = {
+const defaultEventsContextValue: EventsContext = {
     events: [],
-    updateEvent: (_event: Event) => { },
-    symptoms: [],
-    updateSymptoms: (_symptoms: Symptoms) => { },
-    selectedDate: new Date(),
-    setSelectedDate: (_date: Date) => { },
-    settings: defaultSettings,
-    updateSettings: (_settings: Settings) => { },
-    db: defaultDb,
-    setDb: (_db: SQLite.SQLiteDatabase) => { },
+    updateEvent: (_event: Event) => { }
 };
-const Ctx = createContext(defaultContextValue);
+const EventsCtx = createContext(defaultEventsContextValue);
+const defaultSymptomsContextValue: SymptomsContext = {
+    symptoms: [],
+    updateSymptoms: (_symptoms: Symptoms) => { }
+};
+const SymptomsCtx = createContext(defaultSymptomsContextValue);
+const defaultSelectedDateContextValue: SelectedDateContext = {
+    selectedDate: new Date(),
+    setSelectedDate: (_date: Date) => { }
+};
+const SelectedDateCtx = createContext(defaultSelectedDateContextValue);
+const defaultSettingsContextValue: SettingsContext = {
+    settings: defaultSettings,
+    updateSettings: (_settings: Settings) => { }
+};
+const SettingsCtx = createContext(defaultSettingsContextValue);
+const defaultDbContextValue: DbContext = {
+    db: defaultDb,
+    setDb: (_db: SQLite.SQLiteDatabase) => { }
+};
+const DbCtx = createContext(defaultDbContextValue);
 
 export const AppContext = ({ children }: { children: ReactNode }) => {
 
@@ -35,12 +47,12 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
 
     const [settings, setSettings] = useState<Settings>(defaultSettings);
 
-    const [dbEvents, setDbEvents] = useState<Event[]>(defaultContextValue.events);
-    const [events, setEvents] = useState<Event[]>(defaultContextValue.events);
-    const [dbSymptoms, setDbSymptoms] = useState<Symptoms[]>(defaultContextValue.symptoms);
-    const [symptoms, setSymptoms] = useState<Symptoms[]>(defaultContextValue.symptoms);
+    const [dbEvents, setDbEvents] = useState<Event[]>(defaultEventsContextValue.events);
+    const [events, setEvents] = useState<Event[]>(defaultEventsContextValue.events);
+    const [dbSymptoms, setDbSymptoms] = useState<Symptoms[]>(defaultSymptomsContextValue.symptoms);
+    const [symptoms, setSymptoms] = useState<Symptoms[]>(defaultSymptomsContextValue.symptoms);
 
-    const [selectedDate, setSelectedDate] = useState<Date>(defaultContextValue.selectedDate);
+    const [selectedDate, setSelectedDate] = useState<Date>(defaultSelectedDateContextValue.selectedDate);
 
     const updateEvent = useCallback((editEvent: Event) => {
         if (editEvent.prediction)
@@ -153,10 +165,22 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
     }, [dbSymptoms]);
 
     return (
-        <Ctx.Provider value={{ events, updateEvent, symptoms, updateSymptoms, selectedDate, setSelectedDate, settings, updateSettings, db, setDb }}>
-            {children}
-        </Ctx.Provider>
+        <EventsCtx.Provider value={useMemo(() => ({ events, updateEvent }), [events])}>
+            <SymptomsCtx.Provider value={useMemo(() => ({ symptoms, updateSymptoms }), [symptoms])}>
+                <SelectedDateCtx.Provider value={useMemo(() => ({ selectedDate, setSelectedDate }), [selectedDate])}>
+                    <SettingsCtx.Provider value={useMemo(() => ({ settings, updateSettings }), [settings])}>
+                        <DbCtx.Provider value={useMemo(() => ({ db, setDb }), [db])}>
+                            {children}
+                        </DbCtx.Provider>
+                    </SettingsCtx.Provider>
+                </SelectedDateCtx.Provider>
+            </SymptomsCtx.Provider>
+        </EventsCtx.Provider>
     )
 }
 
-export const useAppContext = () => useContext(Ctx);
+export const useEventsContext = () => useContext(EventsCtx);
+export const useSymptomsContext = () => useContext(SymptomsCtx);
+export const useSelectedDateContext = () => useContext(SelectedDateCtx);
+export const useSettingsContext = () => useContext(SettingsCtx);
+export const useDbContext = () => useContext(DbCtx);

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { DateData, Calendar as RNCalendar, CalendarUtils } from 'react-native-calendars';
 
 import { useTheme } from '../theme/ThemeContext';
-import { useAppContext } from '../app/AppContext';
+import { useEventsContext, useSelectedDateContext } from '../app/AppContext';
 import { Event, getMonthYear, isSameDate } from '../app/Types';
 import CalendarEditDialog from './CalendarEditDialog';
 import { CalendarColors } from '../theme/Colors';
@@ -11,10 +11,10 @@ import { TextStyle, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 
 const Calendar = () => {
-    console.log("RERENDER: Calendar");
     // Getting theme and data contexts
     const { theme } = useTheme();
-    const { events, updateEvent, selectedDate, setSelectedDate } = useAppContext();
+    const { events, updateEvent } = useEventsContext();
+    const { selectedDate, setSelectedDate } = useSelectedDateContext();
 
     // Marking dates
     const [loadingDates, setLoadingDates] = useState(true);
@@ -125,7 +125,7 @@ const Calendar = () => {
     return (
         <>
             <RNCalendar
-                key={theme.mode?.toString() + headerClicked.toString()} // Force remount when theme changes
+                key={`${theme.mode}-${headerClicked}`} // Force remount when theme changes
                 horizontal={true}
                 pagingEnabled={true}
                 futureScrollRange={0}

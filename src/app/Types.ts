@@ -196,17 +196,25 @@ export type EventPeriod = {
     dayLength: number;
 }
 
-export type Context = {
+export type EventsContext = {
     events: Event[];
     updateEvent: (event: Event) => void;
+};
+export type SymptomsContext = {
     symptoms: Symptoms[];
     updateSymptoms: (symptoms: Symptoms) => void;
-    selectedDate: Date;
-    setSelectedDate: (date: Date) => void;
+};
+export type SettingsContext = {
     settings: Settings;
     updateSettings: (settings: Settings) => void;
+};
+export type DbContext = {
     db: SQLite.SQLiteDatabase;
     setDb: (db: SQLite.SQLiteDatabase) => void;
+};
+export type SelectedDateContext = {
+    selectedDate: Date;
+    setSelectedDate: (date: Date) => void;
 };
 
 export type Settings = {

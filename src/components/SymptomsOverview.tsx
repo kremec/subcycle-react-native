@@ -3,15 +3,16 @@ import { Card, IconButton } from 'react-native-paper'
 
 import { defaultSymptoms, getWeekdayDayMonth, isSameDate, Symptoms, SymptomTypes } from '../app/Types';
 import { useTheme } from '../theme/ThemeContext';
-import { useAppContext } from '../app/AppContext';
 import SymptomsEdit from './SymptomsEdit';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useSelectedDateContext, useSymptomsContext } from '../app/AppContext';
 
 const SymptomsOverview = () => {
     const { theme } = useTheme();
-    const { symptoms, updateSymptoms, selectedDate } = useAppContext();
+    const { symptoms, updateSymptoms } = useSymptomsContext();
+    const { selectedDate } = useSelectedDateContext();
 
     const selectedSymptoms = useMemo(() => {
         return symptoms.find(s => isSameDate(s.date, selectedDate)) || defaultSymptoms(selectedDate);

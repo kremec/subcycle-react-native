@@ -9,14 +9,15 @@ import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 
+import { useDbContext, useSettingsContext } from '../AppContext';
 import { useTheme } from '../../theme/ThemeContext';
-import { useAppContext } from '../AppContext';
 import { getHourMinute, Settings } from '../Types';
 
 export default function Tab() {
     const { theme } = useTheme();
 
-    const { db, setDb, settings, updateSettings } = useAppContext();
+    const { db, setDb } = useDbContext();
+    const { settings, updateSettings } = useSettingsContext();
     const [currentSettings, setCurrentSettings] = useState(settings);
     useEffect(() => {
         setCurrentSettings(settings);
