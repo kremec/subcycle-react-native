@@ -19,9 +19,7 @@ const SymptomCard = ({ icon: Icon, text, backgroundColor, filled, selected, onPr
                 justifyContent: 'center',
                 alignItems: 'center'
             }}
-            onPress={() => {
-                onPress()
-            }}
+            onPress={onPress}
         >
             <Card.Content style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <Icon size={40} strokeWidth={!filled ? 1.5 : 0} fill={filled ? theme.colors.onBackground : 'transparent'} color={theme.colors.onBackground} />

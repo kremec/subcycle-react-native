@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 import { Card, IconButton } from 'react-native-paper'
 
 import { defaultSymptoms, getWeekdayDayMonth, isSameDate, Symptoms, SymptomTypes } from '../app/Types';

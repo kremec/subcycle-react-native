@@ -25,8 +25,8 @@ const SymptomsEdit = ({ bottomSheetModalRef, selectedSymptoms, onChange }: { bot
     };
 
     const handleSymptomToggle = useCallback((key: keyof Symptoms) => {
-        const updatedSymptoms = { ...selectedSymptoms, [key]: !selectedSymptoms[key] };
-        onChange(updatedSymptoms);
+        if (key !== "date")
+            onChange({ ...selectedSymptoms, [key]: !selectedSymptoms[key] })
     }, [selectedSymptoms, onChange]);
 
     return (
@@ -60,10 +60,7 @@ const SymptomsEdit = ({ bottomSheetModalRef, selectedSymptoms, onChange }: { bot
                                             text={symptom.name}
                                             backgroundColor={type.backgroundColor}
                                             filled={symptom.filled}
-                                            onPress={() => {
-                                                if (key !== "date")
-                                                    handleSymptomToggle(key)
-                                            }}
+                                            onPress={() => handleSymptomToggle(key)}
                                             selected={selectedSymptoms[key] === true}
                                         />
                                     )
