@@ -1,42 +1,38 @@
-import { Stack } from "expo-router";
-import { ThemeProvider, useTheme } from "../theme/ThemeContext";
-import { PaperProvider } from "react-native-paper";
-import { AppContext, useEventsContext } from "./AppContext";
-import NotificationsManager from "../notifications/NotificationsManager";
-import * as Notifications from 'expo-notifications';
-import { useEffect } from "react";
-import { isSameDate } from "./Types";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { Stack } from 'expo-router'
+import { ThemeProvider, useTheme } from '../theme/ThemeContext'
+import { PaperProvider } from 'react-native-paper'
+import { AppContext, useEventsContext } from './AppContext'
+import NotificationsManager from '../notifications/NotificationsManager'
+import * as Notifications from 'expo-notifications'
+import { useEffect } from 'react'
+import { isSameDate } from './Types'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 
 const RootLayout = () => {
-    const { theme } = useTheme();
-    const { events, updateEvent } = useEventsContext();
+    const { theme } = useTheme()
+    const { events, updateEvent } = useEventsContext()
 
-    const lastNotificationResponse = Notifications.useLastNotificationResponse();
+    const lastNotificationResponse = Notifications.useLastNotificationResponse()
     useEffect(() => {
-        if (lastNotificationResponse?.actionIdentifier === "checkpill") {
-            Notifications.dismissAllNotificationsAsync();
+        if (lastNotificationResponse?.actionIdentifier === 'checkpill') {
+            Notifications.dismissAllNotificationsAsync()
 
-            let event = events.find(e => isSameDate(new Date(), e.date));
-            if (!event)
-                event = { date: new Date(), menstruation: false, ovulation: false, pill: true, prediction: false };
-            event.pill = true;
-            updateEvent(event);
+            let event = events.find((e) => isSameDate(new Date(), e.date))
+            if (!event) event = { date: new Date(), menstruation: false, ovulation: false, pill: true, prediction: false }
+            event.pill = true
+            updateEvent(event)
         }
-    }, [lastNotificationResponse]);
+    }, [lastNotificationResponse])
 
     return (
         <PaperProvider theme={theme}>
             <Stack>
-                <Stack.Screen
-                    name="(tabs)"
-                    options={{ headerShown: false }}
-                />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             </Stack>
         </PaperProvider>
-    );
-};
+    )
+}
 
 const App = () => {
     return (
@@ -50,6 +46,6 @@ const App = () => {
                 </ThemeProvider>
             </BottomSheetModalProvider>
         </GestureHandlerRootView>
-    );
-};
-export default App;
+    )
+}
+export default App

@@ -1,10 +1,10 @@
-import { Tabs } from 'expo-router';
-import { Icon } from 'react-native-paper';
-import { useTheme } from '../../theme/ThemeContext';
+import { Tabs } from 'expo-router'
+import { Icon } from 'react-native-paper'
+import { useTheme } from '../../theme/ThemeContext'
 
 export default function TabLayout() {
-    const { theme } = useTheme(); // Access the theme
-    
+    const { theme } = useTheme() // Access the theme
+
     return (
         <Tabs
             screenOptions={{
@@ -14,7 +14,7 @@ export default function TabLayout() {
                 // Top header bar
                 headerTitleStyle: { color: theme.colors.onBackground },
                 headerStyle: { backgroundColor: theme.colors.background },
-                tabBarShowLabel: false,
+                tabBarShowLabel: false
             }}
             // All screens' background color
             sceneContainerStyle={{ backgroundColor: theme.colors.background }}
@@ -23,16 +23,16 @@ export default function TabLayout() {
                 name="index"
                 options={{
                     title: 'Calendar',
-                    tabBarIcon: ({ color }) => <Icon source="calendar-outline" size={20} color={color} />,
+                    tabBarIcon: ({ color }) => <Icon source="calendar-outline" size={20} color={color} />
                 }}
             />
             <Tabs.Screen
                 name="settings"
                 options={{
                     title: 'Settings',
-                    tabBarIcon: ({ color }) => <Icon source="cog-outline" size={20} color={color} />,
+                    tabBarIcon: ({ color }) => <Icon source="cog-outline" size={20} color={color} />
                 }}
             />
         </Tabs>
-    );
+    )
 }

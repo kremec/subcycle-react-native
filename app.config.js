@@ -1,44 +1,42 @@
-const IS_DEV = process.env.APP_VARIANT === 'development';
+const IS_DEV = process.env.APP_VARIANT === 'development'
 
 export default {
     expo: {
-        name: IS_DEV ? "subcycle (Dev)" : "subcycle",
-        slug: "subcycle",
-        scheme: "subcycle",
-        version: "2.0.1",
-        orientation: "portrait",
-        icon: "./assets/icon.png",
-        userInterfaceStyle: "automatic",
+        name: IS_DEV ? 'subcycle (Dev)' : 'subcycle',
+        slug: 'subcycle',
+        scheme: 'subcycle',
+        version: '2.0.1',
+        orientation: 'portrait',
+        icon: './assets/icon.png',
+        userInterfaceStyle: 'automatic',
         android: {
             adaptiveIcon: {
-                foregroundImage: "./assets/adaptive-icon.png",
-                backgroundColor: "#ffffff"
+                foregroundImage: './assets/adaptive-icon.png',
+                backgroundColor: '#ffffff'
             },
             splash: {
-                image: "./assets/splash.png",
-                resizeMode: "contain",
-                backgroundColor: "#ffffff",
+                image: './assets/splash.png',
+                resizeMode: 'contain',
+                backgroundColor: '#ffffff',
                 dark: {
-                    image: "./assets/splash.png",
-                    resizeMode: "contain",
-                    backgroundColor: "#000000"
+                    image: './assets/splash.png',
+                    resizeMode: 'contain',
+                    backgroundColor: '#000000'
                 }
             },
-            package: IS_DEV ? "dev.subbyte.subcycle" : "com.subbyte.subcycle"
+            package: IS_DEV ? 'dev.subbyte.subcycle' : 'com.subbyte.subcycle'
         },
         web: {
-            favicon: "./assets/favicon.png"
+            favicon: './assets/favicon.png'
         },
-        plugins: [
-            "expo-router"
-        ],
+        plugins: ['expo-router'],
         extra: {
             router: {
                 origin: false
             },
             eas: {
-                projectId: "48d6445a-942c-474d-be16-5d46d6f25603"
+                projectId: '48d6445a-942c-474d-be16-5d46d6f25603'
             }
         }
     }
-};
+}

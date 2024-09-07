@@ -1,6 +1,6 @@
-import React, { memo } from "react";
-import { Card, Text } from "react-native-paper";
-import { Icon } from "@tabler/icons-react-native";
+import React, { memo } from 'react'
+import { Card, Text } from 'react-native-paper'
+import { Icon } from '@tabler/icons-react-native'
 
 const SymptomCard = ({
     icon: Icon,
@@ -9,15 +9,15 @@ const SymptomCard = ({
     onBackgroundColor,
     filled,
     selected,
-    onPress,
+    onPress
 }: {
-    icon: Icon;
-    text: string;
-    backgroundColor: string;
-    onBackgroundColor: string;
-    filled: boolean | undefined;
-    selected: boolean;
-    onPress: () => void;
+    icon: Icon
+    text: string
+    backgroundColor: string
+    onBackgroundColor: string
+    filled: boolean | undefined
+    selected: boolean
+    onPress: () => void
 }) => {
     return (
         <Card
@@ -30,35 +30,30 @@ const SymptomCard = ({
                 padding: selected ? 0 : 2,
                 borderWidth: selected ? 2 : 0,
                 borderColor: onBackgroundColor,
-                justifyContent: "center",
-                alignItems: "center",
+                justifyContent: 'center',
+                alignItems: 'center'
             }}
             onPress={onPress}
         >
             <Card.Content
                 style={{
-                    justifyContent: "center",
-                    alignItems: "center",
+                    justifyContent: 'center',
+                    alignItems: 'center'
                 }}
             >
-                <Icon
-                    size={40}
-                    strokeWidth={!filled ? 1.5 : 0}
-                    fill={filled ? onBackgroundColor : "transparent"}
-                    color={onBackgroundColor}
-                />
+                <Icon size={40} strokeWidth={!filled ? 1.5 : 0} fill={filled ? onBackgroundColor : 'transparent'} color={onBackgroundColor} />
                 <Text
                     variant="bodySmall"
                     style={{
                         color: onBackgroundColor,
-                        opacity: 1,
+                        opacity: 1
                     }}
                 >
                     {text}
                 </Text>
             </Card.Content>
         </Card>
-    );
-};
+    )
+}
 
-export default memo(SymptomCard);
+export default memo(SymptomCard)

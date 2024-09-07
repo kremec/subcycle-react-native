@@ -1,8 +1,8 @@
-import { View } from "react-native";
+import { View } from 'react-native'
 
-import CycleStatus from "../../components/CycleStatus";
-import Calendar from "../../components/Calendar";
-import SymptomsOverview from "../../components/SymptomsOverview";
+import CycleStatus from '../../components/CycleStatus'
+import Calendar from '../../components/Calendar'
+import SymptomsOverview from '../../components/SymptomsOverview'
 
 const Home = () => {
     return (
@@ -19,7 +19,7 @@ const Home = () => {
                 <SymptomsOverview />
             </View>
         </View>
-    );
-};
+    )
+}
 
-export default Home;
+export default Home

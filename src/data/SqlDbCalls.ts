@@ -1,5 +1,5 @@
-import { SQLiteDatabase } from "expo-sqlite";
-import { DbEvent, DbSymptoms, Event, Symptoms } from "../app/Types";
+import { SQLiteDatabase } from 'expo-sqlite'
+import { DbEvent, DbSymptoms, Event, Symptoms } from '../app/Types'
 
 export async function createTables(db: SQLiteDatabase) {
     await db?.execAsync(
@@ -46,26 +46,26 @@ export async function createTables(db: SQLiteDatabase) {
             mood_irritated BOOLEAN NOT NULL DEFAULT FALSE
         );
         `
-    );
-};
+    )
+}
 
 export async function getEventsFromDb(db: SQLiteDatabase) {
-    const results = await db.getAllAsync<DbEvent>("SELECT * FROM events");
+    const results = await db.getAllAsync<DbEvent>('SELECT * FROM events')
 
-    const events: Event[] = results.map(event => ({
+    const events: Event[] = results.map((event) => ({
         date: new Date(event.date),
         menstruation: event.menstruation ? true : false,
         ovulation: event.ovulation ? true : false,
         pill: event.pill ? true : false,
-        prediction: false,
-    }));
-    return events;
-};
+        prediction: false
+    }))
+    return events
+}
 
 export async function getSymptomsFromDb(db: SQLiteDatabase) {
-    const results = await db.getAllAsync<DbSymptoms>("SELECT * FROM symptoms");
+    const results = await db.getAllAsync<DbSymptoms>('SELECT * FROM symptoms')
 
-    const symptoms: Symptoms[] = results.map(symptoms => ({
+    const symptoms: Symptoms[] = results.map((symptoms) => ({
         date: new Date(symptoms.date),
         menstruationLow: symptoms.menstruation_low ? true : false,
         menstruationMedium: symptoms.menstruation_medium ? true : false,
@@ -98,10 +98,9 @@ export async function getSymptomsFromDb(db: SQLiteDatabase) {
         moodAnnoyed: symptoms.mood_annoyed ? true : false,
         moodSensitive: symptoms.mood_sensitive ? true : false,
         moodIrritated: symptoms.mood_irritated ? true : false
-    }));
-    return symptoms;
-};
-
+    }))
+    return symptoms
+}
 
 export async function insertEventToDb(db: SQLiteDatabase, event: Event) {
     const command = await db.prepareAsync(
@@ -115,14 +114,15 @@ export async function insertEventToDb(db: SQLiteDatabase, event: Event) {
             $menstruation,
             $ovulation,
             $pill
-        )`);
+        )`
+    )
     await command.executeAsync({
         $date: event.date.toISOString(),
         $menstruation: event.menstruation,
         $ovulation: event.ovulation,
         $pill: event.pill
-    });
-};
+    })
+}
 
 export async function insertSymptomsToDb(db: SQLiteDatabase, symptoms: Symptoms) {
     const command = await db.prepareAsync(
@@ -192,7 +192,8 @@ export async function insertSymptomsToDb(db: SQLiteDatabase, symptoms: Symptoms)
             $mood_annoyed,
             $mood_sensitive,
             $mood_irritated
-        )`)
+        )`
+    )
     await command.executeAsync({
         $date: symptoms.date.toISOString(),
         $menstruation_low: symptoms.menstruationLow,
@@ -225,10 +226,9 @@ export async function insertSymptomsToDb(db: SQLiteDatabase, symptoms: Symptoms)
         $mood_sad: symptoms.moodSad,
         $mood_annoyed: symptoms.moodAnnoyed,
         $mood_sensitive: symptoms.moodSensitive,
-        $mood_irritated: symptoms.moodIrritated,
-    });
-};
-
+        $mood_irritated: symptoms.moodIrritated
+    })
+}
 
 export async function updateEventInDb(db: SQLiteDatabase, event: Event) {
     const command = await db.prepareAsync(
@@ -237,14 +237,14 @@ export async function updateEventInDb(db: SQLiteDatabase, event: Event) {
             ovulation = $ovulation,
             pill = $pill
         WHERE date = $date`
-    );
+    )
     await command.executeAsync({
         $date: event.date.toISOString(),
         $menstruation: event.menstruation,
         $ovulation: event.ovulation,
         $pill: event.pill
-    });
-};
+    })
+}
 
 export async function updateSymptomsInDb(db: SQLiteDatabase, symptoms: Symptoms) {
     const command = await db.prepareAsync(
@@ -281,7 +281,7 @@ export async function updateSymptomsInDb(db: SQLiteDatabase, symptoms: Symptoms)
             mood_sensitive = $mood_sensitive,
             mood_irritated = $mood_irritated
         WHERE date = $date`
-    );
+    )
     await command.executeAsync({
         $date: symptoms.date.toISOString(),
         $menstruation_low: symptoms.menstruationLow,
@@ -314,17 +314,16 @@ export async function updateSymptomsInDb(db: SQLiteDatabase, symptoms: Symptoms)
         $mood_sad: symptoms.moodSad,
         $mood_annoyed: symptoms.moodAnnoyed,
         $mood_sensitive: symptoms.moodSensitive,
-        $mood_irritated: symptoms.moodIrritated,
-    });
-};
-
+        $mood_irritated: symptoms.moodIrritated
+    })
+}
 
 export async function deleteEventFromDb(db: SQLiteDatabase, date: Date) {
-    const command = await db.prepareAsync(`DELETE FROM events WHERE date = $date`);
-    await command.executeAsync({ $date: date.toISOString() });
-};
+    const command = await db.prepareAsync(`DELETE FROM events WHERE date = $date`)
+    await command.executeAsync({ $date: date.toISOString() })
+}
 
 export async function deleteSymptomsFromDb(db: SQLiteDatabase, date: Date) {
-    const command = await db.prepareAsync(`DELETE FROM symptoms WHERE date = $date`);
-    await command.executeAsync({ $date: date.toISOString() });
-};
+    const command = await db.prepareAsync(`DELETE FROM symptoms WHERE date = $date`)
+    await command.executeAsync({ $date: date.toISOString() })
+}
