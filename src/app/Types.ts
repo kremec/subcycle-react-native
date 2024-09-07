@@ -98,10 +98,10 @@ export type Symptoms = {
     dischargeCreamy: boolean
     dischargeSticky: boolean
     dischargeDry: boolean
-    sexDriveVeryLow: boolean
-    sexDriveLow: boolean
-    sexDriveHigh: boolean
-    sexDriveVeryHigh: boolean
+    libidoVeryLow: boolean
+    libidoLow: boolean
+    libidoHigh: boolean
+    libidoVeryHigh: boolean
     exerciseRunning: boolean
     exerciseCycling: boolean
     exerciseHiking: boolean
@@ -133,10 +133,10 @@ export const defaultSymptoms = (date: Date): Symptoms => ({
     dischargeCreamy: false,
     dischargeSticky: false,
     dischargeDry: false,
-    sexDriveVeryLow: false,
-    sexDriveLow: false,
-    sexDriveHigh: false,
-    sexDriveVeryHigh: false,
+    libidoVeryLow: false,
+    libidoLow: false,
+    libidoHigh: false,
+    libidoVeryHigh: false,
     exerciseRunning: false,
     exerciseCycling: false,
     exerciseHiking: false,
@@ -186,13 +186,13 @@ export const SymptomTypes = [
         ]
     },
     {
-        name: 'Sex drive',
-        backgroundColor: SymptomColors.sexDrive,
+        name: 'Libido',
+        backgroundColor: SymptomColors.libido,
         types: [
-            { key: 'sexDriveVeryLow', name: 'Very low', icon: IconArrowBadgeDown, filled: true },
-            { key: 'sexDriveLow', name: 'Low', icon: IconArrowBadgeDown },
-            { key: 'sexDriveHigh', name: 'High', icon: IconArrowBadgeUp },
-            { key: 'sexDriveVeryHigh', name: 'Very high', icon: IconArrowBadgeUp, filled: true }
+            { key: 'libidoVeryLow', name: 'Very low', icon: IconArrowBadgeDown, filled: true },
+            { key: 'libidoLow', name: 'Low', icon: IconArrowBadgeDown },
+            { key: 'libidoHigh', name: 'High', icon: IconArrowBadgeUp },
+            { key: 'libidoVeryHigh', name: 'Very high', icon: IconArrowBadgeUp, filled: true }
         ]
     },
     {

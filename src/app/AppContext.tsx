@@ -100,10 +100,10 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
                 editSymptoms.dischargeCreamy ||
                 editSymptoms.dischargeSticky ||
                 editSymptoms.dischargeDry ||
-                editSymptoms.sexDriveVeryLow ||
-                editSymptoms.sexDriveLow ||
-                editSymptoms.sexDriveHigh ||
-                editSymptoms.sexDriveVeryHigh ||
+                editSymptoms.libidoVeryLow ||
+                editSymptoms.libidoLow ||
+                editSymptoms.libidoHigh ||
+                editSymptoms.libidoVeryHigh ||
                 editSymptoms.exerciseRunning ||
                 editSymptoms.exerciseCycling ||
                 editSymptoms.exerciseHiking ||

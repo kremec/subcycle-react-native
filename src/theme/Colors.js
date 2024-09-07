@@ -97,6 +97,6 @@ export const SymptomColors = {
     discharge: '#87CEFA', // lightskyblue
     symptoms: '#FFA07A', // lightsalmon
     moods: '#DA70D6', // orchid
-    sexDrive: '#FFB6C1', // lightpink
+    libido: '#FFB6C1', // lightpink
     exercise: '#20B2AA' // lightseagreen
 }

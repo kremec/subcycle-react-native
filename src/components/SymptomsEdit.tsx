@@ -58,34 +58,34 @@ const SymptomsEdit = ({
                     }
                 }
 
-                // Sex
-                if (key === 'sexDriveVeryLow' && updatedSymptoms.sexDriveVeryLow) {
+                // Libido
+                if (key === 'libidoVeryLow' && updatedSymptoms.libidoVeryLow) {
                     updatedSymptoms = {
                         ...updatedSymptoms,
-                        sexDriveLow: false,
-                        sexDriveHigh: false,
-                        sexDriveVeryHigh: false
+                        libidoLow: false,
+                        libidoHigh: false,
+                        libidoVeryHigh: false
                     }
-                } else if (key === 'sexDriveLow' && updatedSymptoms.sexDriveLow) {
+                } else if (key === 'libidoLow' && updatedSymptoms.libidoLow) {
                     updatedSymptoms = {
                         ...updatedSymptoms,
-                        sexDriveVeryLow: false,
-                        sexDriveHigh: false,
-                        sexDriveVeryHigh: false
+                        libidoVeryLow: false,
+                        libidoHigh: false,
+                        libidoVeryHigh: false
                     }
-                } else if (key === 'sexDriveHigh' && updatedSymptoms.sexDriveHigh) {
+                } else if (key === 'libidoHigh' && updatedSymptoms.libidoHigh) {
                     updatedSymptoms = {
                         ...updatedSymptoms,
-                        sexDriveVeryLow: false,
-                        sexDriveLow: false,
-                        sexDriveVeryHigh: false
+                        libidoVeryLow: false,
+                        libidoLow: false,
+                        libidoVeryHigh: false
                     }
-                } else if (key === 'sexDriveVeryHigh' && updatedSymptoms.sexDriveVeryHigh) {
+                } else if (key === 'libidoVeryHigh' && updatedSymptoms.libidoVeryHigh) {
                     updatedSymptoms = {
                         ...updatedSymptoms,
-                        sexDriveVeryLow: false,
-                        sexDriveLow: false,
-                        sexDriveHigh: false
+                        libidoVeryLow: false,
+                        libidoLow: false,
+                        libidoHigh: false
                     }
                 }
 
