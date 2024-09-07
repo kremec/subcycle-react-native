@@ -34,11 +34,63 @@ const SymptomsEdit = ({
 
     const handleSymptomToggle = useCallback(
         (key: keyof Symptoms) => {
-            if (key !== 'date')
-                onChange({
-                    ...selectedSymptoms,
-                    [key]: !selectedSymptoms[key]
-                })
+            if (key !== 'date') {
+                let updatedSymptoms = { ...selectedSymptoms, [key]: !selectedSymptoms[key] }
+
+                // Menstruation flows
+                if (key === 'menstruationLow' && updatedSymptoms.menstruationLow) {
+                    updatedSymptoms = {
+                        ...updatedSymptoms,
+                        menstruationMedium: false,
+                        menstruationStrong: false
+                    }
+                } else if (key === 'menstruationMedium' && updatedSymptoms.menstruationMedium) {
+                    updatedSymptoms = {
+                        ...updatedSymptoms,
+                        menstruationLow: false,
+                        menstruationStrong: false
+                    }
+                } else if (key === 'menstruationStrong' && updatedSymptoms.menstruationStrong) {
+                    updatedSymptoms = {
+                        ...updatedSymptoms,
+                        menstruationLow: false,
+                        menstruationMedium: false
+                    }
+                }
+
+                // Sex
+                if (key === 'sexDriveVeryLow' && updatedSymptoms.sexDriveVeryLow) {
+                    updatedSymptoms = {
+                        ...updatedSymptoms,
+                        sexDriveLow: false,
+                        sexDriveHigh: false,
+                        sexDriveVeryHigh: false
+                    }
+                } else if (key === 'sexDriveLow' && updatedSymptoms.sexDriveLow) {
+                    updatedSymptoms = {
+                        ...updatedSymptoms,
+                        sexDriveVeryLow: false,
+                        sexDriveHigh: false,
+                        sexDriveVeryHigh: false
+                    }
+                } else if (key === 'sexDriveHigh' && updatedSymptoms.sexDriveHigh) {
+                    updatedSymptoms = {
+                        ...updatedSymptoms,
+                        sexDriveVeryLow: false,
+                        sexDriveLow: false,
+                        sexDriveVeryHigh: false
+                    }
+                } else if (key === 'sexDriveVeryHigh' && updatedSymptoms.sexDriveVeryHigh) {
+                    updatedSymptoms = {
+                        ...updatedSymptoms,
+                        sexDriveVeryLow: false,
+                        sexDriveLow: false,
+                        sexDriveHigh: false
+                    }
+                }
+
+                onChange(updatedSymptoms)
+            }
         },
         [selectedSymptoms, onChange]
     )
