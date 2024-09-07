@@ -26,7 +26,13 @@ const SymptomsOverview = () => {
                 <Card.Title title={`Symptoms for ${getWeekdayDayMonth(selectedDate)}`} />
                 <Card.Content>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <IconButton mode="outlined" icon="plus" style={{ borderRadius: 10 }} onPress={() => bottomSheetModalRef.current?.snapToIndex(0)} />
+                        <IconButton
+                            mode="outlined"
+                            icon="plus"
+                            iconColor={theme.colors.onBackground}
+                            style={{ borderRadius: 10, borderColor: theme.colors.onBackground, borderWidth: 1.5 }}
+                            onPress={() => bottomSheetModalRef.current?.snapToIndex(0)}
+                        />
                         <ScrollView horizontal decelerationRate={0.9}>
                             {SymptomTypes.map((type) =>
                                 type.types.map((symptom) => {

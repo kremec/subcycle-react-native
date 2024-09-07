@@ -4,7 +4,7 @@ import CycleStatus from '../../components/CycleStatus'
 import Calendar from '../../components/Calendar'
 import SymptomsOverview from '../../components/SymptomsOverview'
 
-const Home = () => {
+export default function HomeTab() {
     return (
         <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10 }}>
             <View style={{ justifyContent: 'center' }}>
@@ -21,5 +21,3 @@ const Home = () => {
         </View>
     )
 }
-
-export default Home

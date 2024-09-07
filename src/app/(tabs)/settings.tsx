@@ -12,8 +12,9 @@ import * as DocumentPicker from 'expo-document-picker'
 import { useDbContext, useSettingsContext } from '../AppContext'
 import { useTheme } from '../../theme/ThemeContext'
 import { getHourMinute, Settings } from '../Types'
+import { IconAlarm, IconFileExport, IconFileImport, IconReport, IconUserHeart } from '@tabler/icons-react-native'
 
-export default function Tab() {
+export default function SettingsTab() {
     const { theme } = useTheme()
 
     const { db, setDb } = useDbContext()
@@ -55,7 +56,11 @@ export default function Tab() {
         <>
             <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10, flexDirection: 'column' }}>
                 <Card style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}>
-                    <Card.Title title="Menstrual cycle prediction" subtitle="Number of months for predictions" left={(props) => <Icon source="chart-box-outline" {...props} />} />
+                    <Card.Title
+                        title="Menstrual cycle prediction"
+                        subtitle="Number of months for predictions"
+                        left={(props) => <IconReport {...props} color={theme.colors.onBackground} strokeWidth={1.5} />}
+                    />
                     <Card.Content>
                         <Picker
                             selectedValue={currentSettings?.predictionsTimespan}
@@ -84,7 +89,7 @@ export default function Tab() {
                 </Card>
 
                 <Card style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}>
-                    <Card.Title title="Pill notifications" subtitle="Daily notification time" left={(props) => <Icon source="alarm" {...props} />} />
+                    <Card.Title title="Pill notifications" subtitle="Daily notification time" left={(props) => <IconAlarm {...props} color={theme.colors.onBackground} strokeWidth={1.5} />} />
                     <Card.Content>
                         <TouchableRipple style={{ padding: 10, borderRadius: 10 }} onPress={() => setShowNotificationTimePicker(true)}>
                             <Text>Notification time: {getHourMinute(currentSettings?.notificationTime)}</Text>
@@ -105,7 +110,7 @@ export default function Tab() {
                 </Card>
 
                 <Card style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}>
-                    <Card.Title title="Partner mode" subtitle="Coming soon <3" left={(props) => <Icon source="account-heart-outline" {...props} />} />
+                    <Card.Title title="Partner mode" subtitle="Coming soon <3" left={(props) => <IconUserHeart {...props} color={theme.colors.onBackground} strokeWidth={1.5} />} />
                     <Card.Content>
                         <Switch value={currentSettings.partnerMode} onValueChange={(value) => updateSettings({ ...currentSettings, partnerMode: value })} />
                     </Card.Content>
@@ -113,12 +118,22 @@ export default function Tab() {
             </View>
             <View style={{ paddingHorizontal: 10, paddingVertical: 10, gap: 10, flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
-                    <Button mode="outlined" textColor={theme.colors.onBackground} icon={(props) => <Icon source="import" {...props} />} onPress={() => importDb()}>
+                    <Button
+                        mode="outlined"
+                        textColor={theme.colors.onBackground}
+                        icon={(props) => <IconFileImport {...props} color={theme.colors.onBackground} strokeWidth={2} />}
+                        onPress={() => importDb()}
+                    >
                         Import data
                     </Button>
                 </View>
                 <View style={{ flex: 1 }}>
-                    <Button mode="outlined" textColor={theme.colors.onBackground} icon={(props) => <Icon source="export" {...props} />} onPress={() => exportDb()}>
+                    <Button
+                        mode="outlined"
+                        textColor={theme.colors.onBackground}
+                        icon={(props) => <IconFileExport {...props} color={theme.colors.onBackground} strokeWidth={2} />}
+                        onPress={() => exportDb()}
+                    >
                         Export data
                     </Button>
                 </View>
