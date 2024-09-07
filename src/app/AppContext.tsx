@@ -62,19 +62,19 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
             if (!existingEvent) {
                 if (hasEvents) {
                     // Insert if event is new and has at least some event
-                    setDbEvents([...dbEvents, editEvent])
                     insertEventToDb(db, editEvent)
+                    setDbEvents([...dbEvents, editEvent])
                 }
             } else {
                 if (hasEvents) {
                     // Update if event has at least one event
                     const tempEvents = dbEvents.filter((e) => !isSameDate(e.date, editEvent.date))
+                    updateEventInDb(db, editEvent)
                     setDbEvents([...tempEvents, editEvent])
-                    updateEventInDb(db, existingEvent)
                 } else {
                     // Delete if event has no events
-                    setDbEvents(dbEvents.filter((e) => !isSameDate(e.date, editEvent.date)))
                     deleteEventFromDb(db, editEvent.date)
+                    setDbEvents(dbEvents.filter((e) => !isSameDate(e.date, editEvent.date)))
                 }
             }
         },
@@ -115,23 +115,24 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
                 editSymptoms.moodAnnoyed ||
                 editSymptoms.moodSensitive ||
                 editSymptoms.moodIrritated
+
             const existingSymptoms = dbSymptoms.find((s) => isSameDate(s.date, editSymptoms.date))
             if (!existingSymptoms) {
                 if (hasSymptoms) {
                     // Insert if symptoms are new and have at least some symptoms
-                    setDbSymptoms([...dbSymptoms, editSymptoms])
                     insertSymptomsToDb(db, editSymptoms)
+                    setDbSymptoms([...dbSymptoms, editSymptoms])
                 }
             } else {
                 if (hasSymptoms) {
                     // Update if symptoms have at least one symptom
                     const tempSymptoms = dbSymptoms.filter((s) => !isSameDate(s.date, editSymptoms.date))
+                    updateSymptomsInDb(db, editSymptoms)
                     setDbSymptoms([...tempSymptoms, editSymptoms])
-                    updateSymptomsInDb(db, existingSymptoms)
                 } else {
                     // Delete if symptoms have no symptoms
-                    setDbSymptoms(dbSymptoms.filter((s) => !isSameDate(s.date, editSymptoms.date)))
                     deleteSymptomsFromDb(db, editSymptoms.date)
+                    setDbSymptoms(dbSymptoms.filter((s) => !isSameDate(s.date, editSymptoms.date)))
                 }
             }
         },
