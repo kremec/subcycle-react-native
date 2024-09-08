@@ -26,7 +26,7 @@ const CycleStatus = () => {
                         {daysUntilNextMenstruationEvent} days
                     </Text>
                     <Text variant="titleLarge">
-                        until next <Text style={{ color: CalendarColors.predictedMenstruation, fontWeight: 'bold' }}>menstruation</Text>
+                        until next <Text style={{ color: CalendarColors.menstruationMedium, fontWeight: 'bold' }}>menstruation</Text>
                     </Text>
                 </>
             ) : (

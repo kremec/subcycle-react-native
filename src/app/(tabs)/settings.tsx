@@ -17,7 +17,7 @@ import { IconAlarm, IconFileExport, IconFileImport, IconReport, IconUserHeart } 
 export default function SettingsTab() {
     const { theme } = useTheme()
 
-    const { db, setDb } = useDbContext()
+    const { setDb } = useDbContext()
     const { settings, updateSettings } = useSettingsContext()
     const [currentSettings, setCurrentSettings] = useState(settings)
     useEffect(() => {

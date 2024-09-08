@@ -27,7 +27,7 @@ const CalendarEditDialog = ({ visible, onCancel, onDone, selectedEvent }: { visi
                             if (!menstruationChecked) setOvulationChecked(false) // Deselect ovulation if menstruation is deselected
                         }}
                         label="Menstruation"
-                        color={CalendarColors.menstruation}
+                        color={CalendarColors.menstruationMedium}
                     />
                     {/* Ovulation */}
                     <Checkbox.Item
