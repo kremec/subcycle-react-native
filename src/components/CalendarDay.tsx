@@ -12,9 +12,9 @@ const CalendarDay = ({ markedDate }: { markedDate: MarkedDate }) => {
     return (
         <TouchableOpacity
             style={{
-                width: markedDate.endingDay ? '101%' : '100%',
-                height: 'auto',
-                paddingVertical: 5,
+                width: '100%',
+                transform: !markedDate.endingDay && !markedDate.startingDay ? [{ scaleX: 1.02 }] : [],
+                paddingVertical: 7,
                 backgroundColor: !markedDate.prediction ? markedDate.color : 'transparent',
                 borderTopLeftRadius: markedDate.startingDay ? borderRadius : 0,
                 borderBottomLeftRadius: markedDate.startingDay ? borderRadius : 0,
@@ -30,7 +30,7 @@ const CalendarDay = ({ markedDate }: { markedDate: MarkedDate }) => {
             onPress={markedDate.onPress}
         >
             <View style={{ alignItems: 'center' }}>
-                <Text variant="bodyLarge" style={{ textAlign: 'center', justifyContent: 'center', fontWeight: markedDate.selected ? 'bold' : 'normal' }}>
+                <Text variant="bodyLarge" style={{ textAlign: 'center', justifyContent: 'center', fontWeight: markedDate.selected ? 'bold' : 'normal', color: markedDate.textColor }}>
                     {markedDate.date.getDate()}
                 </Text>
                 <IconCircle size={5} color={markedDate.dotColor} strokeWidth={3} fill={markedDate.dotColor} style={{ position: 'absolute', bottom: -3 }} />

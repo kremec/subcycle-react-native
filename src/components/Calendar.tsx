@@ -53,7 +53,7 @@ const Calendar = () => {
                     startingDay,
                     endingDay,
                     color,
-                    textColor: event.menstruation || event.ovulation ? theme.colors.background : theme.colors.onBackground,
+                    textColor: !event.prediction && (event.menstruation || event.ovulation) ? theme.colors.background : theme.colors.onBackground,
                     dotColor,
                     selected: false,
                     prediction: event.prediction,
