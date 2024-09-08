@@ -8,6 +8,7 @@ export default function TabLayout() {
 
     return (
         <Tabs
+            initialRouteName="index"
             screenOptions={{
                 // Bottom tab bar
                 tabBarActiveTintColor: theme.colors.onBackground,
