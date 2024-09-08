@@ -220,10 +220,26 @@ export const SymptomTypes = [
     }
 ]
 
+
+export type MarkedDate = {
+    date: Date
+    marked: boolean
+    startingDay: boolean
+    endingDay: boolean
+    color: string
+    textColor: string
+    dotColor: string
+    selected: boolean,
+    prediction: boolean,
+    onPress: () => void
+}
+
+
 export type EventPeriod = {
     start: Date
     dayLength: number
 }
+
 
 export type EventsContext = {
     events: Event[]

@@ -1,102 +1,93 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { DateData, Calendar as RNCalendar, CalendarUtils } from 'react-native-calendars'
+import { TouchableOpacity } from 'react-native'
+import { Text } from 'react-native-paper'
+import { DateData, Calendar as RNCalendar } from 'react-native-calendars'
 
 import { useTheme } from '../theme/ThemeContext'
-import { useEventsContext, useSelectedDateContext } from '../app/AppContext'
-import { Event, getMonthYear, isSameDate } from '../app/Types'
+import { useEventsContext, useSelectedDateContext, useSymptomsContext } from '../app/AppContext'
+import { Event, getMonthYear, isSameDate, MarkedDate, Symptoms } from '../app/Types'
 import CalendarEditDialog from './CalendarEditDialog'
 import { CalendarColors } from '../theme/Colors'
 
-import { TextStyle, TouchableOpacity } from 'react-native'
-import { Text } from 'react-native-paper'
+import CalendarDay from './CalendarDay'
 
 const Calendar = () => {
     // Getting theme and data contexts
     const { theme } = useTheme()
     const { events, updateEvent } = useEventsContext()
+    const { symptoms } = useSymptomsContext()
     const { selectedDate, setSelectedDate } = useSelectedDateContext()
 
     // Marking dates
     const [loadingDates, setLoadingDates] = useState(true)
-    const [markedDates, setMarkedDates] = useState({})
+    const [markedDates, setMarkedDates] = useState<MarkedDate[]>([])
     useEffect(() => {
         setLoadingDates(true)
 
         // Watch out to not mutate events array in this function
-        const formattedEvents = formatCalendarDates(events)
-        setMarkedDates({ ...formattedEvents })
+        const formattedEvents = formatCalendarDates(events, symptoms)
+        setMarkedDates(formattedEvents)
 
         setLoadingDates(false)
-    }, [events, selectedDate, theme])
+    }, [events, symptoms, selectedDate, theme])
 
     const formatCalendarDates = useCallback(
-        (events: Event[]) => {
-            const markedDates: { [dateKey: string]: { selected: boolean; startingDay: boolean; endingDay: boolean; marked: boolean; color: string; dotColor: string; customTextStyle?: TextStyle } } =
-                {}
+        (events: Event[], symptoms: Symptoms[]) => {
+            const markedDates: MarkedDate[] = []
 
             events.forEach((event) => {
-                const dateKey = CalendarUtils.getCalendarDateString(event.date)
-                const color = getEventColor(event)
+                const color = getEventColor(event, symptoms)
                 const dotColor = getEventDotColor(event)
-                const customTextStyle = getEventTextStyle(event)
 
                 var dayBefore = new Date(event.date)
                 dayBefore.setDate(event.date.getDate() - 1)
                 var dayAfter = new Date(event.date)
                 dayAfter.setDate(event.date.getDate() + 1)
 
-                markedDates[dateKey] = {
-                    selected: true,
-                    // If there is no event on the previous day with same color, mark it as starting day
-                    startingDay: !events.some((e) => isSameDate(e.date, dayBefore) && getEventColor(event) === getEventColor(e)),
-                    // If there is no event on the next day with same color, mark it as ending day
-                    endingDay: !events.some((e) => isSameDate(e.date, dayAfter) && getEventColor(event) === getEventColor(e)),
+                const startingDay = !events.some((e) => isSameDate(e.date, dayBefore) && combineEvents(event, e))
+                const endingDay = !events.some((e) => isSameDate(e.date, dayAfter) && combineEvents(event, e))
+
+                markedDates.push({
+                    date: event.date,
                     marked: true,
+                    startingDay,
+                    endingDay,
                     color,
+                    textColor: event.menstruation || event.ovulation ? theme.colors.background : theme.colors.onBackground,
                     dotColor,
-                    customTextStyle
-                }
+                    selected: false,
+                    prediction: event.prediction,
+                    onPress: () => {}
+                })
             })
-            if (!events.some((e) => isSameDate(e.date, selectedDate)))
-                markedDates[CalendarUtils.getCalendarDateString(selectedDate)] = {
-                    selected: true,
-                    startingDay: false,
-                    endingDay: false,
-                    marked: true,
-                    color: theme.colors.background,
-                    dotColor: theme.colors.background,
-                    customTextStyle: { color: theme.colors.onBackground, fontWeight: 'bold' }
-                }
 
             return markedDates
         },
         [events, selectedDate, theme]
     )
-    const getEventColor = useCallback((event: Event) => {
-        if (event.prediction) {
-            if (event.menstruation) return CalendarColors.predictedMenstruation
-            else if (event.ovulation) return CalendarColors.predictedOvulation
-            else return CalendarColors.off
-        } else {
-            if (event.menstruation) return CalendarColors.menstruation
-            else if (event.ovulation) return CalendarColors.ovulation
-            else return CalendarColors.off
-        }
+    const combineEvents = useCallback((event1: Event, event2: Event) => {
+        if (event1.menstruation && event2.menstruation && event1.prediction === event2.prediction) return true
+        else if (event1.ovulation && event2.ovulation && event1.prediction === event2.prediction) return true
+        return false
+    }, [])
+    const getEventColor = useCallback((event: Event, symptoms: Symptoms[]) => {
+        if (event.ovulation) return CalendarColors.ovulation
+        else if (event.menstruation) {
+            if (!event.prediction) {
+                const symptomsForDate = symptoms.find((s) => isSameDate(s.date, event.date))
+                if (symptomsForDate) {
+                    if (symptomsForDate.menstruationLow) return CalendarColors.menstruationLow
+                    else if (symptomsForDate.menstruationMedium) return CalendarColors.menstruationMedium
+                    else if (symptomsForDate.menstruationStrong) return CalendarColors.menstruationHeavy
+                }
+            }
+            return CalendarColors.menstruationMedium
+        } else return CalendarColors.off
     }, [])
     const getEventDotColor = useCallback((event: Event) => {
         if (event.pill) return CalendarColors.pill
         else return CalendarColors.off
     }, [])
-    const getEventTextStyle = useCallback(
-        (event: Event) => {
-            const textStyle: TextStyle = { color: event.menstruation || event.ovulation ? theme.colors.background : theme.colors.onBackground }
-
-            if (isSameDate(event.date, selectedDate)) textStyle.fontWeight = 'bold'
-
-            return textStyle
-        },
-        [selectedDate, theme]
-    )
 
     // Edit dialog
     const [dialogVisible, setDialogVisible] = useState(false)
@@ -143,11 +134,37 @@ const Calendar = () => {
                 hideExtraDays={true}
                 firstDay={1}
                 markingType={'period'}
-                markedDates={markedDates}
-                displayLoadingIndicator={loadingDates}
-                onDayPress={(date: DateData) => {
-                    calendarDayPress(date)
+                dayComponent={({ date }: { date: DateData }) => {
+                    const markedDate = markedDates.find((m) => isSameDate(date, m.date))
+                    if (markedDate) {
+                        return (
+                            <CalendarDay
+                                markedDate={{
+                                    ...markedDate,
+                                    selected: isSameDate(date, selectedDate),
+                                    onPress: () => calendarDayPress(date)
+                                }}
+                            />
+                        )
+                    }
+                    return (
+                        <CalendarDay
+                            markedDate={{
+                                date: new Date(date.dateString),
+                                startingDay: false,
+                                endingDay: false,
+                                marked: false,
+                                color: theme.colors.background,
+                                textColor: theme.colors.onBackground,
+                                dotColor: theme.colors.background,
+                                selected: isSameDate(date, selectedDate),
+                                prediction: false,
+                                onPress: () => calendarDayPress(date)
+                            }}
+                        />
+                    )
                 }}
+                displayLoadingIndicator={loadingDates}
                 renderHeader={renderHeader}
                 theme={{
                     calendarBackground: theme.colors.background,
