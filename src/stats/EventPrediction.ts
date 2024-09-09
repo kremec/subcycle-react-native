@@ -22,7 +22,7 @@ export const getMenstruationPredictions = (events: Event[], predictionPeriod: nu
     if (Number.isNaN(averageMenstruationCycleLength))
         return []
 
-    const averageMenstruationPeriodLength = getAverageEventPeriodLength(menstruationPeriods)
+    const averageMenstruationPeriodLength = Math.round(getAverageEventPeriodLength(menstruationPeriods))
 
     const predictedDates = getPredictions(menstruationPeriods, predictionPeriod, averageMenstruationCycleLength, averageMenstruationPeriodLength)
     return predictedDates.map((date) => ({ date, menstruationLight: false, menstruationModerate: true, menstruationHeavy: false, menstruationSpotting: false, ovulation: false, pill: false, prediction: true }))
@@ -35,7 +35,7 @@ export const getOvulationPredictions = (events: Event[], predictionPeriod: numbe
     if (Number.isNaN(averageOvulationCycleLength))
         return []
 
-    const averageOvulationPeriodLength = getAverageEventPeriodLength(ovulationPeriods)
+    const averageOvulationPeriodLength = Math.round(getAverageEventPeriodLength(ovulationPeriods))
 
     const predictedDates = getPredictions(ovulationPeriods, predictionPeriod, averageOvulationCycleLength, averageOvulationPeriodLength)
     return predictedDates.map((date) => ({ date, menstruationLight: false, menstruationModerate: false, menstruationHeavy: false, menstruationSpotting: false, ovulation: true, pill: false, prediction: true }))

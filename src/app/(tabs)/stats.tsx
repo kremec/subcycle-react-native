@@ -23,7 +23,11 @@ export default function StatsTab() {
                     title="Average cycle length"
                     subtitle={
                         <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
-                            {!Number.isNaN(averageCycleLength) ? averageCycleLength + ' days' : 'N/A'}
+                            {!Number.isNaN(averageCycleLength)
+                                ? Math.floor(averageCycleLength) !== Math.ceil(averageCycleLength)
+                                    ? Math.floor(averageCycleLength) + ' - ' + Math.ceil(averageCycleLength) + ' days'
+                                    : averageCycleLength + ' day' + (averageHeavyPeriodLength > 1 ? 's' : '')
+                                : 'N/A'}
                         </Text>
                     }
                     left={(props) => <IconReload {...props} color={theme.colors.onBackground} strokeWidth={1.5} />}
@@ -35,7 +39,11 @@ export default function StatsTab() {
                     title="Average period length"
                     subtitle={
                         <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
-                            {!Number.isNaN(averagePeriodLength) ? averagePeriodLength + ' days' : 'N/A'}
+                            {!Number.isNaN(averagePeriodLength)
+                                ? Math.floor(averagePeriodLength) !== Math.ceil(averagePeriodLength)
+                                    ? Math.floor(averagePeriodLength) + ' - ' + Math.ceil(averagePeriodLength) + ' days'
+                                    : averagePeriodLength + ' day' + (averageHeavyPeriodLength > 1 ? 's' : '')
+                                : 'N/A'}
                         </Text>
                     }
                     left={(props) => <IconDroplet {...props} color={theme.colors.onBackground} strokeWidth={1.5} />}
@@ -47,7 +55,11 @@ export default function StatsTab() {
                     title="Average heavy period length"
                     subtitle={
                         <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
-                            {!Number.isNaN(averageHeavyPeriodLength) ? averageHeavyPeriodLength + ' days' : 'N/A'}
+                            {!Number.isNaN(averageHeavyPeriodLength)
+                                ? Math.floor(averageHeavyPeriodLength) !== Math.ceil(averageHeavyPeriodLength)
+                                    ? Math.floor(averageHeavyPeriodLength) + ' - ' + Math.ceil(averageHeavyPeriodLength) + ' days'
+                                    : averageHeavyPeriodLength + ' day' + (averageHeavyPeriodLength > 1 ? 's' : '')
+                                : 'N/A'}
                         </Text>
                     }
                     left={(props) => <IconDroplet fill={theme.colors.onBackground} {...props} color={theme.colors.onBackground} strokeWidth={1.5} />}
