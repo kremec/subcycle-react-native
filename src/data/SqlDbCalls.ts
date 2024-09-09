@@ -168,7 +168,7 @@ export async function insertEventToDb(db: SQLiteDatabase, event: Event) {
     const command = await db.prepareAsync(
         `INSERT INTO events (
             date,
-            menstrtationLight,
+            menstruationLight,
             menstruationModerate,
             menstruationHeavy,
             menstruationSpotting,
