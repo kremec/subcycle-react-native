@@ -53,7 +53,7 @@ const Calendar = () => {
                     endingDay,
                     color,
                     textColor:
-                        !event.prediction && (event.menstruationLight || event.menstruationModerate || event.menstruationHeavy || event.menstruationSpotting)
+                        !event.prediction && (event.menstruationLight || event.menstruationModerate || event.menstruationHeavy || event.menstruationSpotting || event.ovulation)
                             ? theme.colors.background
                             : theme.colors.onBackground,
                     dotColor,
@@ -68,14 +68,13 @@ const Calendar = () => {
         [events, selectedDate, theme]
     )
     const combineEvents = useCallback((event1: Event, event2: Event) => {
-        if (
-            ((event1.menstruationLight || event1.menstruationModerate || event1.menstruationHeavy || event1.menstruationSpotting) &&
-                (event2.menstruationLight || event2.menstruationModerate || event2.menstruationHeavy || event2.menstruationSpotting)) ||
+        const combineMenstruationEvents =
+            (event1.menstruationLight || event1.menstruationModerate || event1.menstruationHeavy || event1.menstruationSpotting) &&
+            (event2.menstruationLight || event2.menstruationModerate || event2.menstruationHeavy || event2.menstruationSpotting) &&
             event1.prediction === event2.prediction
-        )
-            return true
-        else if (event1.ovulation && event2.ovulation && event1.prediction === event2.prediction) return true
-        return false
+        const combineOvulationEvents = event1.ovulation && event2.ovulation && event1.prediction === event2.prediction
+        if (combineMenstruationEvents || combineOvulationEvents) return true
+        else return false
     }, [])
     const getEventColor = useCallback((event: Event) => {
         if (event.ovulation) return CalendarColors.ovulation

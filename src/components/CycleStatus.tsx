@@ -14,7 +14,6 @@ const CycleStatus = () => {
             .filter((event) => (event.menstruationLight || event.menstruationModerate || event.menstruationHeavy || event.menstruationSpotting) && event.date >= new Date())
             .sort((a, b) => a.date.getTime() - b.date.getTime())[0]
 
-        console.log(nextClosestEvent)
         if (!nextClosestEvent) return
 
         const msTimeUntilNextEvent = nextClosestEvent.date.getTime() - new Date().getTime()

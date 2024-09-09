@@ -83,7 +83,6 @@ export const getAverageEventPeriodLength = (eventPeriods: EventPeriod[]) => {
 export const getAverageCycleLength = (events: Event[]) => {
     const menstruationPeriods: EventPeriod[] = getEventPeriods(events, ["menstruationLight", "menstruationModerate", "menstruationHeavy", "menstruationSpotting"])
 
-    console.log(menstruationPeriods )
     const averageEventCycleLength = getAverageEventCycleLength(menstruationPeriods)
     return averageEventCycleLength
 }
