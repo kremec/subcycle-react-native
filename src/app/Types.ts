@@ -32,15 +32,25 @@ import {
     IconTrekking
 } from '@tabler/icons-react-native'
 
+export type DbVersion = {
+    version: number
+}
+
 export type DbEvent = {
     date: Date
-    menstruation: boolean
+    menstruationLight: boolean
+    menstruationModerate: boolean
+    menstruationHeavy: boolean
+    menstruationSpotting: boolean
     ovulation: boolean
     pill: boolean
 }
 export type Event = {
     date: Date
-    menstruation: boolean
+    menstruationLight: boolean
+    menstruationModerate: boolean
+    menstruationHeavy: boolean
+    menstruationSpotting: boolean
     ovulation: boolean
     pill: boolean
     prediction: boolean
@@ -48,10 +58,6 @@ export type Event = {
 
 export type DbSymptoms = {
     date: Date
-    menstruation_low: boolean
-    menstruation_medium: boolean
-    menstruation_strong: boolean
-    menstruation_spotting: boolean
     symptoms_intestinal_problems: boolean
     symptoms_appetite_changes: boolean
     symptoms_bloating: boolean
@@ -82,10 +88,6 @@ export type DbSymptoms = {
 }
 export type Symptoms = {
     date: Date
-    menstruationLow: boolean
-    menstruationMedium: boolean
-    menstruationStrong: boolean
-    menstruationSpotting: boolean
     symptomsIntestinalProblems: boolean
     symptomsAppetiteChanges: boolean
     symptomsBloating: boolean
@@ -117,10 +119,6 @@ export type Symptoms = {
 
 export const defaultSymptoms = (date: Date): Symptoms => ({
     date,
-    menstruationLow: false,
-    menstruationMedium: false,
-    menstruationStrong: false,
-    menstruationSpotting: false,
     symptomsIntestinalProblems: false,
     symptomsAppetiteChanges: false,
     symptomsBloating: false,
@@ -151,16 +149,6 @@ export const defaultSymptoms = (date: Date): Symptoms => ({
 })
 
 export const SymptomTypes = [
-    {
-        name: 'Menstruation',
-        backgroundColor: SymptomColors.menstruation,
-        types: [
-            { key: 'menstruationLow', name: 'Low', icon: IconDroplet },
-            { key: 'menstruationMedium', name: 'Medium', icon: IconDropletHalfFilled, filled: true },
-            { key: 'menstruationStrong', name: 'Strong', icon: IconDroplet, filled: true },
-            { key: 'menstruationSpotting', name: 'Spotting', icon: IconChartBubble, filled: true }
-        ]
-    },
     {
         name: 'Symptoms',
         backgroundColor: SymptomColors.symptoms,

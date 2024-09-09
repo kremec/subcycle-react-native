@@ -1,6 +1,13 @@
 import { Event, EventPeriod, isSameDate, Symptoms } from '../app/Types'
 
-export const getEventPeriods = (events: Event[], eventName: string) => {
+const getEventKeysValue = (event: Event, eventNames: string[]) => {
+    const eventKeys = eventNames.map((eventName) => eventName as keyof Event);
+    const found = eventKeys.some((eventKey) => {
+        return Boolean(event[eventKey]);  // Using Boolean() to ensure truthiness
+    });
+    return found;
+}
+export const getEventPeriods = (events: Event[], eventNames: string[]) => {
     const eventPeriods: EventPeriod[] = []
     events.forEach((event) => {
         var dayBefore = new Date(event.date)
@@ -8,11 +15,10 @@ export const getEventPeriods = (events: Event[], eventName: string) => {
         var dayAfter = new Date(event.date)
         dayAfter.setDate(event.date.getDate() + 1)
 
-        const eventKey = eventName as keyof Event
-        if (!event.prediction && event[eventKey] && !events.some((e) => isSameDate(e.date, dayBefore) && e[eventKey])) {
+        if (!event.prediction && getEventKeysValue(event, eventNames) && !events.some((e) => isSameDate(e.date, dayBefore) && getEventKeysValue(e, eventNames))) {
             // event is the is the first day of a menstruation period
             var periodLength = 1
-            while (events.some((e) => isSameDate(e.date, dayAfter) && e[eventKey])) {
+            while (events.some((e) => isSameDate(e.date, dayAfter) && getEventKeysValue(e, eventNames))) {
                 dayAfter.setDate(dayAfter.getDate() + 1)
                 periodLength++
             }
@@ -75,22 +81,23 @@ export const getAverageEventPeriodLength = (eventPeriods: EventPeriod[]) => {
 }
 
 export const getAverageCycleLength = (events: Event[]) => {
-    const menstruationPeriods: EventPeriod[] = getEventPeriods(events, "menstruation")
+    const menstruationPeriods: EventPeriod[] = getEventPeriods(events, ["menstruationLight", "menstruationModerate", "menstruationHeavy", "menstruationSpotting"])
 
+    console.log(menstruationPeriods )
     const averageEventCycleLength = getAverageEventCycleLength(menstruationPeriods)
     return averageEventCycleLength
 }
 
 export const getAveragePeriodLength = (events: Event[]) => {
-    const menstruationPeriods: EventPeriod[] = getEventPeriods(events, "menstruation")
+    const menstruationPeriods: EventPeriod[] = getEventPeriods(events, ["menstruationLight", "menstruationModerate", "menstruationHeavy", "menstruationSpotting"])
 
     const averagePeriodLength = getAverageEventPeriodLength(menstruationPeriods)
     return averagePeriodLength
 }
 
-export const getAverageStrongPeriodLength = (symptoms: Symptoms[]) => {
-    const menstruationPeriods: EventPeriod[] = getSymptomPeriods(symptoms, "menstruationStrong")
+export const getAverageHeavyPeriodLength = (events: Event[]) => {
+    const heavyMenstruationPeriods: EventPeriod[] = getEventPeriods(events, ["menstruationHeavy"])
 
-    const averageStrongPeriodLength = getAverageEventPeriodLength(menstruationPeriods)
-    return averageStrongPeriodLength
+    const averageHeavyPeriodLength = getAverageEventPeriodLength(heavyMenstruationPeriods)
+    return averageHeavyPeriodLength
 }

@@ -16,7 +16,7 @@ export const getPredictions = (eventPeriods: EventPeriod[], predictionPeriod: nu
 }
 
 export const getMenstruationPredictions = (events: Event[], predictionPeriod: number): Event[] => {
-    const menstruationPeriods: EventPeriod[] = getEventPeriods(events, "menstruation")
+    const menstruationPeriods: EventPeriod[] = getEventPeriods(events, ["menstruationLight", "menstruationModerate", "menstruationHeavy", "menstruationSpotting"])
 
     var averageMenstruationCycleLength = getAverageEventCycleLength(menstruationPeriods)
     if (Number.isNaN(averageMenstruationCycleLength))
@@ -25,11 +25,11 @@ export const getMenstruationPredictions = (events: Event[], predictionPeriod: nu
     const averageMenstruationPeriodLength = getAverageEventPeriodLength(menstruationPeriods)
 
     const predictedDates = getPredictions(menstruationPeriods, predictionPeriod, averageMenstruationCycleLength, averageMenstruationPeriodLength)
-    return predictedDates.map((date) => ({ date, menstruation: true, ovulation: false, pill: false, prediction: true }))
+    return predictedDates.map((date) => ({ date, menstruationLight: false, menstruationModerate: true, menstruationHeavy: false, menstruationSpotting: false, ovulation: false, pill: false, prediction: true }))
 }
 
 export const getOvulationPredictions = (events: Event[], predictionPeriod: number) => {
-    const ovulationPeriods: EventPeriod[] = getEventPeriods(events, "ovulation")
+    const ovulationPeriods: EventPeriod[] = getEventPeriods(events, ["ovulation"])
 
     var averageOvulationCycleLength = getAverageEventCycleLength(ovulationPeriods)
     if (Number.isNaN(averageOvulationCycleLength))
@@ -38,5 +38,5 @@ export const getOvulationPredictions = (events: Event[], predictionPeriod: numbe
     const averageOvulationPeriodLength = getAverageEventPeriodLength(ovulationPeriods)
 
     const predictedDates = getPredictions(ovulationPeriods, predictionPeriod, averageOvulationCycleLength, averageOvulationPeriodLength)
-    return predictedDates.map((date) => ({ date, menstruation: false, ovulation: true, pill: false, prediction: true }))
+    return predictedDates.map((date) => ({ date, menstruationLight: false, menstruationModerate: false, menstruationHeavy: false, menstruationSpotting: false, ovulation: true, pill: false, prediction: true }))
 }

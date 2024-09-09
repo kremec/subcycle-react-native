@@ -57,7 +57,7 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
         (editEvent: Event) => {
             if (editEvent.prediction) return
 
-            const hasEvents = editEvent.menstruation || editEvent.ovulation || editEvent.pill
+            const hasEvents = editEvent.menstruationLight || editEvent.menstruationModerate || editEvent.menstruationHeavy || editEvent.menstruationSpotting || editEvent.ovulation || editEvent.pill
             const existingEvent = dbEvents.find((e) => isSameDate(e.date, editEvent.date))
             if (!existingEvent) {
                 if (hasEvents) {
@@ -84,10 +84,6 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
     const updateSymptoms = useCallback(
         (editSymptoms: Symptoms) => {
             const hasSymptoms =
-                editSymptoms.menstruationLow ||
-                editSymptoms.menstruationMedium ||
-                editSymptoms.menstruationStrong ||
-                editSymptoms.menstruationSpotting ||
                 editSymptoms.symptomsIntestinalProblems ||
                 editSymptoms.symptomsAppetiteChanges ||
                 editSymptoms.symptomsBloating ||

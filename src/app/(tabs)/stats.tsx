@@ -6,16 +6,15 @@ import { IconDroplet, IconReload } from '@tabler/icons-react-native'
 import { useTheme } from '../../theme/ThemeContext'
 import { useEventsContext, useSymptomsContext } from '../AppContext'
 
-import { getAverageCycleLength, getAveragePeriodLength, getAverageStrongPeriodLength } from '../../stats/CycleStats'
+import { getAverageCycleLength, getAveragePeriodLength, getAverageHeavyPeriodLength } from '../../stats/CycleStats'
 
 export default function StatsTab() {
     const { theme } = useTheme()
     const { events } = useEventsContext()
-    const { symptoms } = useSymptomsContext()
 
     const averageCycleLength = getAverageCycleLength(events)
     const averagePeriodLength = getAveragePeriodLength(events)
-    const averageStrongPeriodLength = getAverageStrongPeriodLength(symptoms)
+    const averageHeavyPeriodLength = getAverageHeavyPeriodLength(events)
 
     return (
         <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10, flexDirection: 'column' }}>
@@ -45,10 +44,10 @@ export default function StatsTab() {
 
             <Card style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}>
                 <Card.Title
-                    title="Average strong period length"
+                    title="Average heavy period length"
                     subtitle={
                         <Text variant="bodyLarge" style={{ fontWeight: 'bold' }}>
-                            {!Number.isNaN(averageStrongPeriodLength) ? averageStrongPeriodLength + ' days' : 'N/A'}
+                            {!Number.isNaN(averageHeavyPeriodLength) ? averageHeavyPeriodLength + ' days' : 'N/A'}
                         </Text>
                     }
                     left={(props) => <IconDroplet fill={theme.colors.onBackground} {...props} color={theme.colors.onBackground} strokeWidth={1.5} />}

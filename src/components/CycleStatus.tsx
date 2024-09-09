@@ -10,8 +10,11 @@ const CycleStatus = () => {
 
     const [daysUntilNextMenstruationEvent, setDaysUntilNextMenstruationEvent] = React.useState(-1)
     useEffect(() => {
-        const nextClosestEvent = events.filter((event) => event.menstruation && event.date >= new Date()).sort((a, b) => a.date.getTime() - b.date.getTime())[0]
+        const nextClosestEvent = events
+            .filter((event) => (event.menstruationLight || event.menstruationModerate || event.menstruationHeavy || event.menstruationSpotting) && event.date >= new Date())
+            .sort((a, b) => a.date.getTime() - b.date.getTime())[0]
 
+        console.log(nextClosestEvent)
         if (!nextClosestEvent) return
 
         const msTimeUntilNextEvent = nextClosestEvent.date.getTime() - new Date().getTime()
@@ -26,7 +29,7 @@ const CycleStatus = () => {
                         {daysUntilNextMenstruationEvent} days
                     </Text>
                     <Text variant="titleLarge">
-                        until next <Text style={{ color: CalendarColors.menstruationMedium, fontWeight: 'bold' }}>menstruation</Text>
+                        until next <Text style={{ color: CalendarColors.menstruationModerate, fontWeight: 'bold' }}>menstruation</Text>
                     </Text>
                 </>
             ) : (

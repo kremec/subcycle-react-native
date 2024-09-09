@@ -85,8 +85,8 @@ export const Colors = {
     }
 }
 export const CalendarColors = {
-    menstruationLow: '#F08080',
-    menstruationMedium: '#D00000',
+    menstruationLight: '#F08080',
+    menstruationModerate: '#D00000',
     menstruationHeavy: '#9D0208',
     ovulation: 'deepskyblue',
     pill: 'limegreen',

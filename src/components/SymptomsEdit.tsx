@@ -37,27 +37,6 @@ const SymptomsEdit = ({
             if (key !== 'date') {
                 let updatedSymptoms = { ...selectedSymptoms, [key]: !selectedSymptoms[key] }
 
-                // Menstruation flows
-                if (key === 'menstruationLow' && updatedSymptoms.menstruationLow) {
-                    updatedSymptoms = {
-                        ...updatedSymptoms,
-                        menstruationMedium: false,
-                        menstruationStrong: false
-                    }
-                } else if (key === 'menstruationMedium' && updatedSymptoms.menstruationMedium) {
-                    updatedSymptoms = {
-                        ...updatedSymptoms,
-                        menstruationLow: false,
-                        menstruationStrong: false
-                    }
-                } else if (key === 'menstruationStrong' && updatedSymptoms.menstruationStrong) {
-                    updatedSymptoms = {
-                        ...updatedSymptoms,
-                        menstruationLow: false,
-                        menstruationMedium: false
-                    }
-                }
-
                 // Libido
                 if (key === 'libidoVeryLow' && updatedSymptoms.libidoVeryLow) {
                     updatedSymptoms = {

@@ -15,7 +15,6 @@ const Calendar = () => {
     // Getting theme and data contexts
     const { theme } = useTheme()
     const { events, updateEvent } = useEventsContext()
-    const { symptoms } = useSymptomsContext()
     const { selectedDate, setSelectedDate } = useSelectedDateContext()
 
     // Marking dates
@@ -25,18 +24,18 @@ const Calendar = () => {
         setLoadingDates(true)
 
         // Watch out to not mutate events array in this function
-        const formattedEvents = formatCalendarDates(events, symptoms)
+        const formattedEvents = formatCalendarDates(events)
         setMarkedDates(formattedEvents)
 
         setLoadingDates(false)
-    }, [events, symptoms, selectedDate, theme])
+    }, [events, selectedDate, theme])
 
     const formatCalendarDates = useCallback(
-        (events: Event[], symptoms: Symptoms[]) => {
+        (events: Event[]) => {
             const markedDates: MarkedDate[] = []
 
             events.forEach((event) => {
-                const color = getEventColor(event, symptoms)
+                const color = getEventColor(event)
                 const dotColor = getEventDotColor(event)
 
                 var dayBefore = new Date(event.date)
@@ -53,7 +52,10 @@ const Calendar = () => {
                     startingDay,
                     endingDay,
                     color,
-                    textColor: !event.prediction && (event.menstruation || event.ovulation) ? theme.colors.background : theme.colors.onBackground,
+                    textColor:
+                        !event.prediction && (event.menstruationLight || event.menstruationModerate || event.menstruationHeavy || event.menstruationSpotting)
+                            ? theme.colors.background
+                            : theme.colors.onBackground,
                     dotColor,
                     selected: false,
                     prediction: event.prediction,
@@ -66,23 +68,22 @@ const Calendar = () => {
         [events, selectedDate, theme]
     )
     const combineEvents = useCallback((event1: Event, event2: Event) => {
-        if (event1.menstruation && event2.menstruation && event1.prediction === event2.prediction) return true
+        if (
+            ((event1.menstruationLight || event1.menstruationModerate || event1.menstruationHeavy || event1.menstruationSpotting) &&
+                (event2.menstruationLight || event2.menstruationModerate || event2.menstruationHeavy || event2.menstruationSpotting)) ||
+            event1.prediction === event2.prediction
+        )
+            return true
         else if (event1.ovulation && event2.ovulation && event1.prediction === event2.prediction) return true
         return false
     }, [])
-    const getEventColor = useCallback((event: Event, symptoms: Symptoms[]) => {
+    const getEventColor = useCallback((event: Event) => {
         if (event.ovulation) return CalendarColors.ovulation
-        else if (event.menstruation) {
-            if (!event.prediction) {
-                const symptomsForDate = symptoms.find((s) => isSameDate(s.date, event.date))
-                if (symptomsForDate) {
-                    if (symptomsForDate.menstruationLow) return CalendarColors.menstruationLow
-                    else if (symptomsForDate.menstruationMedium) return CalendarColors.menstruationMedium
-                    else if (symptomsForDate.menstruationStrong) return CalendarColors.menstruationHeavy
-                }
-            }
-            return CalendarColors.menstruationMedium
-        } else return CalendarColors.off
+        else if (event.menstruationLight) return CalendarColors.menstruationLight
+        else if (event.menstruationModerate) return CalendarColors.menstruationModerate
+        else if (event.menstruationHeavy) return CalendarColors.menstruationHeavy
+        else if (event.menstruationSpotting) return CalendarColors.menstruationModerate
+        else return CalendarColors.off
     }, [])
     const getEventDotColor = useCallback((event: Event) => {
         if (event.pill) return CalendarColors.pill
@@ -96,7 +97,17 @@ const Calendar = () => {
     const calendarDayPress = useCallback(
         (date: DateData) => {
             let event = events.find((e) => isSameDate(date, e.date))
-            if (!event) event = { date: new Date(date.dateString), menstruation: false, ovulation: false, pill: false, prediction: false }
+            if (!event)
+                event = {
+                    date: new Date(date.dateString),
+                    menstruationLight: false,
+                    menstruationModerate: false,
+                    menstruationHeavy: false,
+                    menstruationSpotting: false,
+                    ovulation: false,
+                    pill: false,
+                    prediction: false
+                }
 
             if (isSameDate(event.date, selectedDate)) {
                 setEditEvent(event)

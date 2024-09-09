@@ -1,52 +1,115 @@
 import { SQLiteDatabase } from 'expo-sqlite'
-import { DbEvent, DbSymptoms, Event, Symptoms } from '../app/Types'
+import { DbEvent, DbSymptoms, DbVersion, Event, Symptoms } from '../app/Types'
 
 export async function createTables(db: SQLiteDatabase) {
-    await db?.execAsync(
-        `
-        CREATE TABLE IF NOT EXISTS events (
-            date DATE PRIMARY KEY,
-            menstruation BOOLEAN NOT NULL DEFAULT FALSE,
-            ovulation BOOLEAN NOT NULL DEFAULT FALSE,
-            pill BOOLEAN NOT NULL DEFAULT FALSE
-        );
+    await db.execAsync(`CREATE TABLE IF NOT EXISTS version (version INTEGER NOT NULL);`)
+    const dbVersion = await db.getFirstAsync<DbVersion>("SELECT * FROM version") ?? { version: null }
+    if (!dbVersion.version) {
+        await db.execAsync(`INSERT INTO version (version) VALUES (0)`)
+        dbVersion.version = 0
+    }
 
-        CREATE TABLE IF NOT EXISTS symptoms (
-            date DATE PRIMARY KEY,
-            menstruation_low BOOLEAN NOT NULL DEFAULT FALSE,
-            menstruation_medium BOOLEAN NOT NULL DEFAULT FALSE,
-            menstruation_strong BOOLEAN NOT NULL DEFAULT FALSE,
-            menstruation_spotting BOOLEAN NOT NULL DEFAULT FALSE,
-            symptoms_intestinal_problems BOOLEAN NOT NULL DEFAULT FALSE,
-            symptoms_appetite_changes BOOLEAN NOT NULL DEFAULT FALSE,
-            symptoms_bloating BOOLEAN NOT NULL DEFAULT FALSE,
-            symptoms_chills BOOLEAN NOT NULL DEFAULT FALSE,
-            symptoms_cramps BOOLEAN NOT NULL DEFAULT FALSE,
-            symptoms_dry_skin BOOLEAN NOT NULL DEFAULT FALSE,
-            symptoms_insomnia BOOLEAN NOT NULL DEFAULT FALSE,
-            symptoms_nausea BOOLEAN NOT NULL DEFAULT FALSE,
-            discharge_watery BOOLEAN NOT NULL DEFAULT FALSE,
-            discharge_creamy BOOLEAN NOT NULL DEFAULT FALSE,
-            discharge_sticky BOOLEAN NOT NULL DEFAULT FALSE,
-            discharge_dry BOOLEAN NOT NULL DEFAULT FALSE,
-            sex_drive_very_low BOOLEAN NOT NULL DEFAULT FALSE,
-            sex_drive_low BOOLEAN NOT NULL DEFAULT FALSE,
-            sex_drive_high BOOLEAN NOT NULL DEFAULT FALSE,
-            sex_drive_very_high BOOLEAN NOT NULL DEFAULT FALSE,
-            exercise_running BOOLEAN NOT NULL DEFAULT FALSE,
-            exercise_cycling BOOLEAN NOT NULL DEFAULT FALSE,
-            exercise_hiking BOOLEAN NOT NULL DEFAULT FALSE,
-            exercise_gym BOOLEAN NOT NULL DEFAULT FALSE,
-            mood_angry BOOLEAN NOT NULL DEFAULT FALSE,
-            mood_happy BOOLEAN NOT NULL DEFAULT FALSE,
-            mood_neutral BOOLEAN NOT NULL DEFAULT FALSE,
-            mood_sad BOOLEAN NOT NULL DEFAULT FALSE,
-            mood_annoyed BOOLEAN NOT NULL DEFAULT FALSE,
-            mood_sensitive BOOLEAN NOT NULL DEFAULT FALSE,
-            mood_irritated BOOLEAN NOT NULL DEFAULT FALSE
-        );
-        `
-    )
+    if (dbVersion.version == 0) {
+        await db.withTransactionAsync(async () => {
+            await db?.execAsync(
+                `
+                CREATE TABLE IF NOT EXISTS events (
+                    date DATE PRIMARY KEY,
+                    menstruation BOOLEAN NOT NULL DEFAULT FALSE,
+                    ovulation BOOLEAN NOT NULL DEFAULT FALSE,
+                    pill BOOLEAN NOT NULL DEFAULT FALSE
+                );
+        
+                CREATE TABLE IF NOT EXISTS symptoms (
+                    date DATE PRIMARY KEY,
+                    menstruation_low BOOLEAN NOT NULL DEFAULT FALSE,
+                    menstruation_medium BOOLEAN NOT NULL DEFAULT FALSE,
+                    menstruation_strong BOOLEAN NOT NULL DEFAULT FALSE,
+                    menstruation_spotting BOOLEAN NOT NULL DEFAULT FALSE,
+                    symptoms_intestinal_problems BOOLEAN NOT NULL DEFAULT FALSE,
+                    symptoms_appetite_changes BOOLEAN NOT NULL DEFAULT FALSE,
+                    symptoms_bloating BOOLEAN NOT NULL DEFAULT FALSE,
+                    symptoms_chills BOOLEAN NOT NULL DEFAULT FALSE,
+                    symptoms_cramps BOOLEAN NOT NULL DEFAULT FALSE,
+                    symptoms_dry_skin BOOLEAN NOT NULL DEFAULT FALSE,
+                    symptoms_insomnia BOOLEAN NOT NULL DEFAULT FALSE,
+                    symptoms_nausea BOOLEAN NOT NULL DEFAULT FALSE,
+                    discharge_watery BOOLEAN NOT NULL DEFAULT FALSE,
+                    discharge_creamy BOOLEAN NOT NULL DEFAULT FALSE,
+                    discharge_sticky BOOLEAN NOT NULL DEFAULT FALSE,
+                    discharge_dry BOOLEAN NOT NULL DEFAULT FALSE,
+                    sex_drive_very_low BOOLEAN NOT NULL DEFAULT FALSE,
+                    sex_drive_low BOOLEAN NOT NULL DEFAULT FALSE,
+                    sex_drive_high BOOLEAN NOT NULL DEFAULT FALSE,
+                    sex_drive_very_high BOOLEAN NOT NULL DEFAULT FALSE,
+                    exercise_running BOOLEAN NOT NULL DEFAULT FALSE,
+                    exercise_cycling BOOLEAN NOT NULL DEFAULT FALSE,
+                    exercise_hiking BOOLEAN NOT NULL DEFAULT FALSE,
+                    exercise_gym BOOLEAN NOT NULL DEFAULT FALSE,
+                    mood_angry BOOLEAN NOT NULL DEFAULT FALSE,
+                    mood_happy BOOLEAN NOT NULL DEFAULT FALSE,
+                    mood_neutral BOOLEAN NOT NULL DEFAULT FALSE,
+                    mood_sad BOOLEAN NOT NULL DEFAULT FALSE,
+                    mood_annoyed BOOLEAN NOT NULL DEFAULT FALSE,
+                    mood_sensitive BOOLEAN NOT NULL DEFAULT FALSE,
+                    mood_irritated BOOLEAN NOT NULL DEFAULT FALSE
+                );
+
+                UPDATE version SET version = 1;
+                `
+            )
+            dbVersion.version = 1
+        })
+    }
+    if (dbVersion.version == 1) {
+        await db.withTransactionAsync(async () => {
+            await db?.execAsync(
+                `
+                -- Create new columns
+                ALTER TABLE events ADD COLUMN menstruationLight BOOLEAN NOT NULL DEFAULT FALSE DEFAULT FALSE;
+                ALTER TABLE events ADD COLUMN menstruationModerate BOOLEAN NOT NULL DEFAULT FALSE;
+                ALTER TABLE events ADD COLUMN menstruationHeavy BOOLEAN NOT NULL DEFAULT FALSE;
+                ALTER TABLE events ADD COLUMN menstruationSpotting BOOLEAN NOT NULL DEFAULT FALSE;
+
+                -- Update existing events from events
+                UPDATE events
+                SET menstruationModerate = TRUE
+                WHERE menstruation = TRUE;
+
+                -- Update existing events from symptoms
+                UPDATE events
+                SET
+                    menstruationLight = (SELECT menstruation_low FROM symptoms WHERE symptoms.date = events.date),
+                    menstruationModerate = (SELECT menstruation_medium FROM symptoms WHERE symptoms.date = events.date),
+                    menstruationHeavy = (SELECT menstruation_strong FROM symptoms WHERE symptoms.date = events.date),
+                    menstruationSpotting = (SELECT menstruation_spotting FROM symptoms WHERE symptoms.date = events.date)
+                WHERE EXISTS (SELECT 1 FROM symptoms WHERE symptoms.date = events.date);
+
+                -- Create new events from remaining symptoms
+                INSERT INTO events (date, menstruationLight, menstruationModerate, menstruationHeavy, menstruationSpotting)
+                SELECT
+                    date,
+                    menstruation_low,
+                    menstruation_medium,
+                    menstruation_strong,
+                    menstruation_spotting
+                FROM symptoms
+                WHERE date NOT IN (SELECT date FROM events);
+
+                -- Drop columns from events table 
+                ALTER TABLE events DROP COLUMN menstruation;
+
+                -- Drop columns from symptoms table
+                ALTER TABLE symptoms DROP COLUMN menstruation_low;
+                ALTER TABLE symptoms DROP COLUMN menstruation_medium;
+                ALTER TABLE symptoms DROP COLUMN menstruation_strong;
+                ALTER TABLE symptoms DROP COLUMN menstruation_spotting;
+
+                UPDATE version SET version = 2;
+                `
+            )
+        })
+    }
 }
 
 export async function getEventsFromDb(db: SQLiteDatabase) {
@@ -54,7 +117,10 @@ export async function getEventsFromDb(db: SQLiteDatabase) {
 
     const events: Event[] = results.map((event) => ({
         date: new Date(event.date),
-        menstruation: event.menstruation ? true : false,
+        menstruationLight: event.menstruationLight ? true : false,
+        menstruationModerate: event.menstruationModerate ? true : false,
+        menstruationHeavy: event.menstruationHeavy ? true : false,
+        menstruationSpotting: event.menstruationSpotting ? true : false,
         ovulation: event.ovulation ? true : false,
         pill: event.pill ? true : false,
         prediction: false
@@ -67,10 +133,6 @@ export async function getSymptomsFromDb(db: SQLiteDatabase) {
 
     const symptoms: Symptoms[] = results.map((symptoms) => ({
         date: new Date(symptoms.date),
-        menstruationLow: symptoms.menstruation_low ? true : false,
-        menstruationMedium: symptoms.menstruation_medium ? true : false,
-        menstruationStrong: symptoms.menstruation_strong ? true : false,
-        menstruationSpotting: symptoms.menstruation_spotting ? true : false,
         symptomsIntestinalProblems: symptoms.symptoms_intestinal_problems ? true : false,
         symptomsAppetiteChanges: symptoms.symptoms_appetite_changes ? true : false,
         symptomsBloating: symptoms.symptoms_bloating ? true : false,
@@ -106,19 +168,28 @@ export async function insertEventToDb(db: SQLiteDatabase, event: Event) {
     const command = await db.prepareAsync(
         `INSERT INTO events (
             date,
-            menstruation,
+            menstrtationLight,
+            menstruationModerate,
+            menstruationHeavy,
+            menstruationSpotting,
             ovulation,
             pill
         ) VALUES (
             $date,
-            $menstruation,
+            $menstruationLight,
+            $menstruationModerate,
+            $menstruationHeavy,
+            $menstruationSpotting,
             $ovulation,
             $pill
         )`
     )
     await command.executeAsync({
         $date: event.date.toISOString(),
-        $menstruation: event.menstruation,
+        $menstruationLight: event.menstruationLight,
+        $menstruationModerate: event.menstruationModerate,
+        $menstruationHeavy: event.menstruationHeavy,
+        $menstruationSpotting: event.menstruationSpotting,
         $ovulation: event.ovulation,
         $pill: event.pill
     })
@@ -128,10 +199,6 @@ export async function insertSymptomsToDb(db: SQLiteDatabase, symptoms: Symptoms)
     const command = await db.prepareAsync(
         `INSERT INTO symptoms (
             date,
-            menstruation_low,
-            menstruation_medium,
-            menstruation_strong,
-            menstruation_spotting,
             symptoms_intestinal_problems,
             symptoms_appetite_changes,
             symptoms_bloating,
@@ -161,10 +228,6 @@ export async function insertSymptomsToDb(db: SQLiteDatabase, symptoms: Symptoms)
             mood_irritated
         ) VALUES (
             $date,
-            $menstruation_low,
-            $menstruation_medium,
-            $menstruation_strong,
-            $menstruation_spotting,
             $symptoms_intestinal_problems,
             $symptoms_appetite_changes,
             $symptoms_bloating,
@@ -196,10 +259,6 @@ export async function insertSymptomsToDb(db: SQLiteDatabase, symptoms: Symptoms)
     )
     await command.executeAsync({
         $date: symptoms.date.toISOString(),
-        $menstruation_low: symptoms.menstruationLow,
-        $menstruation_medium: symptoms.menstruationMedium,
-        $menstruation_strong: symptoms.menstruationStrong,
-        $menstruation_spotting: symptoms.menstruationSpotting,
         $symptoms_intestinal_problems: symptoms.symptomsIntestinalProblems,
         $symptoms_appetite_changes: symptoms.symptomsAppetiteChanges,
         $symptoms_bloating: symptoms.symptomsBloating,
@@ -233,14 +292,20 @@ export async function insertSymptomsToDb(db: SQLiteDatabase, symptoms: Symptoms)
 export async function updateEventInDb(db: SQLiteDatabase, event: Event) {
     const command = await db.prepareAsync(
         `UPDATE events SET
-            menstruation = $menstruation,
+            menstruationLight = $menstruationLight,
+            menstruationModerate = $menstruationModerate,
+            menstruationHeavy = $menstruationHeavy,
+            menstruationSpotting = $menstruationSpotting,
             ovulation = $ovulation,
             pill = $pill
         WHERE date = $date`
     )
     await command.executeAsync({
         $date: event.date.toISOString(),
-        $menstruation: event.menstruation,
+        $menstruationLight: event.menstruationLight,
+        $menstruationModerate: event.menstruationModerate,
+        $menstruationHeavy: event.menstruationHeavy,
+        $menstruationSpotting: event.menstruationSpotting,
         $ovulation: event.ovulation,
         $pill: event.pill
     })
@@ -249,10 +314,6 @@ export async function updateEventInDb(db: SQLiteDatabase, event: Event) {
 export async function updateSymptomsInDb(db: SQLiteDatabase, symptoms: Symptoms) {
     const command = await db.prepareAsync(
         `UPDATE symptoms SET
-            menstruation_low = $menstruation_low,
-            menstruation_medium = $menstruation_medium,
-            menstruation_strong = $menstruation_strong,
-            menstruation_spotting = $menstruation_spotting,
             symptoms_intestinal_problems = $symptoms_intestinal_problems,
             symptoms_appetite_changes = $symptoms_appetite_changes,
             symptoms_bloating = $symptoms_bloating,
@@ -284,10 +345,6 @@ export async function updateSymptomsInDb(db: SQLiteDatabase, symptoms: Symptoms)
     )
     await command.executeAsync({
         $date: symptoms.date.toISOString(),
-        $menstruation_low: symptoms.menstruationLow,
-        $menstruation_medium: symptoms.menstruationMedium,
-        $menstruation_strong: symptoms.menstruationStrong,
-        $menstruation_spotting: symptoms.menstruationSpotting,
         $symptoms_intestinal_problems: symptoms.symptomsIntestinalProblems,
         $symptoms_appetite_changes: symptoms.symptomsAppetiteChanges,
         $symptoms_bloating: symptoms.symptomsBloating,
