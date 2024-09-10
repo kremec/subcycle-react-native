@@ -4,8 +4,8 @@ import { PaperProvider } from 'react-native-paper'
 import { AppContext, useEventsContext } from './AppContext'
 import NotificationsManager from '../notifications/NotificationsManager'
 import * as Notifications from 'expo-notifications'
-import { useEffect } from 'react'
-import { isSameDate } from './Types'
+import { useEffect, useState } from 'react'
+import { defaultEvent, isSameDate } from './Types'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 
@@ -13,17 +13,22 @@ const RootLayout = () => {
     const { theme } = useTheme()
     const { events, updateEvent } = useEventsContext()
 
+    const [updatedFromNotification, setUpdatedFromNotification] = useState(false)
+
     const lastNotificationResponse = Notifications.useLastNotificationResponse()
     useEffect(() => {
+        if (events.length === 0 || updatedFromNotification) return
+
+        setUpdatedFromNotification(true)
         if (lastNotificationResponse?.actionIdentifier === 'checkpill') {
             Notifications.dismissAllNotificationsAsync()
 
             let event = events.find((e) => isSameDate(new Date(), e.date))
-            if (!event) event = { date: new Date(), menstruation: false, ovulation: false, pill: true, prediction: false }
+            if (!event) event = defaultEvent(new Date())
             event.pill = true
             updateEvent(event)
         }
-    }, [lastNotificationResponse])
+    }, [lastNotificationResponse, events])
 
     return (
         <PaperProvider theme={theme}>

@@ -5,7 +5,7 @@ import { DateData, Calendar as RNCalendar } from 'react-native-calendars'
 
 import { useTheme } from '../theme/ThemeContext'
 import { useEventsContext, useSelectedDateContext, useSymptomsContext } from '../app/AppContext'
-import { Event, getMonthYear, isSameDate, MarkedDate, Symptoms } from '../app/Types'
+import { defaultEvent, Event, getMonthYear, isSameDate, MarkedDate, Symptoms } from '../app/Types'
 import CalendarEditDialog from './CalendarEditDialog'
 import { CalendarColors } from '../theme/Colors'
 
@@ -96,17 +96,7 @@ const Calendar = () => {
     const calendarDayPress = useCallback(
         (date: DateData) => {
             let event = events.find((e) => isSameDate(date, e.date))
-            if (!event)
-                event = {
-                    date: new Date(date.dateString),
-                    menstruationLight: false,
-                    menstruationModerate: false,
-                    menstruationHeavy: false,
-                    menstruationSpotting: false,
-                    ovulation: false,
-                    pill: false,
-                    prediction: false
-                }
+            if (!event) event = defaultEvent(new Date(date.dateString))
 
             if (isSameDate(event.date, selectedDate)) {
                 setEditEvent(event)
@@ -144,7 +134,8 @@ const Calendar = () => {
                 hideExtraDays={true}
                 firstDay={1}
                 markingType={'period'}
-                dayComponent={({ date }: { date: DateData }) => {
+                dayComponent={({ date }: { date?: DateData }) => {
+                    if (!date) return null
                     const markedDate = markedDates.find((m) => isSameDate(date, m.date))
                     if (markedDate) {
                         return (

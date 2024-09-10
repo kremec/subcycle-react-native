@@ -55,6 +55,16 @@ export type Event = {
     pill: boolean
     prediction: boolean
 }
+export const defaultEvent = (date: Date): Event => ({
+    date,
+    menstruationLight: false,
+    menstruationModerate: false,
+    menstruationHeavy: false,
+    menstruationSpotting: false,
+    ovulation: false,
+    pill: false,
+    prediction: false
+})
 
 export type DbSymptoms = {
     date: Date
@@ -116,7 +126,6 @@ export type Symptoms = {
     moodSensitive: boolean
     moodIrritated: boolean
 }
-
 export const defaultSymptoms = (date: Date): Symptoms => ({
     date,
     symptomsIntestinalProblems: false,
