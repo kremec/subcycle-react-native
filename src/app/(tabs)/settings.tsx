@@ -19,10 +19,6 @@ export default function SettingsTab() {
 
     const { setDb } = useDbContext()
     const { settings, updateSettings } = useSettingsContext()
-    const [currentSettings, setCurrentSettings] = useState(settings)
-    useEffect(() => {
-        setCurrentSettings(settings)
-    }, [settings])
 
     const [showNotificationTimePicker, setShowNotificationTimePicker] = useState(false)
 
@@ -63,9 +59,9 @@ export default function SettingsTab() {
                     />
                     <Card.Content>
                         <Picker
-                            selectedValue={currentSettings?.predictionsTimespan}
+                            selectedValue={settings.predictionsTimespan}
                             onValueChange={(itemValue) => {
-                                const newSettings: Settings = { ...currentSettings, predictionsTimespan: itemValue }
+                                const newSettings: Settings = { ...settings, predictionsTimespan: itemValue }
                                 updateSettings(newSettings)
                             }}
                             style={{
@@ -92,15 +88,15 @@ export default function SettingsTab() {
                     <Card.Title title="Pill notifications" subtitle="Daily notification time" left={(props) => <IconAlarm {...props} color={theme.colors.onBackground} strokeWidth={1.5} />} />
                     <Card.Content>
                         <TouchableRipple style={{ padding: 10, borderRadius: 10 }} onPress={() => setShowNotificationTimePicker(true)}>
-                            <Text>Notification time: {getHourMinute(currentSettings?.notificationTime)}</Text>
+                            <Text>Notification time: {getHourMinute(settings.notificationTime)}</Text>
                         </TouchableRipple>
                         {showNotificationTimePicker && (
                             <DateTimePicker
-                                value={currentSettings?.notificationTime}
+                                value={settings.notificationTime}
                                 mode="time"
                                 is24Hour={true}
                                 onChange={(event, value) => {
-                                    if (event.type === 'set' && value) updateSettings({ ...currentSettings, notificationTime: value })
+                                    if (event.type === 'set' && value) updateSettings({ ...settings, notificationTime: value })
 
                                     setShowNotificationTimePicker(false)
                                 }}
@@ -112,7 +108,7 @@ export default function SettingsTab() {
                 <Card style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}>
                     <Card.Title title="Partner mode" subtitle="Coming soon <3" left={(props) => <IconUserHeart {...props} color={theme.colors.onBackground} strokeWidth={1.5} />} />
                     <Card.Content>
-                        <Switch value={currentSettings.partnerMode} onValueChange={(value) => updateSettings({ ...currentSettings, partnerMode: value })} />
+                        <Switch value={settings.partnerMode} onValueChange={(value) => updateSettings({ ...settings, partnerMode: value })} />
                     </Card.Content>
                 </Card>
             </View>

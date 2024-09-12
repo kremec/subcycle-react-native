@@ -1,10 +1,12 @@
-import { IconCalendarMonth, IconChartBar, IconSettings2 } from '@tabler/icons-react-native'
+import { IconCalendarMonth, IconChartBar, IconSettings2, IconUserHeart } from '@tabler/icons-react-native'
 import { Tabs } from 'expo-router'
 
 import { useTheme } from '../../theme/ThemeContext'
+import { useSettingsContext } from '../AppContext'
 
 export default function TabLayout() {
-    const { theme } = useTheme() // Access the theme
+    const { theme } = useTheme()
+    const { settings } = useSettingsContext()
 
     return (
         <Tabs
@@ -25,7 +27,16 @@ export default function TabLayout() {
                 name="stats"
                 options={{
                     title: 'Stats',
-                    tabBarIcon: ({ color }) => <IconChartBar size={20} color={color} />
+                    tabBarIcon: ({ color }) => <IconChartBar size={20} color={color} />,
+                    href: settings.partnerMode ? null : '/stats'
+                }}
+            />
+            <Tabs.Screen
+                name="partner"
+                options={{
+                    title: 'Partner info',
+                    tabBarIcon: ({ color }) => <IconUserHeart size={20} color={color} />,
+                    href: settings.partnerMode ? '/partner' : null
                 }}
             />
             <Tabs.Screen
