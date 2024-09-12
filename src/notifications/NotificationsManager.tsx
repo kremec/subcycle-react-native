@@ -14,10 +14,14 @@ const NotificationsManager = () => {
     const { settings } = useSettingsContext()
 
     useEffect(() => {
-        // Request notification permissions
-        requestPermissions()
-        // Schedule the notification when the component mounts
-        scheduleDailyNotification()
+        const cancelAndReschedule = async () => {
+            const permissionStatus = await requestPermissions()
+
+            await Notifications.cancelAllScheduledNotificationsAsync()
+            if (permissionStatus === 'granted') scheduleDailyNotification()
+        }
+
+        cancelAndReschedule()
     }, [settings.notificationTime])
 
     const requestPermissions = async () => {
@@ -45,9 +49,7 @@ const NotificationsManager = () => {
             finalStatus = status
         }
 
-        if (finalStatus !== 'granted') {
-            return
-        }
+        return finalStatus
     }
 
     const scheduleDailyNotification = async () => {
