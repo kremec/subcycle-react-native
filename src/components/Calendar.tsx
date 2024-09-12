@@ -10,6 +10,7 @@ import CalendarEditDialog from './CalendarEditDialog'
 import { CalendarColors } from '../theme/Colors'
 
 import CalendarDay from './CalendarDay'
+import { getDayInCycle } from '../stats/CycleStats'
 
 const Calendar = () => {
     // Getting theme and data contexts
@@ -92,11 +93,14 @@ const Calendar = () => {
     // Edit dialog
     const [dialogVisible, setDialogVisible] = useState(false)
     const [editEvent, setEditEvent] = useState<Event>()
+    const [dayInCycle, setDayInCycle] = useState<number>()
 
     const calendarDayPress = useCallback(
         (date: DateData) => {
             let event = events.find((e) => isSameDate(date, e.date))
             if (!event) event = defaultEvent(new Date(date.dateString))
+
+            setDayInCycle(getDayInCycle(event.date, events))
 
             if (isSameDate(event.date, selectedDate)) {
                 setEditEvent(event)
@@ -187,6 +191,7 @@ const Calendar = () => {
                     setEditEvent(undefined)
                 }}
                 selectedEvent={editEvent}
+                dayInCycle={dayInCycle}
             />
         </>
     )

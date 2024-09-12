@@ -1,12 +1,24 @@
 import React from 'react'
-import { Button, Checkbox, Dialog, Portal, Text } from 'react-native-paper'
+import { Button, Dialog, Portal, Text } from 'react-native-paper'
 import { CalendarColors } from '../theme/Colors'
 import { Event, getWeekdayDayMonth } from '../app/Types'
 import { View } from 'react-native'
-import { IconChartBubble, IconDroplet, IconDropletHalf, IconDropletHalfFilled, IconEgg, IconPill, IconPillFilled } from '@tabler/icons-react-native'
+import { IconChartBubble, IconDroplet, IconDropletHalfFilled, IconEgg, IconPillFilled } from '@tabler/icons-react-native'
 import { useTheme } from '../theme/ThemeContext'
 
-const CalendarEditDialog = ({ visible, onCancel, onDone, selectedEvent }: { visible: boolean; onCancel: () => void; onDone: (updatedDateEvent: Event) => void; selectedEvent: Event | undefined }) => {
+const CalendarEditDialog = ({
+    visible,
+    onCancel,
+    onDone,
+    selectedEvent,
+    dayInCycle
+}: {
+    visible: boolean
+    onCancel: () => void
+    onDone: (updatedDateEvent: Event) => void
+    selectedEvent: Event | undefined
+    dayInCycle: number | undefined
+}) => {
     if (!selectedEvent) return
 
     const { theme } = useTheme()
@@ -21,14 +33,18 @@ const CalendarEditDialog = ({ visible, onCancel, onDone, selectedEvent }: { visi
     return (
         <Portal>
             <Dialog visible={visible} onDismiss={onCancel}>
-                <Dialog.Title>
-                    <Text variant="titleLarge">
-                        {selectedEvent.prediction ? 'Predictions' : 'Events'} for {getWeekdayDayMonth(selectedEvent.date)}
-                    </Text>
+                <Dialog.Title style={{ paddingTop: 10 }}>
+                    <View>
+                        <Text variant="titleLarge">
+                            {selectedEvent.prediction ? 'Predictions' : 'Events'} for {getWeekdayDayMonth(selectedEvent.date)}
+                        </Text>
+                        {dayInCycle && (
+                            <Text variant="titleSmall">{dayInCycle && `${dayInCycle === 1 ? '1st' : dayInCycle === 2 ? '2nd' : dayInCycle === 3 ? '3rd' : dayInCycle + 'th'} day of cycle`}</Text>
+                        )}
+                    </View>
                 </Dialog.Title>
                 <Dialog.Content>
                     {/* Menstruation */}
-                    <Text variant="bodyLarge">Menstruation flow</Text>
                     <Button
                         mode="outlined"
                         onPress={() => {

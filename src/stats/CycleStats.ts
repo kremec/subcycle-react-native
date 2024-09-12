@@ -7,7 +7,7 @@ const getEventKeysValue = (event: Event, eventNames: string[]) => {
     });
     return found;
 }
-export const getEventPeriods = (events: Event[], eventNames: string[]) => {
+export const getEventPeriods = (events: Event[], eventNames: string[], usePredictions: boolean = false) => {
     const eventPeriods: EventPeriod[] = []
     events.forEach((event) => {
         var dayBefore = new Date(event.date)
@@ -15,7 +15,7 @@ export const getEventPeriods = (events: Event[], eventNames: string[]) => {
         var dayAfter = new Date(event.date)
         dayAfter.setDate(event.date.getDate() + 1)
 
-        if (!event.prediction && getEventKeysValue(event, eventNames) && !events.some((e) => isSameDate(e.date, dayBefore) && getEventKeysValue(e, eventNames))) {
+        if ((!event.prediction || usePredictions) && getEventKeysValue(event, eventNames) && !events.some((e) => isSameDate(e.date, dayBefore) && getEventKeysValue(e, eventNames))) {	
             // event is the is the first day of a menstruation period
             var periodLength = 1
             while (events.some((e) => isSameDate(e.date, dayAfter) && getEventKeysValue(e, eventNames))) {
@@ -99,4 +99,15 @@ export const getAverageHeavyPeriodLength = (events: Event[]) => {
 
     const averageHeavyPeriodLength = getAverageEventPeriodLength(heavyMenstruationPeriods)
     return averageHeavyPeriodLength
+}
+
+export const getDayInCycle = (date: Date, events: Event[]) => {
+    const menstruationPeriods: EventPeriod[] = getEventPeriods(events, ["menstruationLight", "menstruationModerate", "menstruationHeavy", "menstruationSpotting"], true)
+    const menstruationPeriodsBeforeDate = menstruationPeriods.filter((period) => period.start <= date).sort((a, b) => b.start.getTime() - a.start.getTime())
+
+    if (menstruationPeriodsBeforeDate.length == 0)
+        return NaN
+
+    const msTimeFromLastCyclestart = date.getTime() - menstruationPeriodsBeforeDate[0].start.getTime()
+    return Math.floor(msTimeFromLastCyclestart / (1000 * 60 * 60 * 24)) + 1
 }
