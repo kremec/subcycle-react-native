@@ -38,8 +38,8 @@ const CalendarEditDialog = ({
                         <Text variant="titleLarge">
                             {selectedEvent.prediction ? 'Predictions' : 'Events'} for {getWeekdayDayMonth(selectedEvent.date)}
                         </Text>
-                        {dayInCycle && (
-                            <Text variant="titleSmall">{dayInCycle && `${dayInCycle === 1 ? '1st' : dayInCycle === 2 ? '2nd' : dayInCycle === 3 ? '3rd' : dayInCycle + 'th'} day of cycle`}</Text>
+                        {typeof dayInCycle === 'number' && !Number.isNaN(dayInCycle) && (
+                            <Text variant="titleSmall">{`${dayInCycle}${dayInCycle === 1 ? 'st' : dayInCycle === 2 ? 'nd' : dayInCycle === 3 ? 'rd' : 'th'} day of cycle`}</Text>
                         )}
                     </View>
                 </Dialog.Title>
