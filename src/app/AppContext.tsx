@@ -2,10 +2,23 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, 
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin'
 import * as SQLite from 'expo-sqlite'
 
-import { DbContext, Event, EventsContext, isSameDate, SelectedDateContext, Settings, SettingsContext, Symptoms, SymptomsContext } from './Types'
+import { DbContext, Event, EventsContext, isSameDate, PartnerInsight, PartnerInsightsContext, SelectedDateContext, Settings, SettingsContext, Symptoms, SymptomsContext } from './Types'
 import { getMenstruationPredictions, getOvulationPredictions } from '../stats/EventPrediction'
 
-import { createTables, insertEventToDb, updateEventInDb, getEventsFromDb, deleteEventFromDb, getSymptomsFromDb, updateSymptomsInDb, deleteSymptomsFromDb, insertSymptomsToDb } from '../data/SqlDbCalls'
+import {
+    createTables,
+    insertEventToDb,
+    updateEventInDb,
+    getEventsFromDb,
+    deleteEventFromDb,
+    getSymptomsFromDb,
+    updateSymptomsInDb,
+    deleteSymptomsFromDb,
+    insertSymptomsToDb,
+    insertPartnerInsightToDb,
+    updatePartnerInsightInDb,
+    deletePartnerInsightFromDb
+} from '../data/SqlDbCalls'
 import { getSettings, storeSettings } from '../data/AsyncStorageCalls'
 
 const defaultDb = SQLite.openDatabaseSync('subcycle.db')
@@ -14,6 +27,7 @@ const defaultSettings: Settings = {
     notificationTime: new Date(new Date().setHours(18, 0, 0)),
     partnerMode: false
 }
+
 const defaultEventsContextValue: EventsContext = {
     events: [],
     updateEvent: (_event: Event) => {}
@@ -24,6 +38,12 @@ const defaultSymptomsContextValue: SymptomsContext = {
     updateSymptoms: (_symptoms: Symptoms) => {}
 }
 const SymptomsCtx = createContext(defaultSymptomsContextValue)
+const defaultPartnerInsightsContextValue: PartnerInsightsContext = {
+    partnerInsights: [],
+    updatePartnerInsights: (_insights: PartnerInsight[]) => {},
+    deletePartnerInsights: (_dayInCycle: number) => {}
+}
+const PartnerInsightsCtx = createContext(defaultPartnerInsightsContextValue)
 const defaultSelectedDateContextValue: SelectedDateContext = {
     selectedDate: new Date(),
     setSelectedDate: (_date: Date) => {}
@@ -50,6 +70,8 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
     const [events, setEvents] = useState<Event[]>(defaultEventsContextValue.events)
     const [dbSymptoms, setDbSymptoms] = useState<Symptoms[]>(defaultSymptomsContextValue.symptoms)
     const [symptoms, setSymptoms] = useState<Symptoms[]>(defaultSymptomsContextValue.symptoms)
+    const [dbPartnerInsights, setDbPartnerInsights] = useState<PartnerInsight[]>(defaultPartnerInsightsContextValue.partnerInsights)
+    const [partnerInsights, setPartnerInsights] = useState<PartnerInsight[]>(defaultPartnerInsightsContextValue.partnerInsights)
 
     const [selectedDate, setSelectedDate] = useState<Date>(defaultSelectedDateContextValue.selectedDate)
 
@@ -135,6 +157,35 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
         [dbSymptoms]
     )
 
+    const updatePartnerInsights = useCallback(
+        (editInsights: PartnerInsight[]) => {
+            const existingInsights = dbPartnerInsights.find((i) => i.dayInCycle === editInsights[0].dayInCycle)
+            if (!existingInsights) {
+                // Insert if insight is new
+                insertPartnerInsightToDb(db, editInsights[0])
+                setDbPartnerInsights([...dbPartnerInsights, ...editInsights])
+            } else {
+                // Update if insight is already in db
+                const tempInsights = dbPartnerInsights.filter((i) => i.dayInCycle !== editInsights[0].dayInCycle)
+                updatePartnerInsightInDb(db, editInsights[0])
+                setDbPartnerInsights([...tempInsights, ...editInsights])
+            }
+        },
+        [dbPartnerInsights]
+    )
+    const deletePartnerInsights = useCallback(
+        (dayInCycle: number) => {
+            const existingInsights = dbPartnerInsights.find((i) => i.dayInCycle === dayInCycle)
+            if (existingInsights) {
+                // Delete if insight is already in db
+                const tempInsights = dbPartnerInsights.filter((i) => i.dayInCycle !== dayInCycle)
+                deletePartnerInsightFromDb(db, dayInCycle)
+                setDbPartnerInsights(tempInsights)
+            }
+        },
+        [dbPartnerInsights]
+    )
+
     const updateSettings = useCallback(async (settings: Settings) => {
         setSettings(settings)
         await storeSettings(settings)
@@ -166,15 +217,20 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         setSymptoms(dbSymptoms)
     }, [dbSymptoms])
+    useEffect(() => {
+        setPartnerInsights(dbPartnerInsights)
+    }, [dbPartnerInsights])
 
     return (
         <EventsCtx.Provider value={useMemo(() => ({ events, updateEvent }), [events])}>
             <SymptomsCtx.Provider value={useMemo(() => ({ symptoms, updateSymptoms }), [symptoms])}>
-                <SelectedDateCtx.Provider value={useMemo(() => ({ selectedDate, setSelectedDate }), [selectedDate])}>
-                    <SettingsCtx.Provider value={useMemo(() => ({ settings, updateSettings }), [settings])}>
-                        <DbCtx.Provider value={useMemo(() => ({ db, setDb }), [db])}>{children}</DbCtx.Provider>
-                    </SettingsCtx.Provider>
-                </SelectedDateCtx.Provider>
+                <PartnerInsightsCtx.Provider value={useMemo(() => ({ partnerInsights, updatePartnerInsights, deletePartnerInsights }), [partnerInsights])}>
+                    <SelectedDateCtx.Provider value={useMemo(() => ({ selectedDate, setSelectedDate }), [selectedDate])}>
+                        <SettingsCtx.Provider value={useMemo(() => ({ settings, updateSettings }), [settings])}>
+                            <DbCtx.Provider value={useMemo(() => ({ db, setDb }), [db])}>{children}</DbCtx.Provider>
+                        </SettingsCtx.Provider>
+                    </SelectedDateCtx.Provider>
+                </PartnerInsightsCtx.Provider>
             </SymptomsCtx.Provider>
         </EventsCtx.Provider>
     )
@@ -185,3 +241,4 @@ export const useSymptomsContext = () => useContext(SymptomsCtx)
 export const useSelectedDateContext = () => useContext(SelectedDateCtx)
 export const useSettingsContext = () => useContext(SettingsCtx)
 export const useDbContext = () => useContext(DbCtx)
+export const usePartnerInsightsContext = () => useContext(PartnerInsightsCtx)

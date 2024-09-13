@@ -1,9 +1,9 @@
 import { SQLiteDatabase } from 'expo-sqlite'
-import { DbEvent, DbSymptoms, DbVersion, Event, Symptoms } from '../app/Types'
+import { DbEvent, DbSymptoms, DbVersion, Event, PartnerInsight, Symptoms } from '../app/Types'
 
 export async function createTables(db: SQLiteDatabase) {
     await db.execAsync(`CREATE TABLE IF NOT EXISTS version (version INTEGER NOT NULL);`)
-    const dbVersion = await db.getFirstAsync<DbVersion>("SELECT * FROM version") ?? { version: null }
+    const dbVersion = (await db.getFirstAsync<DbVersion>('SELECT * FROM version')) ?? { version: null }
     if (!dbVersion.version) {
         await db.execAsync(`INSERT INTO version (version) VALUES (0)`)
         dbVersion.version = 0
@@ -110,6 +110,22 @@ export async function createTables(db: SQLiteDatabase) {
             )
         })
     }
+    if (dbVersion.version == 2) {
+        await db.withTransactionAsync(async () => {
+            await db?.execAsync(
+                `
+                -- Create new table
+                CREATE TABLE IF NOT EXISTS partnerInsights (
+                    dayInCycle INTEGER NOT NULL,
+                    name TEXT NOT NULL,
+                    description TEXT NOT NULL
+                );
+
+                UPDATE version SET version = 3; 
+                `
+            )
+        })
+    }
 }
 
 export async function getEventsFromDb(db: SQLiteDatabase) {
@@ -162,6 +178,17 @@ export async function getSymptomsFromDb(db: SQLiteDatabase) {
         moodIrritated: symptoms.mood_irritated ? true : false
     }))
     return symptoms
+}
+
+export async function getPartnerInsightsFromDb(db: SQLiteDatabase) {
+    const results = await db.getAllAsync<PartnerInsight>('SELECT * FROM partnerInsights')
+
+    const partnerInsights: PartnerInsight[] = results.map((insight) => ({
+        dayInCycle: insight.dayInCycle,
+        name: insight.name,
+        description: insight.description
+    }))
+    return partnerInsights
 }
 
 export async function insertEventToDb(db: SQLiteDatabase, event: Event) {
@@ -289,6 +316,25 @@ export async function insertSymptomsToDb(db: SQLiteDatabase, symptoms: Symptoms)
     })
 }
 
+export async function insertPartnerInsightToDb(db: SQLiteDatabase, insight: PartnerInsight) {
+    const command = await db.prepareAsync(
+        `INSERT INTO partnerInsights (
+            dayInCycle,
+            name,
+            description
+        ) VALUES (
+            $dayInCycle,
+            $name,
+            $description
+        )`
+    )
+    await command.executeAsync({
+        $dayInCycle: insight.dayInCycle,
+        $name: insight.name,
+        $description: insight.description
+    })
+}
+
 export async function updateEventInDb(db: SQLiteDatabase, event: Event) {
     const command = await db.prepareAsync(
         `UPDATE events SET
@@ -375,6 +421,21 @@ export async function updateSymptomsInDb(db: SQLiteDatabase, symptoms: Symptoms)
     })
 }
 
+export async function updatePartnerInsightInDb(db: SQLiteDatabase, insight: PartnerInsight) {
+    const command = await db.prepareAsync(
+        `UPDATE partnerInsights SET
+            dayInCycle = $dayInCycle,
+            name = $name,
+            description = $description
+        WHERE dayInCycle = $dayInCycle`
+    )
+    await command.executeAsync({
+        $dayInCycle: insight.dayInCycle,
+        $name: insight.name,
+        $description: insight.description
+    })
+}
+
 export async function deleteEventFromDb(db: SQLiteDatabase, date: Date) {
     const command = await db.prepareAsync(`DELETE FROM events WHERE date = $date`)
     await command.executeAsync({ $date: date.toISOString() })
@@ -383,4 +444,9 @@ export async function deleteEventFromDb(db: SQLiteDatabase, date: Date) {
 export async function deleteSymptomsFromDb(db: SQLiteDatabase, date: Date) {
     const command = await db.prepareAsync(`DELETE FROM symptoms WHERE date = $date`)
     await command.executeAsync({ $date: date.toISOString() })
+}
+
+export async function deletePartnerInsightFromDb(db: SQLiteDatabase, dayInCycle: number) {
+    const command = await db.prepareAsync(`DELETE FROM partnerInsights WHERE dayInCycle = $dayInCycle`)
+    await command.executeAsync({ $dayInCycle: dayInCycle })
 }

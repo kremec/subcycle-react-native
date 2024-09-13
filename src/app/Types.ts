@@ -156,7 +156,6 @@ export const defaultSymptoms = (date: Date): Symptoms => ({
     moodSensitive: false,
     moodIrritated: false
 })
-
 export const SymptomTypes = [
     {
         name: 'Symptoms',
@@ -217,7 +216,6 @@ export const SymptomTypes = [
     }
 ]
 
-
 export type MarkedDate = {
     date: Date
     marked: boolean
@@ -226,17 +224,26 @@ export type MarkedDate = {
     color: string
     textColor: string
     dotColor: string
-    selected: boolean,
-    prediction: boolean,
+    selected: boolean
+    prediction: boolean
     onPress: () => void
 }
-
 
 export type EventPeriod = {
     start: Date
     dayLength: number
 }
 
+export type PartnerInsight = {
+    dayInCycle: number
+    name: string
+    description: string
+}
+export const defaultPartnerInsight: PartnerInsight = {
+    dayInCycle: -1,
+    name: '',
+    description: ''
+}
 
 export type EventsContext = {
     events: Event[]
@@ -245,6 +252,11 @@ export type EventsContext = {
 export type SymptomsContext = {
     symptoms: Symptoms[]
     updateSymptoms: (symptoms: Symptoms) => void
+}
+export type PartnerInsightsContext = {
+    partnerInsights: PartnerInsight[]
+    updatePartnerInsights: (insights: PartnerInsight[]) => void
+    deletePartnerInsights: (dayInCycle: number) => void
 }
 export type SettingsContext = {
     settings: Settings
