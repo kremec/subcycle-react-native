@@ -255,8 +255,7 @@ export type SymptomsContext = {
 }
 export type PartnerInsightsContext = {
     partnerInsights: PartnerInsight[]
-    updatePartnerInsights: (insights: PartnerInsight[]) => void
-    deletePartnerInsights: (dayInCycle: number) => void
+    updatePartnerInsights: (insight: PartnerInsight, originalDayInCycle: number) => void
 }
 export type SettingsContext = {
     settings: Settings

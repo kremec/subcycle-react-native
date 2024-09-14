@@ -421,16 +421,17 @@ export async function updateSymptomsInDb(db: SQLiteDatabase, symptoms: Symptoms)
     })
 }
 
-export async function updatePartnerInsightInDb(db: SQLiteDatabase, insight: PartnerInsight) {
+export async function updatePartnerInsightInDb(db: SQLiteDatabase, insight: PartnerInsight, originalDayInCycle: number) {
     const command = await db.prepareAsync(
         `UPDATE partnerInsights SET
             dayInCycle = $dayInCycle,
             name = $name,
             description = $description
-        WHERE dayInCycle = $dayInCycle`
+        WHERE dayInCycle = $originalDayInCycle`
     )
     await command.executeAsync({
         $dayInCycle: insight.dayInCycle,
+        $originalDayInCycle: originalDayInCycle,
         $name: insight.name,
         $description: insight.description
     })

@@ -17,7 +17,8 @@ import {
     insertSymptomsToDb,
     insertPartnerInsightToDb,
     updatePartnerInsightInDb,
-    deletePartnerInsightFromDb
+    deletePartnerInsightFromDb,
+    getPartnerInsightsFromDb
 } from '../data/SqlDbCalls'
 import { getSettings, storeSettings } from '../data/AsyncStorageCalls'
 
@@ -40,8 +41,7 @@ const defaultSymptomsContextValue: SymptomsContext = {
 const SymptomsCtx = createContext(defaultSymptomsContextValue)
 const defaultPartnerInsightsContextValue: PartnerInsightsContext = {
     partnerInsights: [],
-    updatePartnerInsights: (_insights: PartnerInsight[]) => {},
-    deletePartnerInsights: (_dayInCycle: number) => {}
+    updatePartnerInsights: (_insight: PartnerInsight) => {}
 }
 const PartnerInsightsCtx = createContext(defaultPartnerInsightsContextValue)
 const defaultSelectedDateContextValue: SelectedDateContext = {
@@ -158,29 +158,23 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
     )
 
     const updatePartnerInsights = useCallback(
-        (editInsights: PartnerInsight[]) => {
-            const existingInsights = dbPartnerInsights.find((i) => i.dayInCycle === editInsights[0].dayInCycle)
-            if (!existingInsights) {
-                // Insert if insight is new
-                insertPartnerInsightToDb(db, editInsights[0])
-                setDbPartnerInsights([...dbPartnerInsights, ...editInsights])
+        (editInsights: PartnerInsight, originalDayInCycle: number) => {
+            const toDelete = editInsights.dayInCycle === -1
+            if (toDelete) {
+                console.log('Deleting insight')
+                deletePartnerInsightFromDb(db, originalDayInCycle)
+                setDbPartnerInsights(dbPartnerInsights.filter((i) => i.dayInCycle !== editInsights.dayInCycle))
             } else {
-                // Update if insight is already in db
-                const tempInsights = dbPartnerInsights.filter((i) => i.dayInCycle !== editInsights[0].dayInCycle)
-                updatePartnerInsightInDb(db, editInsights[0])
-                setDbPartnerInsights([...tempInsights, ...editInsights])
-            }
-        },
-        [dbPartnerInsights]
-    )
-    const deletePartnerInsights = useCallback(
-        (dayInCycle: number) => {
-            const existingInsights = dbPartnerInsights.find((i) => i.dayInCycle === dayInCycle)
-            if (existingInsights) {
-                // Delete if insight is already in db
-                const tempInsights = dbPartnerInsights.filter((i) => i.dayInCycle !== dayInCycle)
-                deletePartnerInsightFromDb(db, dayInCycle)
-                setDbPartnerInsights(tempInsights)
+                const existingInsights = dbPartnerInsights.find((i) => i.dayInCycle === originalDayInCycle)
+                if (existingInsights) {
+                    console.log('Updating insight')
+                    updatePartnerInsightInDb(db, editInsights, originalDayInCycle)
+                    setDbPartnerInsights([...dbPartnerInsights.filter((i) => i.dayInCycle !== originalDayInCycle), editInsights])
+                } else {
+                    console.log('Inserting insight')
+                    insertPartnerInsightToDb(db, editInsights)
+                    setDbPartnerInsights([...dbPartnerInsights, editInsights])
+                }
             }
         },
         [dbPartnerInsights]
@@ -200,6 +194,9 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
 
             const symptomsFromDb = await getSymptomsFromDb(db)
             setDbSymptoms(symptomsFromDb)
+
+            const partnerInsightsFromDb = await getPartnerInsightsFromDb(db)
+            setDbPartnerInsights(partnerInsightsFromDb)
         }
         updateFromDb()
 
@@ -224,7 +221,7 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
     return (
         <EventsCtx.Provider value={useMemo(() => ({ events, updateEvent }), [events])}>
             <SymptomsCtx.Provider value={useMemo(() => ({ symptoms, updateSymptoms }), [symptoms])}>
-                <PartnerInsightsCtx.Provider value={useMemo(() => ({ partnerInsights, updatePartnerInsights, deletePartnerInsights }), [partnerInsights])}>
+                <PartnerInsightsCtx.Provider value={useMemo(() => ({ partnerInsights, updatePartnerInsights }), [partnerInsights])}>
                     <SelectedDateCtx.Provider value={useMemo(() => ({ selectedDate, setSelectedDate }), [selectedDate])}>
                         <SettingsCtx.Provider value={useMemo(() => ({ settings, updateSettings }), [settings])}>
                             <DbCtx.Provider value={useMemo(() => ({ db, setDb }), [db])}>{children}</DbCtx.Provider>
