@@ -60,6 +60,7 @@ const ParnerInfo = () => {
                             .map((insight) => (
                                 <>
                                     <List.Item
+                                        key={insight.dayInCycle}
                                         title={insight.name}
                                         description={insight.description}
                                         onPress={() => {
@@ -72,7 +73,7 @@ const ParnerInfo = () => {
                                             </View>
                                         )}
                                     />
-                                    <Divider />
+                                    <Divider key={insight.dayInCycle + '-divider'} />
                                 </>
                             ))}
                     </ScrollView>
@@ -94,8 +95,6 @@ const ParnerInfo = () => {
                         setEditInsight(null)
                     }}
                     onDone={(updatedPartnerInsight, remove) => {
-                        console.log(!partnerInsights.some((i) => i.dayInCycle == updatedPartnerInsight.dayInCycle), editInsight.dayInCycle === updatedPartnerInsight.dayInCycle)
-
                         if (remove) updatePartnerInsights({ ...updatedPartnerInsight, dayInCycle: -1 }, editInsight.dayInCycle)
                         else if (!partnerInsights.some((i) => i.dayInCycle == updatedPartnerInsight.dayInCycle) || editInsight.dayInCycle === updatedPartnerInsight.dayInCycle)
                             updatePartnerInsights(updatedPartnerInsight, editInsight.dayInCycle)

@@ -163,7 +163,7 @@ export const AppContext = ({ children }: { children: ReactNode }) => {
             if (toDelete) {
                 console.log('Deleting insight')
                 deletePartnerInsightFromDb(db, originalDayInCycle)
-                setDbPartnerInsights(dbPartnerInsights.filter((i) => i.dayInCycle !== editInsights.dayInCycle))
+                setDbPartnerInsights(dbPartnerInsights.filter((i) => i.dayInCycle !== originalDayInCycle))
             } else {
                 const existingInsights = dbPartnerInsights.find((i) => i.dayInCycle === originalDayInCycle)
                 if (existingInsights) {

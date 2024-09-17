@@ -22,14 +22,14 @@ const PartnerInsightsEditDialog = ({
         <Portal>
             <Dialog visible={visible} onDismiss={onCancel}>
                 <Dialog.Title>
-                    <Text variant="titleLarge">{name ? name : 'New partner insight'}</Text>
+                    <Text variant="titleLarge">{name ? name : 'New insight'}</Text>
                 </Dialog.Title>
                 <Dialog.Content>
                     {selectedInsight && (
                         <>
                             <TextInput label="Name" multiline={true} value={name} onChangeText={(text) => setName(text)} />
                             <View style={{ height: 20 }} />
-                            <TextInput label="Description" multiline={true} value={description} onChangeText={(text) => setDescription(text)} />
+                            <TextInput label="Description" multiline={true} defaultValue={description} onChangeText={(text) => setDescription(text)} />
                             <View style={{ height: 20 }} />
                             <TextInput label="Start day in cycle" keyboardType="numeric" value={dayInCycle} onChangeText={(text) => setDayInCycle(text.replace(/[^0-9]/g, ''))} />
                         </>
