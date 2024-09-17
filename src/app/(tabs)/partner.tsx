@@ -11,7 +11,7 @@ import { defaultPartnerInsight, PartnerInsight } from '../Types'
 import { FlatList, ScrollView } from 'react-native-gesture-handler'
 import { IconArrowDown, IconCompass, IconEdit } from '@tabler/icons-react-native'
 
-const ParnerInfo = () => {
+const PartnerInfo = () => {
     const { theme } = useTheme()
     const { events } = useEventsContext()
     const { selectedDate } = useSelectedDateContext()
@@ -45,8 +45,11 @@ const ParnerInfo = () => {
             {partnerTabMode === 'view' ? (
                 <>
                     <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10 }}>
-                        <Text variant="titleLarge" style={{ textAlign: 'center' }}>
+                        <Text variant="titleLarge" style={{ textAlign: 'center', marginBottom: -10 }}>
                             {currentPartnerInsight ? currentPartnerInsight.name : 'No insights found'}
+                        </Text>
+                        <Text variant="titleSmall" style={{ textAlign: 'center' }}>
+                            {`(${currentDayInCycle}${currentDayInCycle === 1 ? 'st' : currentDayInCycle === 2 ? 'nd' : currentDayInCycle === 3 ? 'rd' : 'th'} day in cycle)`}
                         </Text>
                         <Text variant="bodyLarge">{currentPartnerInsight ? currentPartnerInsight.description : ''}</Text>
                     </View>
@@ -58,9 +61,8 @@ const ParnerInfo = () => {
                         {partnerInsights
                             .sort((a, b) => a.dayInCycle - b.dayInCycle)
                             .map((insight) => (
-                                <>
+                                <React.Fragment key={insight.dayInCycle}>
                                     <List.Item
-                                        key={insight.dayInCycle}
                                         title={insight.name}
                                         description={insight.description}
                                         onPress={() => {
@@ -73,8 +75,8 @@ const ParnerInfo = () => {
                                             </View>
                                         )}
                                     />
-                                    <Divider key={insight.dayInCycle + '-divider'} />
-                                </>
+                                    <Divider />
+                                </React.Fragment>
                             ))}
                     </ScrollView>
 
@@ -107,4 +109,4 @@ const ParnerInfo = () => {
     )
 }
 
-export default ParnerInfo
+export default PartnerInfo
