@@ -15,7 +15,6 @@ const NotificationsManager = () => {
 
     useEffect(() => {
         if (settings.notificationTime === null) return
-        console.log('NotificationsManager', settings.notificationTime)
 
         const cancelAndReschedule = async () => {
             const permissionStatus = await requestPermissions()
