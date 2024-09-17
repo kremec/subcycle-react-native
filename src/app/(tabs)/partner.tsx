@@ -45,10 +45,10 @@ const ParnerInfo = () => {
             {partnerTabMode === 'view' ? (
                 <>
                     <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10 }}>
-                        <Text variant="headlineSmall" style={{ textAlign: 'center' }}>
+                        <Text variant="titleLarge" style={{ textAlign: 'center' }}>
                             {currentPartnerInsight ? currentPartnerInsight.name : 'No insights found'}
                         </Text>
-                        <Text variant="titleLarge">{currentPartnerInsight ? currentPartnerInsight.description : ''}</Text>
+                        <Text variant="bodyLarge">{currentPartnerInsight ? currentPartnerInsight.description : ''}</Text>
                     </View>
                 </>
             ) : partnerTabMode === 'edit' ? (

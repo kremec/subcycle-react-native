@@ -172,7 +172,7 @@ const CalendarEditDialog = ({
                             onDone(selectedEvent)
                         }}
                     >
-                        Done
+                        Save
                     </Button>
                 </Dialog.Actions>
             </Dialog>

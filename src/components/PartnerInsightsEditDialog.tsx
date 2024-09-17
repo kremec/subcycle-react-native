@@ -39,7 +39,7 @@ const PartnerInsightsEditDialog = ({
                     {selectedInsight && (
                         <>
                             <Button onPress={() => onDone({ ...selectedInsight, name, description, dayInCycle: parseInt(dayInCycle) }, true)}>Delete</Button>
-                            <Button onPress={() => onDone({ ...selectedInsight, name, description, dayInCycle: parseInt(dayInCycle) }, false)}>Done</Button>
+                            <Button onPress={() => onDone({ ...selectedInsight, name, description, dayInCycle: parseInt(dayInCycle) }, false)}>Save</Button>
                         </>
                     )}
                 </Dialog.Actions>
