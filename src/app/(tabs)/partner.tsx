@@ -1,23 +1,22 @@
 import React, { useState } from 'react'
 import { View } from 'react-native'
-import { Button, Divider, FAB, List, SegmentedButtons, Text } from 'react-native-paper'
+import { Divider, FAB, List, SegmentedButtons, Text } from 'react-native-paper'
 
 import { useTheme } from '../../theme/ThemeContext'
-import { useEventsContext, usePartnerInsightsContext, useSelectedDateContext } from '../AppContext'
+import { useEventsContext, usePartnerInsightsContext } from '../AppContext'
 
 import { getDayInCycle } from '../../stats/CycleStats'
 import PartnerInsightsEditDialog from '../../components/PartnerInsightsEditDialog'
 import { defaultPartnerInsight, PartnerInsight } from '../Types'
-import { FlatList, ScrollView } from 'react-native-gesture-handler'
+import { ScrollView } from 'react-native-gesture-handler'
 import { IconArrowDown, IconCompass, IconEdit } from '@tabler/icons-react-native'
 
 const PartnerInfo = () => {
     const { theme } = useTheme()
     const { events } = useEventsContext()
-    const { selectedDate } = useSelectedDateContext()
     const { partnerInsights, updatePartnerInsights } = usePartnerInsightsContext()
 
-    const currentDayInCycle = getDayInCycle(selectedDate, events)
+    const currentDayInCycle = getDayInCycle(new Date(), events)
     const currentPartnerInsight = partnerInsights.filter((insight) => insight.dayInCycle <= currentDayInCycle).sort((a, b) => b.dayInCycle - a.dayInCycle)[0]
 
     const [partnerTabMode, setPartnerTabMode] = useState('view')
@@ -45,13 +44,21 @@ const PartnerInfo = () => {
             {partnerTabMode === 'view' ? (
                 <>
                     <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 10, gap: 10 }}>
-                        <Text variant="titleLarge" style={{ textAlign: 'center', marginBottom: -10 }}>
-                            {currentPartnerInsight ? currentPartnerInsight.name : 'No insights found'}
-                        </Text>
-                        <Text variant="titleSmall" style={{ textAlign: 'center' }}>
-                            {`(${currentDayInCycle}${currentDayInCycle === 1 ? 'st' : currentDayInCycle === 2 ? 'nd' : currentDayInCycle === 3 ? 'rd' : 'th'} day in cycle)`}
-                        </Text>
-                        <Text variant="bodyLarge">{currentPartnerInsight ? currentPartnerInsight.description : ''}</Text>
+                        {currentPartnerInsight && !Number.isNaN(currentDayInCycle) ? (
+                            <>
+                                <Text variant="titleLarge" style={{ textAlign: 'center', marginBottom: -10 }}>
+                                    {currentPartnerInsight.name}
+                                </Text>
+                                <Text variant="titleSmall" style={{ textAlign: 'center' }}>
+                                    {`(${currentDayInCycle}${currentDayInCycle === 1 ? 'st' : currentDayInCycle === 2 ? 'nd' : currentDayInCycle === 3 ? 'rd' : 'th'} day in cycle)`}
+                                </Text>
+                                <Text variant="bodyLarge">{currentPartnerInsight.description}</Text>
+                            </>
+                        ) : (
+                            <Text variant="titleLarge" style={{ textAlign: 'center', marginBottom: -10 }}>
+                                No insights found
+                            </Text>
+                        )}
                     </View>
                 </>
             ) : partnerTabMode === 'edit' ? (

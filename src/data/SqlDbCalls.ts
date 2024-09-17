@@ -58,7 +58,8 @@ export async function createTables(db: SQLiteDatabase) {
                 UPDATE version SET version = 1;
                 `
             )
-            dbVersion.version = 1
+            const newDbVersion = (await db.getFirstAsync<DbVersion>('SELECT * FROM version')) ?? { version: null }
+            if (newDbVersion.version == 1) dbVersion.version = newDbVersion.version
         })
     }
     if (dbVersion.version == 1) {
@@ -108,6 +109,8 @@ export async function createTables(db: SQLiteDatabase) {
                 UPDATE version SET version = 2;
                 `
             )
+            const newDbVersion = (await db.getFirstAsync<DbVersion>('SELECT * FROM version')) ?? { version: null }
+            if (newDbVersion.version == 2) dbVersion.version = newDbVersion.version
         })
     }
     if (dbVersion.version == 2) {
@@ -125,6 +128,8 @@ export async function createTables(db: SQLiteDatabase) {
                 `
             )
         })
+        const newDbVersion = (await db.getFirstAsync<DbVersion>('SELECT * FROM version')) ?? { version: null }
+        if (newDbVersion.version == 3) dbVersion.version = newDbVersion.version
     }
 }
 
