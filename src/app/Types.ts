@@ -272,7 +272,7 @@ export type SelectedDateContext = {
 
 export type Settings = {
     predictionsTimespan: number
-    notificationTime: Date
+    notificationTime: Date | null
     partnerMode: boolean
 }
 

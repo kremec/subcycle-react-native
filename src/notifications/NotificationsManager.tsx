@@ -14,6 +14,9 @@ const NotificationsManager = () => {
     const { settings } = useSettingsContext()
 
     useEffect(() => {
+        if (settings.notificationTime === null) return
+        console.log('NotificationsManager', settings.notificationTime)
+
         const cancelAndReschedule = async () => {
             const permissionStatus = await requestPermissions()
 
@@ -53,8 +56,7 @@ const NotificationsManager = () => {
     }
 
     const scheduleDailyNotification = async () => {
-        // Cancel all previously scheduled notifications (optional)
-        await Notifications.cancelAllScheduledNotificationsAsync()
+        if (settings.notificationTime === null) return
 
         // Schedule the notification
         await Notifications.scheduleNotificationAsync({

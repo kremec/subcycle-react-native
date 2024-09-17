@@ -25,7 +25,7 @@ import { getSettings, storeSettings } from '../data/AsyncStorageCalls'
 const defaultDb = SQLite.openDatabaseSync('subcycle.db')
 const defaultSettings: Settings = {
     predictionsTimespan: 1,
-    notificationTime: new Date(new Date().setHours(18, 0, 0)),
+    notificationTime: null,
     partnerMode: false
 }
 

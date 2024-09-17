@@ -88,11 +88,11 @@ export default function SettingsTab() {
                     <Card.Title title="Pill notifications" subtitle="Daily notification time" left={(props) => <IconAlarm {...props} color={theme.colors.onBackground} strokeWidth={1.5} />} />
                     <Card.Content>
                         <TouchableRipple style={{ padding: 10, borderRadius: 10 }} onPress={() => setShowNotificationTimePicker(true)}>
-                            <Text>Notification time: {getHourMinute(settings.notificationTime)}</Text>
+                            <Text>Notification time {settings.notificationTime ? ': ' + getHourMinute(settings.notificationTime) : 'not set'}</Text>
                         </TouchableRipple>
                         {showNotificationTimePicker && (
                             <DateTimePicker
-                                value={settings.notificationTime}
+                                value={settings.notificationTime ?? new Date()}
                                 mode="time"
                                 is24Hour={true}
                                 onChange={(event, value) => {
