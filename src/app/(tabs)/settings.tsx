@@ -108,7 +108,7 @@ export default function SettingsTab() {
                 <Card style={{ overflow: 'hidden', padding: 10, backgroundColor: theme.colors.background, shadowColor: theme.colors.onBackground }}>
                     <Card.Title title="Partner mode" subtitle="Insights based on day of cycle" left={(props) => <IconUserHeart {...props} color={theme.colors.onBackground} strokeWidth={1.5} />} />
                     <Card.Content>
-                        <Switch value={settings.partnerMode} onValueChange={(value) => updateSettings({ ...settings, partnerMode: value })} />
+                        <Switch color={theme.colors.secondary} value={settings.partnerMode} onValueChange={(value) => updateSettings({ ...settings, partnerMode: value })} />
                     </Card.Content>
                 </Card>
             </View>
