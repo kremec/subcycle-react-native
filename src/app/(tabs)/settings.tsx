@@ -13,8 +13,12 @@ import { useDbContext, useSettingsContext } from '../AppContext'
 import { useTheme } from '../../theme/ThemeContext'
 import { getHourMinute, Settings } from '../Types'
 import { IconAlarm, IconFileExport, IconFileImport, IconReport, IconUserHeart } from '@tabler/icons-react-native'
+import NotificationsManager, { sendTestNotification } from '../../notifications/NotificationsManager'
+import React from 'react'
 
 export default function SettingsTab() {
+    const IS_DEV = process.env.NODE_ENV === 'development'
+
     const { theme } = useTheme()
 
     const { setDb } = useDbContext()
@@ -101,6 +105,11 @@ export default function SettingsTab() {
                                     setShowNotificationTimePicker(false)
                                 }}
                             />
+                        )}
+                        {IS_DEV && (
+                            <Button mode="outlined" textColor={theme.colors.onBackground} onPress={() => sendTestNotification()}>
+                                Send test notification
+                            </Button>
                         )}
                     </Card.Content>
                 </Card>
