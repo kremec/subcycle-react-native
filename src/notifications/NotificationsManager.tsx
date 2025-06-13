@@ -1,12 +1,14 @@
 import { useEffect } from 'react'
 import * as Notifications from 'expo-notifications'
 import { useSettingsContext } from '../app/AppContext'
+import { registerBackgroundTask } from './backgroundTask'
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
-        shouldShowAlert: true,
         shouldPlaySound: true,
-        shouldSetBadge: true
+        shouldSetBadge: true,
+        shouldShowBanner: true,
+        shouldShowList: true
     })
 })
 
@@ -14,34 +16,51 @@ const NotificationsManager = () => {
     const { settings } = useSettingsContext()
 
     useEffect(() => {
+        const setupNotifications = async () => {
+            await Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                vibrationPattern: [0, 250, 250, 250],
+                importance: Notifications.AndroidImportance.MAX,
+                lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+                bypassDnd: true
+            })
+
+            await Notifications.setNotificationCategoryAsync('pillreminder', [
+                {
+                    buttonTitle: 'Check pill for today',
+                    identifier: 'checkpill',
+                    options: {
+                        opensAppToForeground: false,
+                        isDestructive: true,
+                        isAuthenticationRequired: false
+                    }
+                }
+            ])
+
+            await registerBackgroundTask()
+        }
+
+        setupNotifications()
+    }, [])
+
+    useEffect(() => {
         if (settings.notificationTime === null) return
 
-        const cancelAndReschedule = async () => {
+        const setupNotifications = async () => {
             const permissionStatus = await requestPermissions()
 
             await Notifications.cancelAllScheduledNotificationsAsync()
-            if (permissionStatus === 'granted') scheduleDailyNotification()
+            if (permissionStatus === 'granted') {
+                await scheduleDailyNotification()
+                // Re-register the background task to ensure it's active
+                await registerBackgroundTask()
+            }
         }
 
-        cancelAndReschedule()
+        setupNotifications()
     }, [settings.notificationTime])
 
     const requestPermissions = async () => {
-        await Notifications.setNotificationChannelAsync('default', {
-            name: 'default',
-            vibrationPattern: [0, 250, 250, 250],
-            importance: Notifications.AndroidImportance.MAX,
-            lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-            bypassDnd: true
-        })
-
-        await Notifications.setNotificationCategoryAsync('pillreminder', [
-            {
-                buttonTitle: 'Check pill for today',
-                identifier: 'checkpill'
-            }
-        ])
-
         const { status: existingStatus } = await Notifications.getPermissionsAsync()
         let finalStatus = existingStatus
 
@@ -69,14 +88,32 @@ const NotificationsManager = () => {
             },
             trigger: {
                 // Show the notification every day at the specified time
+                type: Notifications.SchedulableTriggerInputTypes.DAILY,
                 hour: settings.notificationTime.getHours(),
-                minute: settings.notificationTime.getMinutes(),
-                repeats: true
+                minute: settings.notificationTime.getMinutes()
             }
         })
     }
 
     return null
+}
+
+export const sendTestNotification = async () => {
+    await Notifications.scheduleNotificationAsync({
+        content: {
+            categoryIdentifier: 'pillreminder',
+            title: 'subcycle',
+            body: "Don't forget to take your pill!",
+            sound: true,
+            vibrate: [0, 250, 250, 250],
+            priority: 'max'
+        },
+        trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            seconds: 5,
+            channelId: 'default'
+        }
+    })
 }
 
 export default NotificationsManager
