@@ -18,16 +18,16 @@ export default function TabLayout() {
                 // Top header bar
                 headerTitleStyle: { color: theme.colors.onBackground },
                 headerStyle: { backgroundColor: theme.colors.background },
-                tabBarShowLabel: false
+                tabBarShowLabel: false,
+                // All screens' background color
+                sceneStyle: { backgroundColor: theme.colors.background }
             }}
-            // All screens' background color
-            sceneContainerStyle={{ backgroundColor: theme.colors.background }}
         >
             <Tabs.Screen
                 name="stats"
                 options={{
                     title: 'Stats',
-                    tabBarIcon: ({ color }) => <IconChartBar size={20} color={color} />,
+                    tabBarIcon: ({ color }: { color: string }) => <IconChartBar size={20} color={color} />,
                     href: settings.partnerMode ? null : '/stats'
                 }}
             />
@@ -35,7 +35,7 @@ export default function TabLayout() {
                 name="partner"
                 options={{
                     title: 'Partner info',
-                    tabBarIcon: ({ color }) => <IconUserHeart size={20} color={color} />,
+                    tabBarIcon: ({ color }: { color: string }) => <IconUserHeart size={20} color={color} />,
                     href: settings.partnerMode ? '/partner' : null
                 }}
             />
@@ -43,14 +43,14 @@ export default function TabLayout() {
                 name="index"
                 options={{
                     title: 'Calendar',
-                    tabBarIcon: ({ color }) => <IconCalendarMonth size={20} color={color} />
+                    tabBarIcon: ({ color }: { color: string }) => <IconCalendarMonth size={20} color={color} />
                 }}
             />
             <Tabs.Screen
                 name="settings"
                 options={{
                     title: 'Settings',
-                    tabBarIcon: ({ color }) => <IconSettings2 size={20} color={color} />
+                    tabBarIcon: ({ color }: { color: string }) => <IconSettings2 size={20} color={color} />
                 }}
             />
         </Tabs>

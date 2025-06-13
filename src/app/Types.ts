@@ -10,10 +10,7 @@ import {
     IconBike,
     IconBolt,
     IconCactus,
-    IconChartBubble,
     IconChartRadar,
-    IconDroplet,
-    IconDropletHalfFilled,
     IconDropletOff,
     IconIceCream2,
     IconMoodAngry,
@@ -320,4 +317,15 @@ export const getHourMinute = (date: Date) => {
         minute: 'numeric'
     }
     return date.toLocaleTimeString(undefined, options)
+}
+
+export default {
+    defaultEvent,
+    defaultSymptoms,
+    SymptomTypes,
+    defaultPartnerInsight,
+    isSameDate,
+    getMonthYear,
+    getWeekdayDayMonth,
+    getHourMinute
 }

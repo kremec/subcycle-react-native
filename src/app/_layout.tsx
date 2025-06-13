@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { defaultEvent, isSameDate } from './Types'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
+import { StatusBar } from 'expo-status-bar'
 
 const RootLayout = () => {
     const { theme } = useTheme()
@@ -47,6 +48,7 @@ const App = () => {
                     <AppContext>
                         <RootLayout />
                         <NotificationsManager />
+                        <StatusBar style="auto" />
                     </AppContext>
                 </ThemeProvider>
             </BottomSheetModalProvider>

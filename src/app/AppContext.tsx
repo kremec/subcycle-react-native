@@ -31,32 +31,32 @@ const defaultSettings: Settings = {
 
 const defaultEventsContextValue: EventsContext = {
     events: [],
-    updateEvent: (_event: Event) => {}
+    updateEvent: (_event: Event) => { }
 }
 const EventsCtx = createContext(defaultEventsContextValue)
 const defaultSymptomsContextValue: SymptomsContext = {
     symptoms: [],
-    updateSymptoms: (_symptoms: Symptoms) => {}
+    updateSymptoms: (_symptoms: Symptoms) => { }
 }
 const SymptomsCtx = createContext(defaultSymptomsContextValue)
 const defaultPartnerInsightsContextValue: PartnerInsightsContext = {
     partnerInsights: [],
-    updatePartnerInsights: (_insight: PartnerInsight) => {}
+    updatePartnerInsights: (_insight: PartnerInsight) => { }
 }
 const PartnerInsightsCtx = createContext(defaultPartnerInsightsContextValue)
 const defaultSelectedDateContextValue: SelectedDateContext = {
     selectedDate: new Date(),
-    setSelectedDate: (_date: Date) => {}
+    setSelectedDate: (_date: Date) => { }
 }
 const SelectedDateCtx = createContext(defaultSelectedDateContextValue)
 const defaultSettingsContextValue: SettingsContext = {
     settings: defaultSettings,
-    updateSettings: (_settings: Settings) => {}
+    updateSettings: (_settings: Settings) => { }
 }
 const SettingsCtx = createContext(defaultSettingsContextValue)
 const defaultDbContextValue: DbContext = {
     db: defaultDb,
-    setDb: (_db: SQLite.SQLiteDatabase) => {}
+    setDb: (_db: SQLite.SQLiteDatabase) => { }
 }
 const DbCtx = createContext(defaultDbContextValue)
 
@@ -236,3 +236,5 @@ export const useSelectedDateContext = () => useContext(SelectedDateCtx)
 export const useSettingsContext = () => useContext(SettingsCtx)
 export const useDbContext = () => useContext(DbCtx)
 export const usePartnerInsightsContext = () => useContext(PartnerInsightsCtx)
+
+export default AppContext
