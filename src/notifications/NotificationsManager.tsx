@@ -16,7 +16,31 @@ const NotificationsManager = () => {
     const { settings } = useSettingsContext()
 
     useEffect(() => {
-        registerBackgroundTask()
+        const setupNotifications = async () => {
+            await Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                vibrationPattern: [0, 250, 250, 250],
+                importance: Notifications.AndroidImportance.MAX,
+                lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+                bypassDnd: true
+            })
+
+            await Notifications.setNotificationCategoryAsync('pillreminder', [
+                {
+                    buttonTitle: 'Check pill for today',
+                    identifier: 'checkpill',
+                    options: {
+                        opensAppToForeground: false,
+                        isDestructive: true,
+                        isAuthenticationRequired: false
+                    }
+                }
+            ])
+
+            await registerBackgroundTask()
+        }
+
+        setupNotifications()
     }, [])
 
     useEffect(() => {
@@ -26,33 +50,17 @@ const NotificationsManager = () => {
             const permissionStatus = await requestPermissions()
 
             await Notifications.cancelAllScheduledNotificationsAsync()
-            if (permissionStatus === 'granted') scheduleDailyNotification()
+            if (permissionStatus === 'granted') {
+                await scheduleDailyNotification()
+                // Re-register the background task to ensure it's active
+                await registerBackgroundTask()
+            }
         }
 
         setupNotifications()
     }, [settings.notificationTime])
 
     const requestPermissions = async () => {
-        await Notifications.setNotificationChannelAsync('default', {
-            name: 'default',
-            vibrationPattern: [0, 250, 250, 250],
-            importance: Notifications.AndroidImportance.MAX,
-            lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-            bypassDnd: true
-        })
-
-        await Notifications.setNotificationCategoryAsync('pillreminder', [
-            {
-                buttonTitle: 'Check pill for today',
-                identifier: 'checkpill',
-                options: {
-                    opensAppToForeground: false,
-                    isDestructive: true,
-                    isAuthenticationRequired: false
-                }
-            }
-        ])
-
         const { status: existingStatus } = await Notifications.getPermissionsAsync()
         let finalStatus = existingStatus
 

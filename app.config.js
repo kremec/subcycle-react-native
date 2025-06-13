@@ -24,7 +24,12 @@ export default {
                     backgroundColor: '#000000'
                 }
             },
-            package: IS_DEV ? 'dev.subbyte.subcycle' : 'com.subbyte.subcycle'
+            package: IS_DEV ? 'dev.subbyte.subcycle' : 'com.subbyte.subcycle',
+            permissions: [
+                'RECEIVE_BOOT_COMPLETED',
+                'SCHEDULE_EXACT_ALARM',
+                'USE_EXACT_ALARM'
+            ]
         },
         web: {
             favicon: './assets/favicon.png'
